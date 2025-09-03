@@ -7,6 +7,9 @@ settings:
 importers:
   .:
     dependencies:
+      '@tailwindcss/postcss':
+        specifier: ^4.1.12
+        version: 4.1.12
       '@tailwindcss/vite':
         specifier: ^4.1.12
         version: 4.1.12(vite@7.1.4(jiti@2.5.1)(lightningcss@1.30.1)(sass@1.92.0)(yaml@2.8.1))
@@ -16,6 +19,12 @@ importers:
       axios:
         specifier: ^1.11.0
         version: 1.11.0
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
+      postcss:
+        specifier: ^8.5.6
+        version: 8.5.6
       react:
         specifier: ^19.1.1
         version: 19.1.1
@@ -79,6 +88,13 @@ importers:
         version: 7.1.4(jiti@2.5.1)(lightningcss@1.30.1)(sass@1.92.0)(yaml@2.8.1)
 
 packages:
+  '@alloc/quick-lru@5.2.0':
+    resolution:
+      {
+        integrity: sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==,
+      }
+    engines: { node: '>=10' }
+
   '@ampproject/remapping@2.3.0':
     resolution:
       {
@@ -1044,6 +1060,12 @@ packages:
       }
     engines: { node: '>= 10' }
 
+  '@tailwindcss/postcss@4.1.12':
+    resolution:
+      {
+        integrity: sha512-5PpLYhCAwf9SJEeIsSmCDLgyVfdBhdBpzX1OJ87anT9IVR0Z9pjM0FNixCAUAHGnMBGB8K99SwAheXrT0Kh6QQ==,
+      }
+
   '@tailwindcss/vite@4.1.12':
     resolution:
       {
@@ -1376,6 +1398,13 @@ packages:
         integrity: sha512-nPdaFdQ0h/GEigbPClz11D0v/ZJEwxmeVZGeMo3Z5StPtUTkA9o1lD6QwoirYiSDzbcwn2XcjwmCp68W1IS4TA==,
       }
     engines: { node: '>=18' }
+
+  clsx@2.1.1:
+    resolution:
+      {
+        integrity: sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA==,
+      }
+    engines: { node: '>=6' }
 
   color-convert@2.0.1:
     resolution:
@@ -2808,6 +2837,8 @@ packages:
         optional: true
 
 snapshots:
+  '@alloc/quick-lru@5.2.0': {}
+
   '@ampproject/remapping@2.3.0':
     dependencies:
       '@jridgewell/gen-mapping': 0.3.13
@@ -3285,6 +3316,14 @@ snapshots:
       '@tailwindcss/oxide-win32-arm64-msvc': 4.1.12
       '@tailwindcss/oxide-win32-x64-msvc': 4.1.12
 
+  '@tailwindcss/postcss@4.1.12':
+    dependencies:
+      '@alloc/quick-lru': 5.2.0
+      '@tailwindcss/node': 4.1.12
+      '@tailwindcss/oxide': 4.1.12
+      postcss: 8.5.6
+      tailwindcss: 4.1.12
+
   '@tailwindcss/vite@4.1.12(vite@7.1.4(jiti@2.5.1)(lightningcss@1.30.1)(sass@1.92.0)(yaml@2.8.1))':
     dependencies:
       '@tailwindcss/node': 4.1.12
@@ -3526,6 +3565,8 @@ snapshots:
     dependencies:
       slice-ansi: 5.0.0
       string-width: 7.2.0
+
+  clsx@2.1.1: {}
 
   color-convert@2.0.1:
     dependencies:

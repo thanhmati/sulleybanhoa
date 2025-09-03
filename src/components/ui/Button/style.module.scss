@@ -1,0 +1,44 @@
+@reference "../../../index.css";
+
+.btn {
+  @apply inline-block text-white font-semibold tracking-[1px] 
+    px-[35px] py-[14px] rounded-[30px] transition-all duration-400 ease-in-out 
+    cursor-pointer relative overflow-hidden;
+
+  background: linear-gradient(to right, theme(--color-primary-light), theme(--color-primary-dark));
+  border: none;
+  box-shadow: 0 4px 15px color-mix(in srgb, theme(--color-primary-light) 40%, transparent);
+
+  &::before {
+    content: '';
+    @apply absolute top-0 left-[-100%] w-full h-full;
+    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: 0.5s;
+  }
+
+  &:hover::before {
+    left: 100%;
+  }
+
+  &:hover {
+    @apply -translate-y-[5px];
+    box-shadow: 0 8px 20px color-mix(in srgb, theme(--color-primary-light) 60%, transparent);
+  }
+}
+
+.btn-outline {
+  @apply text-primary  cursor-pointer border-primary-light border-2 border-solid;
+
+  background: transparent;
+
+  box-shadow: none;
+
+  &:hover {
+    background: linear-gradient(
+      to right,
+      theme(--color-primary-light),
+      theme(--color-primary-dark)
+    );
+    @apply text-white;
+  }
+}
