@@ -1,0 +1,79 @@
+@import '../../../index.css';
+
+.header {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 15px 5%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(10px);
+  animation: slideDown 0.5s ease-in-out;
+
+  &__logo {
+    display: flex;
+    align-items: center;
+
+    h1 {
+      font-size: 26px;
+      font-weight: 700;
+      background: linear-gradient(to right, #358596, #77c2c0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  }
+  &__logo-icon {
+    width: 45px;
+    height: 45px;
+    background: linear-gradient(135deg, #77c2c0, #358596);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    color: white;
+    font-weight: bold;
+    font-size: 22px;
+    box-shadow: 0 4px 10px rgba(119, 194, 192, 0.3);
+  }
+
+  nav ul {
+    display: flex;
+    list-style: none;
+  }
+
+  nav ul li {
+    margin-left: 28px;
+  }
+
+  nav ul li a {
+    color: #358596;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    position: relative;
+    font-size: 16px;
+  }
+
+  nav ul li a::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(to right, #77c2c0, #358596);
+    transition: width 0.4s ease;
+  }
+
+  nav ul li a:hover::after {
+    width: 100%;
+  }
+
+  nav ul li a:hover {
+    color: #77c2c0;
+  }
+}

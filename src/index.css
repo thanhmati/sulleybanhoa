@@ -1,2 +1,4 @@
 @import 'tailwindcss';
 @import './styles/variables.scss';
+@import './styles/animation.scss';
+@import './styles//global.scss';

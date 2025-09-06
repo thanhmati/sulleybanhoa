@@ -1,9 +1,16 @@
-import { Button } from '../../components/ui/Button';
+import { useScrollAnimation } from '../../hooks/useScrollAnimation';
+import { Categories } from './components/Categories';
+import { Hero } from './components/Hero';
+import { Intro } from './components/Intro';
 
 export default function HomePage() {
+  useScrollAnimation({ staggerSelectors: ['.category'] });
+
   return (
     <div>
-      <Button variant="outline">Khám phá bộ sưu tập</Button>
+      <Hero />
+      <Intro />
+      <Categories />
     </div>
   );
 }
