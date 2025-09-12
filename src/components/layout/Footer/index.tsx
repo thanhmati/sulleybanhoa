@@ -1,3 +1,4 @@
+import { CONTACT } from '../../../lib/constants/contact.constant';
 import styles from './style.module.scss';
 import { Icon } from '@iconify/react';
 
@@ -33,17 +34,17 @@ export function Footer() {
           <h3>Theo dõi chúng tôi</h3>
           <p>Đăng ký để nhận thông tin về các chương trình khuyến mãi</p>
           <div className={styles['social-icons']}>
-            <a href="#">
+            <a href={CONTACT.SOCIAL.facebook} target="_blank">
               <Icon icon="fa7-brands:facebook-f" />
             </a>
-            <a href="https://www.instagram.com/sulleybanhoa/">
+            <a href={CONTACT.SOCIAL.instagram} target="_blank">
               <Icon icon="fa7-brands:instagram" />
             </a>
-            <a href="#">
+            <a href={CONTACT.SOCIAL.tiktok} target="_blank">
               <Icon icon={'fa7-brands:tiktok'} />
             </a>
-            <a href="#">
-              <Icon icon={'fa7-brands:youtube'} />
+            <a href={CONTACT.SOCIAL.zalo} target="_blank">
+              <Icon icon={'simple-icons:zalo'} />
             </a>
           </div>
         </div>

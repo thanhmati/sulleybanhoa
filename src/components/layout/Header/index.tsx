@@ -1,11 +1,16 @@
 import styles from './style.module.scss';
+import Logo from '../../../assets/img/header/logo.png';
 
 export function Header() {
   return (
     <header className={styles.header}>
       <div className={styles.header__logo}>
-        <div className={styles['header__logo-icon']}>S</div>
-        <h1>Sulley Flower</h1>
+        <div className={styles['header__logo-icon']}>
+          <img src={Logo} />
+        </div>
+        <a href="#">
+          <h1>Tiệm hoa trên mây</h1>
+        </a>
       </div>
       <nav>
         <ul>
