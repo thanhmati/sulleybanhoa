@@ -13,6 +13,11 @@
   backdrop-filter: blur(10px);
   animation: slideDown 0.5s ease-in-out;
 
+  /* Overlay */
+  &__overlay {
+    display: none;
+  }
+
   &__logo {
     display: flex;
     align-items: center;
@@ -23,15 +28,44 @@
       background: linear-gradient(to right, #358596, #77c2c0);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      white-space: nowrap;
     }
   }
+
   &__logo-icon {
     width: 50px;
     height: 50px;
     border-radius: 50%;
     margin-right: 12px;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
   }
 
+  /* Toggle button */
+  &__menu-toggle {
+    display: none; // desktop ẩn
+    flex-direction: column;
+    justify-content: space-between;
+    width: 28px;
+    height: 20px;
+    cursor: pointer;
+
+    span {
+      display: block;
+      height: 3px;
+      width: 100%;
+      background: #358596;
+      border-radius: 2px;
+      transition: 0.3s;
+    }
+  }
+
+  /* Nav desktop */
   nav ul {
     display: flex;
     list-style: none;
@@ -45,27 +79,162 @@
     color: #358596;
     text-decoration: none;
     font-weight: 500;
-    transition: all 0.3s ease;
     position: relative;
     font-size: 16px;
+    transition: all 0.3s ease;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(to right, #77c2c0, #358596);
+      transition: width 0.4s ease;
+    }
+
+    &:hover {
+      color: #77c2c0;
+
+      &::after {
+        width: 100%;
+      }
+    }
   }
 
-  nav ul li a::after {
-    content: '';
-    position: absolute;
-    bottom: -5px;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: linear-gradient(to right, #77c2c0, #358596);
-    transition: width 0.4s ease;
+  /* Overlay cho mobile menu */
+  &__overlay {
+    display: none;
   }
 
-  nav ul li a:hover::after {
-    width: 100%;
+  /* 📱 Tablet & Mobile */
+  @media (max-width: 1024px) {
+    &__logo h1 {
+      font-size: 24px;
+    }
+
+    nav ul li {
+      margin-left: 18px;
+    }
   }
 
-  nav ul li a:hover {
-    color: #77c2c0;
+  @media (max-width: 768px) {
+    &__overlay {
+      display: block;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.4);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease;
+      z-index: 1000;
+    }
+
+    &__overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    &__menu-toggle {
+      display: flex;
+      z-index: 1002;
+    }
+
+    /* Nav sidebar */
+    nav {
+      position: fixed;
+      top: 0;
+      right: -100%;
+      width: 70%;
+      max-width: 300px;
+      height: 100vh;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+      transition: right 0.4s ease;
+      z-index: 1001;
+    }
+
+    nav ul {
+      flex-direction: column;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      width: 100%;
+      text-align: center;
+    }
+
+    nav ul li {
+      margin: 18px 0;
+    }
+
+    nav ul li a {
+      font-size: 18px;
+      font-weight: 600;
+      display: inline-block;
+      padding: 10px 0;
+      width: 100%;
+      transition: background 0.3s;
+    }
+
+    nav ul li a:hover {
+      background: rgba(53, 133, 150, 0.1);
+      border-radius: 6px;
+    }
+
+    /* Nav mở */
+    nav.active {
+      right: 0;
+    }
+
+    /* Overlay */
+    &__overlay {
+      display: block;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.4);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease;
+      z-index: 1000;
+    }
+
+    &__overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+
+  /* 📱 Small mobile */
+  @media (max-width: 576px) {
+    &__logo h1 {
+      font-size: 20px;
+    }
+
+    &__logo-icon {
+      width: 36px;
+      height: 36px;
+      margin-right: 8px;
+    }
+
+    nav ul li a {
+      font-size: 16px;
+    }
+  }
+
+  @media (max-width: 400px) {
+    &__logo h1 {
+      font-size: 18px;
+    }
   }
 }
