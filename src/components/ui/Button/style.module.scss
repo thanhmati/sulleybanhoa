@@ -5,9 +5,9 @@
     px-[35px] py-[14px] rounded-[30px] transition-all duration-400 ease-in-out 
     cursor-pointer relative overflow-hidden;
 
-  background: linear-gradient(to right, theme(--color-primary-light), theme(--color-primary-dark));
+  background: linear-gradient(to right, #77c2c0, #2c6b73);
   border: none;
-  box-shadow: 0 4px 15px color-mix(in srgb, theme(--color-primary-light) 40%, transparent);
+  box-shadow: 0 4px 15px color-mix(in srgb, #77c2c0 40%, transparent);
 
   &::before {
     content: '';
@@ -22,23 +22,23 @@
 
   &:hover {
     @apply -translate-y-[5px];
-    box-shadow: 0 8px 20px color-mix(in srgb, theme(--color-primary-light) 60%, transparent);
+    box-shadow: 0 8px 20px color-mix(in srgb, #77c2c0 60%, transparent);
   }
 }
 
 .btn-outline {
-  @apply text-primary  cursor-pointer border-primary-light border-2 border-solid;
+  @apply cursor-pointer  border-2 border-solid;
 
   background: transparent;
 
   box-shadow: none;
 
+  color: #358596;
+
+  border-color: #77c2c0;
+
   &:hover {
-    background: linear-gradient(
-      to right,
-      theme(--color-primary-light),
-      theme(--color-primary-dark)
-    );
+    background: linear-gradient(to right, #77c2c0, #2c6b73);
     @apply text-white;
   }
 }

@@ -1,9 +1,10 @@
 import { lazy } from 'react';
 import type { RouteObject } from 'react-router-dom';
-import MainLayout from '../layout/MainLayout';
 import NotFoundPage from '../../pages/error/NotFoundPage';
 import ErrorBoundary from '../../pages/error/ErrorBoundary';
+import BackOfficeLayout from '../layout/BackOfficeLayout';
 
+const MainLayout = lazy(() => import('../layout/MainLayout'));
 const HomePage = lazy(() => import('../../pages/home/HomePage'));
 const AboutPage = lazy(() => import('../../pages/about/AboutPage'));
 
@@ -13,12 +14,23 @@ export const routes: RouteObject[] = [
     children: [
       { index: true, element: <HomePage /> },
       { path: 'about', element: <AboutPage /> },
-      { path: '*', element: <NotFoundPage /> },
     ],
     element: (
       <ErrorBoundary>
         <MainLayout />
       </ErrorBoundary>
     ),
+  },
+  {
+    path: '/admin',
+    element: (
+      <ErrorBoundary>
+        <BackOfficeLayout />
+      </ErrorBoundary>
+    ),
+  },
+  {
+    path: '*',
+    element: <NotFoundPage />,
   },
 ];
