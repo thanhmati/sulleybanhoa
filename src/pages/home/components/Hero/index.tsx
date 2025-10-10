@@ -1,4 +1,4 @@
-import { Button } from '../../../../components/ui/Button';
+import { AppButton } from '@/components/ui/AppButton';
 import styles from './style.module.scss';
 
 export function Hero() {
@@ -7,7 +7,7 @@ export function Hero() {
       <div className={styles.hero__content}>
         <h2>Nghệ thuật kết hoa Sulley</h2>
         <p>Mang đến những tác phẩm hoa tươi đầy cảm hứng và sáng tạo</p>
-        <Button>Khám phá bộ sưu tập</Button>
+        <AppButton>Khám phá bộ sưu tập</AppButton>
       </div>
     </section>
   );

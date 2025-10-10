@@ -1,7 +1,7 @@
 import styles from './style.module.scss';
-import { Button } from '../../../../components/ui/Button';
 import { Icon } from '@iconify/react';
 import { CONTACT } from '../../../../lib/constants/contact.constant';
+import { AppButton } from '@/components/ui/AppButton';
 
 export function Contact() {
   return (
@@ -58,7 +58,7 @@ export function Contact() {
               <label htmlFor="message">Lời nhắn</label>
               <textarea id="message" placeholder="Nhập lời nhắn của bạn"></textarea>
             </div>
-            <Button>Gửi tin nhắn</Button>
+            <AppButton>Gửi tin nhắn</AppButton>
           </form>
         </div>
       </div>

@@ -23,6 +23,7 @@ export const routes: RouteObject[] = [
   },
   {
     path: '/admin',
+    children: [{ index: true, element: <div>Dashboard page</div> }],
     element: (
       <ErrorBoundary>
         <BackOfficeLayout />

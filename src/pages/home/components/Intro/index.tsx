@@ -1,4 +1,4 @@
-import { Button } from '../../../../components/ui/Button';
+import { AppButton } from '@/components/ui/AppButton';
 import styles from './style.module.scss';
 
 export function Intro() {
@@ -10,7 +10,7 @@ export function Intro() {
         nghệ thuật độc đáo. Với sự sáng tạo và tỉ mỉ, chúng tôi mang đến những tác phẩm hoa đẹp mắt,
         tinh tế và đầy cảm xúc cho mọi dịp đặc biệt của bạn.
       </p>
-      <Button variant="outline">Câu chuyện của chúng tôi</Button>
+      <AppButton variant="outline">Câu chuyện của chúng tôi</AppButton>
     </section>
   );
 }

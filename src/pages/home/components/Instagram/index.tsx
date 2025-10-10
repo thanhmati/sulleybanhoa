@@ -1,4 +1,4 @@
-import { Button } from '../../../../components/ui/Button';
+import { AppButton } from '@/components/ui/AppButton';
 import { CONTACT } from '../../../../lib/constants/contact.constant';
 import styles from './style.module.scss';
 
@@ -33,13 +33,13 @@ export function Instagram() {
           />
         </div>
       </div>
-      <Button
+      <AppButton
         variant="outline"
         className="mt-12 z-10 relative"
         onClick={() => window.open(CONTACT.SOCIAL.instagram, '_blank')}
       >
         {CONTACT.SOCIAL.tag}
-      </Button>
+      </AppButton>
     </section>
   );
 }

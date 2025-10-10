@@ -1,4 +1,4 @@
-import { Button } from '../../../../components/ui/Button';
+import { AppButton } from '@/components/ui/AppButton';
 import styles from './style.module.scss';
 
 export function FeaturedProduct() {
@@ -17,7 +17,7 @@ export function FeaturedProduct() {
             <h3>Bó hồng nhung sang trọng</h3>
             <p>Bó hoa hồng đỏ truyền thống với thiết kế hiện đại</p>
             <span className="price">1.250.000₫</span>
-            <Button> Đặt hàng </Button>
+            <AppButton> Đặt hàng </AppButton>
           </div>
         </div>
         <div className={`${styles.product} animate-on-scroll`}>
@@ -31,7 +31,7 @@ export function FeaturedProduct() {
             <h3>Hộp hoa hồng trắng</h3>
             <p>Hộp hoa cao cấp với hoa hồng trắng tinh khiết</p>
             <span className="price">1.500.000₫</span>
-            <Button> Đặt hàng </Button>
+            <AppButton> Đặt hàng </AppButton>
           </div>
         </div>
         <div className={`${styles.product} animate-on-scroll`}>
@@ -45,7 +45,7 @@ export function FeaturedProduct() {
             <h3>Bó hoa lan tím</h3>
             <p>Phong cách hiện đại với hoa lan tím quý phái</p>
             <span className="price">1.800.000₫</span>
-            <Button> Đặt hàng </Button>
+            <AppButton> Đặt hàng </AppButton>
           </div>
         </div>
       </div>

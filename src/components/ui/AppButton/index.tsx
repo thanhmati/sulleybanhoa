@@ -7,7 +7,7 @@ type ButtonProps = {
   className?: string;
 } & React.ButtonHTMLAttributes<HTMLDivElement>;
 
-export function Button({ children, variant = 'solid', className, ...rest }: ButtonProps) {
+export function AppButton({ children, variant = 'solid', className, ...rest }: ButtonProps) {
   return (
     <div {...rest} className={clsx(styles.btn, variant ? styles[`btn-${variant}`] : '', className)}>
       {children}
