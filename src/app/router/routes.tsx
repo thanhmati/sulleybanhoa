@@ -2,6 +2,7 @@ import { lazy } from 'react';
 import type { RouteObject } from 'react-router-dom';
 import NotFoundPage from '../../pages/error/NotFoundPage';
 import ErrorBoundary from '../../pages/error/ErrorBoundary';
+import { ThemeProvider } from '@/components/theme-provider';
 
 const AdminLayout = lazy(() => import('../layout/AdminLayout'));
 const MainLayout = lazy(() => import('../layout/MainLayout'));
@@ -29,7 +30,9 @@ export const routes: RouteObject[] = [
     ],
     element: (
       <ErrorBoundary>
-        <AdminLayout />
+        <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+          <AdminLayout />
+        </ThemeProvider>
       </ErrorBoundary>
     ),
   },
