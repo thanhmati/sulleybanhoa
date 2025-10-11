@@ -3,6 +3,8 @@ import type { RouteObject } from 'react-router-dom';
 import NotFoundPage from '../../pages/error/NotFoundPage';
 import ErrorBoundary from '../../pages/error/ErrorBoundary';
 import { ThemeProvider } from '@/components/theme-provider';
+import OrderListPage from '@/pages/order/OrderListPage';
+import DashboardPage from '@/pages/dashboard/DashboardPage';
 
 const AdminLayout = lazy(() => import('../layout/AdminLayout'));
 const MainLayout = lazy(() => import('../layout/MainLayout'));
@@ -26,7 +28,13 @@ export const routes: RouteObject[] = [
     path: '/admin',
     handle: { breadcrumb: 'Admin' },
     children: [
-      { index: true, element: <div>Dashboard page</div>, handle: { breadcrumb: 'Dashboard' } },
+      {
+        path: 'dashboard',
+        element: <DashboardPage />,
+        handle: { breadcrumb: 'Bảng điều khiển' },
+      },
+
+      { path: 'orders', element: <OrderListPage />, handle: { breadcrumb: 'Đơn hàng' } },
     ],
     element: (
       <ErrorBoundary>
