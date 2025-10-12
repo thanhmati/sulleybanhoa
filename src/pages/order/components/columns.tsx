@@ -5,87 +5,97 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { MoreHorizontal } from 'lucide-react';
+import { Order } from '@/types/order';
 
-export type Payment = {
-  id: string;
-  amount: number;
-  status: 'pending' | 'processing' | 'success' | 'failed';
-  email: string;
+import { formatCurrency, formatDate } from '@/lib/utils/formatters';
+import { ORDER_STATUS } from '@/lib/constants/order.constant';
+
+export const STATUS_COLORS: Record<
+  ORDER_STATUS,
+  'default' | 'secondary' | 'destructive' | 'outline'
+> = {
+  [ORDER_STATUS.PENDING]: 'secondary',
+  [ORDER_STATUS.DELIVERED]: 'default',
+  [ORDER_STATUS.CANCELLED]: 'destructive',
+  [ORDER_STATUS.RETURNED]: 'outline',
 };
 
-export const payments: Payment[] = [
+export const orderColumns: ColumnDef<Order>[] = [
   {
-    id: '728ed52f',
-    amount: 100,
-    status: 'pending',
-    email: 'm@example.com',
+    accessorKey: 'orderNumber',
+    header: 'Mã đơn',
+    cell: ({ getValue }) => (
+      <span className="font-medium text-foreground">{getValue<string>() ?? '-'}</span>
+    ),
   },
   {
-    id: '489e1d42',
-    amount: 125,
-    status: 'processing',
-    email: 'example@gmail.com',
+    accessorKey: 'deliveryTime',
+    header: 'Thời gian giao',
+    cell: ({ getValue }) => <span>{formatDate(getValue<Date>())}</span>,
   },
-  // ...
-];
-
-export const columns: ColumnDef<Payment>[] = [
+  {
+    accessorKey: 'zalo',
+    header: 'Zalo',
+    cell: ({ getValue }) => getValue<string>() || '-',
+  },
+  {
+    accessorKey: 'instagram',
+    header: 'Instagram',
+    cell: ({ getValue }) => getValue<string>() || '-',
+  },
+  {
+    accessorKey: 'facebook',
+    header: 'Facebook',
+    cell: ({ getValue }) => getValue<string>() || '-',
+  },
+  {
+    accessorKey: 'type',
+    header: 'Loại',
+    cell: ({ getValue }) => getValue<string>() || '-',
+  },
+  {
+    accessorKey: 'tone',
+    header: 'Tone',
+    cell: ({ getValue }) => getValue<string>() || '-',
+  },
+  {
+    accessorKey: 'price',
+    header: 'Giá tiền',
+    cell: ({ getValue }) => <span>{formatCurrency(getValue<number>())}</span>,
+  },
   {
     accessorKey: 'status',
-    header: 'Status',
-  },
-  {
-    accessorKey: 'email',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Email
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-  },
-  {
-    accessorKey: 'amount',
-    header: () => <div className="text-right">Amount</div>,
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue('amount'));
-      const formatted = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-      }).format(amount);
-
-      return <div className="text-right font-medium">{formatted}</div>;
+    header: 'Trạng thái',
+    cell: ({ getValue }) => {
+      const status = getValue<ORDER_STATUS>() ?? 'UNKNOWN';
+      const variant = STATUS_COLORS[status] ?? 'outline';
+      return <Badge variant={variant}>{status}</Badge>;
     },
   },
   {
     id: 'actions',
-    cell: ({ row }) => {
-      const payment = row.original;
-
+    header: '',
+    cell: ({ cell }) => {
+      const order = cell.row.original;
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
+            <Button variant="ghost" size="icon">
               <span className="sr-only">Open menu</span>
               <MoreHorizontal className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
+
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(payment.id)}>
-              Copy payment ID
+            <DropdownMenuLabel>Thao tác</DropdownMenuLabel>
+            <DropdownMenuItem onClick={() => console.log('Edit', order)}>
+              Chỉnh sửa
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => console.log('Delete', order)}>Xoá</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

@@ -23,6 +23,7 @@ import { useState, ReactNode, useMemo } from 'react';
 import { DataTablePagination } from './DataTablePagination';
 import { DataTableProvider } from './DataTableProvider';
 import { flexRender } from '@tanstack/react-table';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -35,9 +36,12 @@ export interface DataTableProps<TData, TValue> {
   enableColumnVisibility?: boolean;
 
   // --- UI Injection
-  toolbar?: (table: Table<TData>) => React.ReactNode; // optional toolbar area
-  footer?: ReactNode; // optional footer (custom summary etc.)
-  pagination?: ReactNode; // replace default pagination with your own
+  toolbar?: (table: Table<TData>) => React.ReactNode;
+  footer?: ReactNode;
+  pagination?: ReactNode;
+
+  // --- Loading state
+  isLoading?: boolean;
 
   // --- Server-side / Controlled Mode
   manualPagination?: boolean;
@@ -66,6 +70,7 @@ export interface DataTableProps<TData, TValue> {
 export function DataTable<TData, TValue>({
   columns,
   data,
+  isLoading = false,
   enableSorting = true,
   enableFiltering = true,
   enablePagination = true,
@@ -158,7 +163,18 @@ export function DataTable<TData, TValue>({
             </TableHeader>
 
             <TableBody>
-              {table.getRowModel().rows?.length ? (
+              {isLoading ? (
+                // Skeleton loading rows
+                Array.from({ length: 5 }).map((_, i) => (
+                  <TableRow key={`skeleton-${i}`}>
+                    {columns.map((_, j) => (
+                      <TableCell key={j}>
+                        <Skeleton className="h-6 w-full rounded" />
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map((row) => (
                   <TableRow key={row.id}>
                     {row.getVisibleCells().map((cell) => (
