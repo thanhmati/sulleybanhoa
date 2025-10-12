@@ -8,7 +8,7 @@ export interface Order {
   type: string;
   tone: string;
   price: number;
-  isDeposit: boolean;
+  deposit: number;
   ship: number;
   note: string;
   status: ORDER_STATUS;

@@ -1,4 +1,4 @@
-export const enum ORDER_STATUS {
+export enum ORDER_STATUS {
   PENDING = 'PENDING',
   DELIVERED = 'DELIVERED',
   CANCELLED = 'CANCELLED',
