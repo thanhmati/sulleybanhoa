@@ -24,6 +24,8 @@ import { DataTablePagination } from './DataTablePagination';
 import { DataTableProvider } from './DataTableProvider';
 import { flexRender } from '@tanstack/react-table';
 import { Skeleton } from '@/components/ui/skeleton';
+import { cn } from '@/lib/utils';
+import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react';
 
 export interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -151,13 +153,32 @@ export function DataTable<TData, TValue>({
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())}
-                    </TableHead>
-                  ))}
+                  {headerGroup.headers.map((header) => {
+                    const canSort = header.column.getCanSort?.();
+                    const sortDir = header.column.getIsSorted?.() as false | 'asc' | 'desc';
+                    return (
+                      <TableHead
+                        key={header.id}
+                        onClick={canSort ? header.column.getToggleSortingHandler() : undefined}
+                        className={cn(canSort && 'cursor-pointer select-none hover:bg-muted/40')}
+                      >
+                        {header.isPlaceholder ? null : (
+                          <div className="flex items-center justify-between">
+                            {flexRender(header.column.columnDef.header, header.getContext())}
+                            {canSort ? (
+                              sortDir === 'asc' ? (
+                                <ArrowUp className="ml-1 h-3 w-3" />
+                              ) : sortDir === 'desc' ? (
+                                <ArrowDown className="ml-1 h-3 w-3" />
+                              ) : (
+                                <ArrowUpDown className="ml-1 h-3 w-3 opacity-40" />
+                              )
+                            ) : null}
+                          </div>
+                        )}
+                      </TableHead>
+                    );
+                  })}
                 </TableRow>
               ))}
             </TableHeader>

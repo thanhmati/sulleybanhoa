@@ -8,6 +8,7 @@ import { OrderFormDialog } from './components/OrderFormDialog';
 import { useState } from 'react';
 import { Order } from '@/types/order';
 import { toast } from 'sonner';
+import { OrderFilters } from './components/OrderFilters';
 
 export default function OrderListPage() {
   const { data, isLoading } = useOrdersQuery();
@@ -41,7 +42,8 @@ export default function OrderListPage() {
         isLoading={isLoading}
         columns={orderColumns(handleEdit, handleDelete)}
         data={data || []}
-        toolbar={() => (
+        externalState={{ sorting: [{ id: 'createdAt', desc: true }] }}
+        toolbar={(table) => (
           <DataTableToolbar
             actions={
               <>
@@ -51,6 +53,7 @@ export default function OrderListPage() {
                 </Button>
               </>
             }
+            filters={<OrderFilters table={table} />}
           />
         )}
       />

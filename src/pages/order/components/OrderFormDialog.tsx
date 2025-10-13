@@ -21,7 +21,7 @@ import {
 } from '@/components/ui/select';
 import { useCreateOrder, useUpdateOrder } from '@/hooks/useOrders';
 import { Order } from '@/types/order';
-import { ORDER_STATUS } from '@/lib/constants/order.constant';
+import { ORDER_STATUS, ORDER_STATUS_LABEL } from '@/lib/constants/order.constant';
 import {
   Form,
   FormControl,
@@ -320,7 +320,7 @@ export function OrderFormDialog({ open, onOpenChange, initialData }: Props) {
                         <SelectContent>
                           {Object.values(ORDER_STATUS).map((status) => (
                             <SelectItem key={status} value={status}>
-                              {status}
+                              {ORDER_STATUS_LABEL[status]}
                             </SelectItem>
                           ))}
                         </SelectContent>

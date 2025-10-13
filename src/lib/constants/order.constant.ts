@@ -4,3 +4,10 @@ export enum ORDER_STATUS {
   CANCELLED = 'CANCELLED',
   RETURNED = 'RETURNED',
 }
+
+export const ORDER_STATUS_LABEL = {
+  [ORDER_STATUS.PENDING]: 'Chưa giao',
+  [ORDER_STATUS.DELIVERED]: 'Đã giao',
+  [ORDER_STATUS.CANCELLED]: 'Huỷ',
+  [ORDER_STATUS.RETURNED]: 'Trả hàng',
+};

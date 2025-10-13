@@ -3,7 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { Order } from '@/types/order';
 
 import { formatCurrency, formatDate } from '@/lib/utils/formatters';
-import { ORDER_STATUS } from '@/lib/constants/order.constant';
+import { ORDER_STATUS, ORDER_STATUS_LABEL } from '@/lib/constants/order.constant';
 import { OrderActionsCell } from './OrderActionsCell';
 
 export const STATUS_COLORS: Record<
@@ -40,15 +40,24 @@ export const orderColumns = (
   {
     accessorKey: 'status',
     header: 'Trạng thái',
+    enableSorting: false,
     cell: ({ getValue }) => {
       const status = getValue<ORDER_STATUS>() ?? ORDER_STATUS.PENDING;
       const variant = STATUS_COLORS[status] ?? 'outline';
-      return <Badge variant={variant}>{status}</Badge>;
+      return <Badge variant={variant}>{ORDER_STATUS_LABEL[status]}</Badge>;
     },
+  },
+  {
+    accessorKey: 'createdAt',
+    header: 'Ngày tạo',
+    cell: ({ getValue }) => <span>{formatDate(getValue<Date>())}</span>,
+    enableHiding: true,
+    sortingFn: 'datetime',
   },
   {
     id: 'actions',
     header: '',
+    enableSorting: false,
     cell: ({
       cell: {
         row: { original: order },
