@@ -12,7 +12,7 @@ export interface Order {
   ship: number;
   note: string;
   status: ORDER_STATUS;
-  orderNumber: number;
+  orderNumber: string;
   createdAt: Date;
   updatedAt: Date;
 }
