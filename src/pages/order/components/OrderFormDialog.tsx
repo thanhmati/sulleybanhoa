@@ -49,6 +49,22 @@ const orderSchema = z.object({
   deposit: z.number().min(0).optional(),
 });
 
+const defaultValues: OrderFormValues = {
+  orderNumber: '',
+  zalo: '',
+  instagram: '',
+  facebook: '',
+  address: '',
+  type: '',
+  tone: '',
+  price: 0,
+  ship: 0,
+  note: '',
+  status: ORDER_STATUS.PENDING,
+  deliveryTime: '',
+  deposit: 0,
+};
+
 type OrderFormValues = z.infer<typeof orderSchema>;
 
 interface Props {
@@ -60,24 +76,12 @@ interface Props {
 export function OrderFormDialog({ open, onOpenChange, initialData }: Props) {
   const form = useForm<OrderFormValues>({
     resolver: zodResolver(orderSchema),
-    defaultValues: {
-      orderNumber: '',
-      zalo: '',
-      instagram: '',
-      facebook: '',
-      address: '',
-      type: '',
-      tone: '',
-      price: 0,
-      ship: 0,
-      note: '',
-      status: ORDER_STATUS.PENDING,
-      deliveryTime: '',
-      deposit: 0,
-    },
+    defaultValues,
   });
 
   useEffect(() => {
+    form.reset(defaultValues);
+
     if (initialData) {
       form.reset({
         ...initialData,
@@ -306,30 +310,32 @@ export function OrderFormDialog({ open, onOpenChange, initialData }: Props) {
                 )}
               />
 
-              <FormField
-                control={form.control}
-                name="status"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Trạng thái</FormLabel>
-                    <FormControl>
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Chọn trạng thái" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {Object.values(ORDER_STATUS).map((status) => (
-                            <SelectItem key={status} value={status}>
-                              {ORDER_STATUS_LABEL[status]}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              {initialData && (
+                <FormField
+                  control={form.control}
+                  name="status"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Trạng thái</FormLabel>
+                      <FormControl>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Chọn trạng thái" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Object.values(ORDER_STATUS).map((status) => (
+                              <SelectItem key={status} value={status}>
+                                {ORDER_STATUS_LABEL[status]}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
             </div>
 
             <DialogFooter>
