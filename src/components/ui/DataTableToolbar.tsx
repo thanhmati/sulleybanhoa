@@ -34,7 +34,7 @@ export function DataTableToolbar({
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm" className="flex items-center gap-1">
                 <Settings2Icon className="h-4 w-4" />
-                Columns
+                Hiển thị cột
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
