@@ -1,6 +1,7 @@
 export interface Order {
   id: string;
-  deliveryTime: Date;
+  deliveryTime: string;
+  deliveryDate: Date;
   zalo: string;
   instagram: string;
   facebook: string;

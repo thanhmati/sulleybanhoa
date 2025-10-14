@@ -42,7 +42,10 @@ export default function OrderListPage() {
         isLoading={isLoading}
         columns={orderColumns(handleEdit, handleDelete)}
         data={data || []}
-        externalState={{ sorting: [{ id: 'createdAt', desc: true }] }}
+        externalState={{
+          sorting: [{ id: 'createdAt', desc: true }],
+          columnVisibility: { orderNumber: false },
+        }}
         toolbar={(table) => (
           <DataTableToolbar
             actions={

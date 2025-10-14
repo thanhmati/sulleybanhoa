@@ -1,5 +1,3 @@
-'use client';
-
 import { Table } from '@tanstack/react-table';
 import { ORDER_STATUS, ORDER_STATUS_LABEL } from '@/lib/constants/order.constant';
 import {
@@ -10,12 +8,9 @@ import {
   SelectItem,
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
-import { CalendarIcon, X } from 'lucide-react';
-import { format } from 'date-fns';
-import { vi } from 'date-fns/locale';
+import { X } from 'lucide-react';
 import { useState } from 'react';
+import { DatePicker } from '@/components/ui/date-picker';
 
 interface OrderFiltersProps<TData> {
   table: Table<TData>;
@@ -23,14 +18,14 @@ interface OrderFiltersProps<TData> {
 
 export function OrderFilters<TData>({ table }: OrderFiltersProps<TData>) {
   const statusColumn = table.getColumn('status');
-  const deliveryTimeColumn = table.getColumn('deliveryTime');
+  const deliveryDateColumn = table.getColumn('deliveryDate');
 
   // ✅ Local state để đồng bộ UI
   const [status, setStatus] = useState<string>((statusColumn?.getFilterValue() as string) ?? 'all');
 
   const [date, setDate] = useState<Date | undefined>(
-    deliveryTimeColumn?.getFilterValue()
-      ? new Date(deliveryTimeColumn.getFilterValue() as string)
+    deliveryDateColumn?.getFilterValue()
+      ? new Date(deliveryDateColumn.getFilterValue() as string)
       : undefined,
   );
 
@@ -42,20 +37,19 @@ export function OrderFilters<TData>({ table }: OrderFiltersProps<TData>) {
 
   const handleDateChange = (selectedDate?: Date) => {
     setDate(selectedDate);
-    deliveryTimeColumn?.setFilterValue(
+    deliveryDateColumn?.setFilterValue(
       selectedDate ? selectedDate.toISOString().split('T')[0] : undefined,
     );
   };
 
   const handleClearFilters = () => {
     setStatus('all');
-    setDate(undefined);
     statusColumn?.setFilterValue(undefined);
-    deliveryTimeColumn?.setFilterValue(undefined);
+    handleDateChange(undefined);
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-3">
+    <div className="flex flex-wrap items-center gap-3 flex-row">
       {/* 🏷 Status filter */}
       <Select value={status} onValueChange={handleStatusChange}>
         <SelectTrigger className="w-[160px]">
@@ -72,17 +66,7 @@ export function OrderFilters<TData>({ table }: OrderFiltersProps<TData>) {
       </Select>
 
       {/* 📅 Delivery date filter */}
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button variant="outline" className="w-[180px] justify-start text-left font-normal">
-            <CalendarIcon className="mr-2 h-4 w-4" />
-            {date ? format(date, 'dd/MM/yyyy', { locale: vi }) : 'Ngày giao'}
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="p-0" align="start">
-          <Calendar mode="single" selected={date} onSelect={handleDateChange} initialFocus />
-        </PopoverContent>
-      </Popover>
+      <DatePicker value={date} onChange={handleDateChange} />
 
       {/* ❌ Clear filters */}
       {(status !== 'all' || date) && (

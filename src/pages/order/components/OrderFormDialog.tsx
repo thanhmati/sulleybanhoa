@@ -30,23 +30,26 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { DateTimePicker } from '@/components/ui/date-time-picker';
+import { DatePicker } from '@/components/ui/date-picker';
 import { CurrencyInput } from '@/components/ui/currency-input';
+import { TimePicker } from '@/components/ui/time-picker';
+import dayjs from 'dayjs';
 
 const orderSchema = z.object({
-  orderNumber: z.string(),
+  orderNumber: z.string().min(1, 'Mã đơn hàng không được để trống'),
   zalo: z.string().optional(),
   instagram: z.string().optional(),
   facebook: z.string().optional(),
-  address: z.string().min(1),
-  type: z.string().min(1),
-  tone: z.string().min(1),
-  price: z.number().min(0),
-  ship: z.number().min(0),
+  address: z.string().min(1, 'Địa chỉ không được để trống'),
+  type: z.string().min(1, 'Vui lòng nhập loại sản phẩm'),
+  tone: z.string().min(1, 'Vui lòng nhập tone màu'),
+  price: z.number().min(0, 'Giá tiền không hợp lệ'),
+  ship: z.number().min(0, 'Phí ship không hợp lệ'),
   note: z.string().optional(),
   status: z.enum(ORDER_STATUS),
-  deliveryTime: z.string().optional(),
-  deposit: z.number().min(0).optional(),
+  deliveryTime: z.string().min(1, 'Vui lòng chọn thời gian giao'),
+  deliveryDate: z.string().min(1, 'Vui lòng chọn ngày giao'),
+  deposit: z.number().min(0, 'Tiền cọc không hợp lệ').optional(),
 });
 
 const defaultValues: OrderFormValues = {
@@ -62,6 +65,7 @@ const defaultValues: OrderFormValues = {
   note: '',
   status: ORDER_STATUS.PENDING,
   deliveryTime: '',
+  deliveryDate: '',
   deposit: 0,
 };
 
@@ -85,9 +89,8 @@ export function OrderFormDialog({ open, onOpenChange, initialData }: Props) {
     if (initialData) {
       form.reset({
         ...initialData,
-        deliveryTime: initialData.deliveryTime
-          ? new Date(initialData.deliveryTime).toISOString().slice(0, 16)
-          : '',
+        deliveryDate: dayjs(initialData.deliveryDate).toISOString(),
+        deliveryTime: dayjs(initialData.deliveryTime).toISOString(),
       });
     }
   }, [form, initialData]);
@@ -98,7 +101,7 @@ export function OrderFormDialog({ open, onOpenChange, initialData }: Props) {
   const onSubmit = (values: OrderFormValues) => {
     const payload = {
       ...values,
-      deliveryTime: values.deliveryTime ? new Date(values.deliveryTime) : new Date(),
+      deliveryDate: values.deliveryDate ? new Date(values.deliveryDate) : new Date(),
     };
 
     if (initialData) {
@@ -137,14 +140,31 @@ export function OrderFormDialog({ open, onOpenChange, initialData }: Props) {
             <div className="grid grid-cols-3 gap-4">
               <FormField
                 control={form.control}
+                name="deliveryDate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Ngày giao</FormLabel>
+                    <FormControl>
+                      <DatePicker
+                        value={field.value ? new Date(field.value) : undefined}
+                        onChange={(val) => field.onChange(val?.toISOString() ?? '')}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
                 name="deliveryTime"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Thời gian giao</FormLabel>
+                    <FormLabel>Giờ giao hàng</FormLabel>
                     <FormControl>
-                      <DateTimePicker
-                        value={field.value ? new Date(field.value) : undefined}
-                        onChange={(val) => field.onChange(val?.toISOString() ?? '')}
+                      <TimePicker
+                        value={field.value}
+                        onChange={(date) => field.onChange(date?.toISOString())}
                       />
                     </FormControl>
                     <FormMessage />
@@ -212,7 +232,7 @@ export function OrderFormDialog({ open, onOpenChange, initialData }: Props) {
                 control={form.control}
                 name="facebook"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="col-span-3">
                     <FormLabel>FB</FormLabel>
                     <FormControl>
                       <Input type="text" {...field} />

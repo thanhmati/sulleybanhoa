@@ -28,9 +28,14 @@ export const orderColumns = (
     ),
   },
   {
+    accessorKey: 'deliveryDate',
+    header: 'Ngày giao',
+    cell: ({ getValue }) => <span>{formatDate(getValue<Date>(), 'DD/MM/YYYY')}</span>,
+  },
+  {
     accessorKey: 'deliveryTime',
-    header: 'Thời gian giao',
-    cell: ({ getValue }) => <span>{formatDate(getValue<Date>())}</span>,
+    header: 'Giờ giao',
+    cell: ({ getValue }) => <span>{formatDate(getValue<Date>(), 'hh:mm A')}</span>,
   },
   {
     accessorKey: 'price',
