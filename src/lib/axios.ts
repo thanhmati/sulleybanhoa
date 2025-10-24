@@ -1,3 +1,4 @@
+import { useAuthStore } from '@/stores/auth.store';
 import axios from 'axios';
 
 const api = axios.create({
@@ -7,11 +8,12 @@ const api = axios.create({
   },
 });
 
-// Optional: add request/response interceptors (nếu bạn dùng token)
 api.interceptors.request.use(
   (config) => {
-    // const token = localStorage.getItem("accessToken");
-    // if (token) config.headers.Authorization = `Bearer ${token}`;
+    const token = useAuthStore.getState().accessToken;
+    if (token && config.headers) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
     return config;
   },
   (error) => Promise.reject(error),

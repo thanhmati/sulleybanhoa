@@ -5,6 +5,9 @@ import ErrorBoundary from '../../pages/error/ErrorBoundary';
 import { ThemeProvider } from '@/components/theme-provider';
 import OrderListPage from '@/pages/order/OrderListPage';
 import DashboardPage from '@/pages/dashboard/DashboardPage';
+import LoginPage from '@/pages/login/LoginPage';
+import { Toaster } from '@/components/ui/sonner';
+import { AuthGuard } from '@/lib/guards/AuthGuard';
 
 const AdminLayout = lazy(() => import('../layout/AdminLayout'));
 const MainLayout = lazy(() => import('../layout/MainLayout'));
@@ -12,40 +15,52 @@ const HomePage = lazy(() => import('../../pages/home/HomePage'));
 const AboutPage = lazy(() => import('../../pages/about/AboutPage'));
 
 export const routes: RouteObject[] = [
+  // 🌐 Public routes
   {
     path: '/',
-    children: [
-      { index: true, element: <HomePage /> },
-      { path: 'about', element: <AboutPage /> },
-    ],
     element: (
       <ErrorBoundary>
         <MainLayout />
       </ErrorBoundary>
     ),
+    children: [
+      { index: true, element: <HomePage /> },
+      { path: 'about', element: <AboutPage /> },
+    ],
   },
+
+  // 🔓 Login route (public)
+  {
+    path: '/login',
+    element: (
+      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+        <Toaster />
+        <LoginPage />
+      </ThemeProvider>
+    ),
+  },
+
+  // 🔒 Protected admin routes
   {
     path: '/admin',
-    handle: { breadcrumb: 'Admin' },
-    children: [
-      {
-        path: 'dashboard',
-        element: <DashboardPage />,
-        handle: { breadcrumb: 'Bảng điều khiển' },
-      },
-
-      { path: 'orders', element: <OrderListPage />, handle: { breadcrumb: 'Đơn hàng' } },
-    ],
     element: (
       <ErrorBoundary>
         <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-          <AdminLayout />
+          <AuthGuard />
         </ThemeProvider>
       </ErrorBoundary>
     ),
+    children: [
+      {
+        element: <AdminLayout />,
+        children: [
+          { path: 'dashboard', element: <DashboardPage /> },
+          { path: 'orders', element: <OrderListPage /> },
+        ],
+      },
+    ],
   },
-  {
-    path: '*',
-    element: <NotFoundPage />,
-  },
+
+  // 🚫 404
+  { path: '*', element: <NotFoundPage /> },
 ];
