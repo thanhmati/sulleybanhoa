@@ -9,49 +9,63 @@ type AuthGuardProps = {
 
 export function AuthGuard({ requiredRoles }: AuthGuardProps) {
   const location = useLocation();
-  const { accessToken, isAuthenticated, isVerifying, setVerifying, user } = useAuthStore((s) => ({
-    accessToken: s.accessToken,
-    isAuthenticated: s.isAuthenticated,
-    isVerifying: s.isVerifying,
-    setVerifying: s.setVerifying,
-    user: s.user,
-  }));
+  const {
+    accessToken,
+    isAuthenticated,
+    isVerifying,
+    setVerifying,
+    setAuth,
+    clearAuth,
+    user,
+    restoreAuth,
+  } = useAuthStore();
 
   const [localLoading, setLocalLoading] = useState(true);
 
   useEffect(() => {
+    restoreAuth();
+  }, [restoreAuth]);
+
+  useEffect(() => {
     let mounted = true;
 
-    async function verify() {
+    const verify = async () => {
+      // chỉ verify 1 lần khi guard mount
       setVerifying(true);
       setLocalLoading(true);
 
       try {
         if (accessToken && isTokenValid(accessToken)) {
-          if (mounted) {
-            setVerifying(false);
-            setLocalLoading(false);
+          // Nếu token hợp lệ → set authenticated
+          if (!isAuthenticated) {
+            // ⚡ tránh re-render loop nếu state đã đúng
+            const existingUser = user ?? null;
+            setAuth(accessToken, existingUser);
           }
-          return;
+        } else {
+          // Token không hợp lệ → clear
+          if (isAuthenticated) clearAuth();
         }
       } catch (err) {
-        console.error('[AuthGuard] Token check error:', err);
+        console.error('[AuthGuard] Token verification failed:', err);
+        clearAuth();
       } finally {
         if (mounted) {
           setVerifying(false);
           setLocalLoading(false);
         }
       }
-    }
+    };
 
     verify();
+
     return () => {
       mounted = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, []); // ✅ chỉ chạy 1 lần khi mount, không phụ thuộc vào state
 
-  // ⏳ Show loader during verification
+  // ⏳ Hiển thị loader khi đang verify
   if (isVerifying || localLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -60,17 +74,12 @@ export function AuthGuard({ requiredRoles }: AuthGuardProps) {
     );
   }
 
-  // 🚫 Avoid redirect loop on /login
-  if (location.pathname === '/login') {
-    return <Outlet />;
-  }
-
-  // 🔐 Redirect unauthenticated users
+  // 🔐 Nếu chưa login → chuyển đến /login
   if (!isAuthenticated) {
     return <Navigate to="/login" state={{ from: location.pathname }} replace />;
   }
 
-  // 🎫 Optional role-based check
+  // 🎫 Kiểm tra quyền (nếu có)
   if (requiredRoles && requiredRoles.length > 0) {
     const hasRole = user?.roles?.some((r) => requiredRoles.includes(r));
     if (!hasRole) {
@@ -78,6 +87,6 @@ export function AuthGuard({ requiredRoles }: AuthGuardProps) {
     }
   }
 
-  // ✅ Authorized: render child routes
+  // ✅ Đã xác thực → render children
   return <Outlet />;
 }

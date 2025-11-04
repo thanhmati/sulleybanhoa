@@ -9,6 +9,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { useLogin } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useAuthStore } from '@/stores/auth.store';
 
 const loginSchema = z.object({
   email: z.string().min(1, 'Vui lòng nhập email'),
@@ -31,17 +32,28 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'form'>)
   const { isPending, mutateAsync } = useLogin();
   const navigate = useNavigate();
   const location = useLocation();
+  const { setAuth } = useAuthStore(); // ✅ lấy setter từ Zustand
 
-  const from = (location.state as { from?: string })?.from || '/admin';
+  const from = (location.state as { from?: string })?.from || '/admin/orders';
 
   const onSubmit = async (values: LoginFormValues) => {
     try {
       const res = await mutateAsync(values);
 
-      localStorage.setItem('accessToken', res.accessToken);
-      localStorage.setItem('refreshToken', res.refreshToken);
+      // 🔑 Giả sử API trả về { accessToken, refreshToken, user }
+      const { accessToken, refreshToken, user } = res;
 
+      // ✅ Lưu token
+      localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem('refreshToken', refreshToken);
+      localStorage.setItem('user', JSON.stringify(user));
+
+      // ✅ Cập nhật Zustand state
+      setAuth(accessToken, user);
+
+      // ✅ Điều hướng
       navigate(from, { replace: true });
+      toast.success('Đăng nhập thành công');
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Đăng nhập thất bại');
     }
