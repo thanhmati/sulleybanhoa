@@ -18,7 +18,7 @@ const data = {
   navMain: [
     {
       title: 'Bảng điều khiển',
-      url: '/admin/dashboard',
+      url: '/admin',
       icon: ChartBarIcon,
     },
     {
@@ -29,7 +29,7 @@ const data = {
   ],
   navSecondary: [
     {
-      title: 'Support',
+      title: 'Hỗ trợ',
       url: '#',
       icon: LifeBuoy,
     },

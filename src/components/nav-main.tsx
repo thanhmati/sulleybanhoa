@@ -30,7 +30,7 @@ export function NavMain({
 }) {
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Platform</SidebarGroupLabel>
+      <SidebarGroupLabel>Danh mục</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
           <NavMainItem key={item.title} item={item} />
