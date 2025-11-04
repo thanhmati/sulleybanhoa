@@ -9,7 +9,6 @@ interface TimePickerProps {
 }
 
 export function TimePicker({ value, onChange }: TimePickerProps) {
-  console.log('value', value);
   const [open, setOpen] = React.useState(false);
 
   // Chuyển sang Date object

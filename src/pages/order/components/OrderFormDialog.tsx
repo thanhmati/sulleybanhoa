@@ -36,7 +36,7 @@ import { TimePicker } from '@/components/ui/time-picker';
 import dayjs from 'dayjs';
 
 const orderSchema = z.object({
-  orderNumber: z.string().min(1, 'Mã đơn hàng không được để trống'),
+  orderNumber: z.string().optional(),
   zalo: z.string().optional(),
   instagram: z.string().optional(),
   facebook: z.string().optional(),
@@ -46,7 +46,7 @@ const orderSchema = z.object({
   price: z.number().min(0, 'Giá tiền không hợp lệ'),
   ship: z.number().min(0, 'Phí ship không hợp lệ'),
   note: z.string().optional(),
-  status: z.enum(ORDER_STATUS),
+  status: z.enum(ORDER_STATUS).optional(),
   deliveryTime: z.string().min(1, 'Vui lòng chọn thời gian giao'),
   deliveryDate: z.string().min(1, 'Vui lòng chọn ngày giao'),
   deposit: z.number().min(0, 'Tiền cọc không hợp lệ').optional(),
@@ -82,6 +82,12 @@ export function OrderFormDialog({ open, onOpenChange, initialData }: Props) {
     resolver: zodResolver(orderSchema),
     defaultValues,
   });
+
+  const {
+    formState: { errors },
+  } = form;
+
+  console.log('errors', errors);
 
   useEffect(() => {
     form.reset(defaultValues);
