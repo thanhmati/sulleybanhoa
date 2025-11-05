@@ -32,14 +32,17 @@ import {
 } from '@/components/ui/form';
 import { DatePicker } from '@/components/ui/date-picker';
 import { CurrencyInput } from '@/components/ui/currency-input';
-import { TimePicker } from '@/components/ui/time-picker';
 import dayjs from 'dayjs';
+import { Separator } from '@/components/ui/separator';
+
+const clientSchema = z.object({
+  name: z.string().min(1, 'Tên khách hàng không được để trống'),
+  phoneNumber: z.string().optional(),
+});
 
 const orderSchema = z.object({
+  client: clientSchema,
   orderNumber: z.string().optional(),
-  zalo: z.string().optional(),
-  instagram: z.string().optional(),
-  facebook: z.string().optional(),
   address: z.string().min(1, 'Địa chỉ không được để trống'),
   type: z.string().min(1, 'Vui lòng nhập loại sản phẩm'),
   tone: z.string().min(1, 'Vui lòng nhập tone màu'),
@@ -47,16 +50,17 @@ const orderSchema = z.object({
   ship: z.number().min(0, 'Phí ship không hợp lệ'),
   note: z.string().optional(),
   status: z.enum(ORDER_STATUS).optional(),
-  deliveryTime: z.string().min(1, 'Vui lòng chọn thời gian giao'),
+  deliveryTime: z.string().min(1, 'Vui lòng nhập thời gian giao'),
   deliveryDate: z.string().min(1, 'Vui lòng chọn ngày giao'),
   deposit: z.number().min(0, 'Tiền cọc không hợp lệ').optional(),
 });
 
 const defaultValues: OrderFormValues = {
+  client: {
+    name: '',
+    phoneNumber: '',
+  },
   orderNumber: '',
-  zalo: '',
-  instagram: '',
-  facebook: '',
   address: '',
   type: '',
   tone: '',
@@ -90,7 +94,6 @@ export function OrderFormDialog({ open, onOpenChange, initialData }: Props) {
       form.reset({
         ...initialData,
         deliveryDate: dayjs(initialData.deliveryDate).toISOString(),
-        deliveryTime: dayjs(initialData.deliveryTime).toISOString(),
       });
     }
   }, [form, initialData]);
@@ -136,19 +139,57 @@ export function OrderFormDialog({ open, onOpenChange, initialData }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-3xl">
+      <DialogContent className="sm:max-w-3xl overflow-y-auto max-h-[90vh]">
         <DialogHeader>
           <DialogTitle>{initialData ? 'Chỉnh sửa đơn hàng' : 'Tạo đơn hàng'}</DialogTitle>
         </DialogHeader>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <div className="grid grid-cols-3 gap-4">
+            <h3 className="text-sm font-semibold text-muted-foreground mt-2">
+              Thông tin khách hàng
+            </h3>
+            <Separator className="my-3" />
+
+            <div className="grid grid-cols-2 gap-4 my-4">
+              <FormField
+                control={form.control}
+                name="client.name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Tên khách hàng</FormLabel>
+                    <FormControl>
+                      <Input type="text" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="client.phoneNumber"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Số điện thoại</FormLabel>
+                    <FormControl>
+                      <Input type="text" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <h3 className="text-sm font-semibold text-muted-foreground">Thông tin đơn hàng</h3>
+            <Separator className="my-3" />
+
+            <div className="grid grid-cols-12 gap-4 my-4">
               <FormField
                 control={form.control}
                 name="deliveryDate"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="col-span-6">
                     <FormLabel>Ngày giao</FormLabel>
                     <FormControl>
                       <DatePicker
@@ -165,13 +206,10 @@ export function OrderFormDialog({ open, onOpenChange, initialData }: Props) {
                 control={form.control}
                 name="deliveryTime"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="col-span-6">
                     <FormLabel>Giờ giao hàng</FormLabel>
                     <FormControl>
-                      <TimePicker
-                        value={field.value}
-                        onChange={(date) => field.onChange(date?.toISOString())}
-                      />
+                      <Input type="text" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -182,7 +220,7 @@ export function OrderFormDialog({ open, onOpenChange, initialData }: Props) {
                 control={form.control}
                 name="type"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="col-span-6">
                     <FormLabel>Loại</FormLabel>
                     <FormControl>
                       <Input type="text" {...field} />
@@ -196,50 +234,8 @@ export function OrderFormDialog({ open, onOpenChange, initialData }: Props) {
                 control={form.control}
                 name="tone"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="col-span-6">
                     <FormLabel>Tone</FormLabel>
-                    <FormControl>
-                      <Input type="text" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="zalo"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Zalo</FormLabel>
-                    <FormControl>
-                      <Input type="tel" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="instagram"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>IG</FormLabel>
-                    <FormControl>
-                      <Input type="text" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="facebook"
-                render={({ field }) => (
-                  <FormItem className="col-span-3">
-                    <FormLabel>FB</FormLabel>
                     <FormControl>
                       <Input type="text" {...field} />
                     </FormControl>
@@ -252,7 +248,7 @@ export function OrderFormDialog({ open, onOpenChange, initialData }: Props) {
                 control={form.control}
                 name="address"
                 render={({ field }) => (
-                  <FormItem className="col-span-3">
+                  <FormItem className="col-span-12">
                     <FormLabel>Địa chỉ</FormLabel>
                     <FormControl>
                       <Input type="text" {...field} />
@@ -266,7 +262,7 @@ export function OrderFormDialog({ open, onOpenChange, initialData }: Props) {
                 control={form.control}
                 name="price"
                 render={() => (
-                  <FormItem>
+                  <FormItem className="col-span-4">
                     <FormLabel>Giá tiền</FormLabel>
                     <FormControl>
                       <Controller
@@ -286,7 +282,7 @@ export function OrderFormDialog({ open, onOpenChange, initialData }: Props) {
                 control={form.control}
                 name="deposit"
                 render={() => (
-                  <FormItem>
+                  <FormItem className="col-span-4">
                     <FormLabel>Cọc</FormLabel>
                     <FormControl>
                       <Controller
@@ -306,7 +302,7 @@ export function OrderFormDialog({ open, onOpenChange, initialData }: Props) {
                 control={form.control}
                 name="ship"
                 render={() => (
-                  <FormItem>
+                  <FormItem className="col-span-4">
                     <FormLabel>Phí ship</FormLabel>
                     <FormControl>
                       <Controller
@@ -326,7 +322,7 @@ export function OrderFormDialog({ open, onOpenChange, initialData }: Props) {
                 control={form.control}
                 name="note"
                 render={({ field }) => (
-                  <FormItem className="col-span-3">
+                  <FormItem className="col-span-12">
                     <FormLabel>Ghi chú</FormLabel>
                     <FormControl>
                       <Input type="text" {...field} />

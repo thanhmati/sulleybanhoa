@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import { CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
+import { vi as viLocale } from 'react-day-picker/locale';
 
 interface DatePickerProps {
   value?: Date;
@@ -39,7 +40,13 @@ export function DatePicker({ value, onChange }: DatePickerProps) {
         </Button>
       </PopoverTrigger>
       <PopoverContent className="flex flex-col space-y-2 p-3 w-auto">
-        <Calendar mode="single" selected={date} onSelect={handleSelectDate} initialFocus />
+        <Calendar
+          mode="single"
+          selected={date}
+          onSelect={handleSelectDate}
+          initialFocus
+          locale={viLocale}
+        />
       </PopoverContent>
     </Popover>
   );

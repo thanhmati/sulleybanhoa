@@ -1,10 +1,13 @@
+interface client {
+  name: string;
+  phoneNumber?: string;
+}
+
 export interface Order {
   id: string;
   deliveryTime: string;
   deliveryDate: Date;
-  zalo: string;
-  instagram: string;
-  facebook: string;
+  client: client;
   address: string;
   type: string;
   tone: string;

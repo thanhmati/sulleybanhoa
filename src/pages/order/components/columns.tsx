@@ -6,14 +6,11 @@ import { formatCurrency, formatDate } from '@/lib/utils/formatters';
 import { ORDER_STATUS, ORDER_STATUS_LABEL } from '@/lib/constants/order.constant';
 import { OrderActionsCell } from './OrderActionsCell';
 
-export const STATUS_COLORS: Record<
-  ORDER_STATUS,
-  'default' | 'secondary' | 'destructive' | 'outline'
-> = {
-  [ORDER_STATUS.PENDING]: 'secondary',
-  [ORDER_STATUS.DELIVERED]: 'default',
-  [ORDER_STATUS.CANCELLED]: 'destructive',
-  [ORDER_STATUS.RETURNED]: 'outline',
+export const STATUS_COLORS: Record<ORDER_STATUS, string> = {
+  [ORDER_STATUS.PENDING]: '#fbbf24', // vàng
+  [ORDER_STATUS.DELIVERED]: '#22c55e', // xanh lá
+  [ORDER_STATUS.CANCELLED]: '#ef4444', // đỏ
+  [ORDER_STATUS.RETURNED]: '#3b82f6', // xanh dương
 };
 
 export const orderColumns = (
@@ -35,7 +32,12 @@ export const orderColumns = (
   {
     accessorKey: 'deliveryTime',
     header: 'Giờ giao',
-    cell: ({ getValue }) => <span>{formatDate(getValue<Date>(), 'hh:mm A')}</span>,
+    cell: ({ getValue }) => <span>{getValue<string>()}</span>,
+  },
+  {
+    accessorKey: 'client.name',
+    header: 'Tên khách hàng',
+    cell: ({ getValue }) => <span>{getValue<string>()}</span>,
   },
   {
     accessorKey: 'price',
@@ -48,8 +50,11 @@ export const orderColumns = (
     enableSorting: false,
     cell: ({ getValue }) => {
       const status = getValue<ORDER_STATUS>() ?? ORDER_STATUS.PENDING;
-      const variant = STATUS_COLORS[status] ?? 'outline';
-      return <Badge variant={variant}>{ORDER_STATUS_LABEL[status]}</Badge>;
+      return (
+        <Badge style={{ backgroundColor: STATUS_COLORS[status], color: 'white' }}>
+          {ORDER_STATUS_LABEL[status]}
+        </Badge>
+      );
     },
   },
   {
