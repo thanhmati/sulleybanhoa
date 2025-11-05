@@ -54,6 +54,7 @@ export const routes: RouteObject[] = [
       {
         element: <AdminLayout />,
         children: [
+          { index: true, element: <DashboardPage /> },
           { path: 'dashboard', element: <DashboardPage /> },
           { path: 'orders', element: <OrderListPage /> },
         ],
