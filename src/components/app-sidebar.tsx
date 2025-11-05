@@ -18,7 +18,7 @@ const data = {
   navMain: [
     {
       title: 'Bảng điều khiển',
-      url: '/admin',
+      url: '/admin/dashboard',
       icon: ChartBarIcon,
     },
     {

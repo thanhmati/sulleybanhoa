@@ -83,12 +83,6 @@ export function OrderFormDialog({ open, onOpenChange, initialData }: Props) {
     defaultValues,
   });
 
-  const {
-    formState: { errors },
-  } = form;
-
-  console.log('errors', errors);
-
   useEffect(() => {
     form.reset(defaultValues);
 
@@ -100,6 +94,12 @@ export function OrderFormDialog({ open, onOpenChange, initialData }: Props) {
       });
     }
   }, [form, initialData]);
+
+  useEffect(() => {
+    if (!open) {
+      form.reset();
+    }
+  }, [open, form]);
 
   const createOrder = useCreateOrder();
   const updateOrder = useUpdateOrder();
