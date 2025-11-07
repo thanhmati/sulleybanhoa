@@ -1,16 +1,30 @@
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import {
+  ORDER_STATUS,
+  ORDER_STATUS_COLORS,
+  ORDER_STATUS_LABEL,
+} from '@/lib/constants/order.constant';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 
-const data = [
-  { name: 'Pending', value: 25 },
-  { name: 'Delivered', value: 60 },
-  { name: 'Cancelled', value: 10 },
-  { name: 'Returned', value: 5 },
-];
+interface OrderStatusPieChartProps {
+  data: {
+    status: ORDER_STATUS;
+    count: number;
+  }[];
+}
 
-const COLORS = ['#facc15', '#22c55e', '#ef4444', '#3b82f6'];
+export function OrderStatusPieChart({ data }: OrderStatusPieChartProps) {
+  const total = data.reduce((sum, item) => sum + item.count, 0);
 
-export function OrderStatusPieChart() {
+  const chartData = data
+    .filter((item) => item.count > 0)
+    .map((item) => ({
+      name: ORDER_STATUS_LABEL[item.status],
+      value: item.count,
+      percentage: total ? ((item.count / total) * 100).toFixed(1) : 0,
+      color: ORDER_STATUS_COLORS[item.status] || '#94a3b8',
+    }));
+
   return (
     <Card>
       <CardHeader>
@@ -20,20 +34,25 @@ export function OrderStatusPieChart() {
         <ResponsiveContainer width="100%" height={250}>
           <PieChart>
             <Pie
-              data={data}
+              data={chartData}
               cx="50%"
               cy="50%"
               innerRadius={60}
               outerRadius={90}
               paddingAngle={4}
               dataKey="value"
-              label
+              label={({ name, percentage }) => `${name} (${percentage}%)`}
             >
-              {data.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              {chartData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.color} />
               ))}
             </Pie>
-            <Tooltip formatter={(v: number) => `${v}%`} />
+            <Tooltip
+              formatter={(value: number, _name, entry: any) =>
+                `${entry.payload.percentage}% (${value} đơn)`
+              }
+              labelFormatter={() => ''}
+            />
             <Legend layout="vertical" verticalAlign="middle" align="right" iconType="circle" />
           </PieChart>
         </ResponsiveContainer>

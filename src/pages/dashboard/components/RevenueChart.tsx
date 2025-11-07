@@ -1,14 +1,14 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from 'recharts';
 
-const data = [
-  { name: 'Tuần 1', revenue: 12000000 },
-  { name: 'Tuần 2', revenue: 18000000 },
-  { name: 'Tuần 3', revenue: 25000000 },
-  { name: 'Tuần 4', revenue: 22000000 },
-];
+interface RevenueChartProps {
+  data: {
+    week: string;
+    revenue: number;
+  }[];
+}
 
-export function RevenueChart() {
+export function RevenueChart({ data }: RevenueChartProps) {
   return (
     <Card>
       <CardHeader>
@@ -23,9 +23,16 @@ export function RevenueChart() {
                 <stop offset="95%" stopColor="#2563eb" stopOpacity={0} />
               </linearGradient>
             </defs>
-            <XAxis dataKey="name" tickLine={false} axisLine={false} />
-            <YAxis tickLine={false} axisLine={false} />
-            <Tooltip formatter={(v: number) => `${v.toLocaleString()} ₫`} />
+            <XAxis dataKey="week" tickLine={false} axisLine={false} />
+            <YAxis
+              tickFormatter={(v) => `${(v / 1000000).toFixed(1)}M`}
+              tickLine={false}
+              axisLine={false}
+            />
+            <Tooltip
+              formatter={(v: number) => `${v.toLocaleString()} ₫`}
+              labelFormatter={(label) => `📅 ${label}`}
+            />
             <Area
               type="monotone"
               dataKey="revenue"

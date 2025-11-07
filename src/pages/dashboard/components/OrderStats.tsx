@@ -1,13 +1,39 @@
+import { DashboardSummary } from '@/types/dashboard';
 import { StatCard } from './StatCard';
+import { formatCurrency } from '@/lib/utils/formatters';
 
-const orderStats = [
-  { title: 'Tổng đơn hàng', value: '1,240', change: '+8%', positive: true },
-  { title: 'Doanh thu tháng này', value: '₫120,000,000', change: '+12%', positive: true },
-  { title: 'Đơn đã giao', value: '870', change: '+5%', positive: true },
-  { title: 'Đơn bị huỷ', value: '45', change: '-2%', positive: false },
-];
+interface OrderStatsProps {
+  summary: DashboardSummary;
+}
 
-export function OrderStats() {
+export function OrderStats({ summary }: OrderStatsProps) {
+  const orderStats = [
+    {
+      title: 'Tổng đơn hàng',
+      value: summary.totalOrders.toLocaleString(),
+      change: '+0%',
+      positive: true,
+    },
+    {
+      title: 'Doanh thu',
+      value: `${formatCurrency(summary.revenue)}`,
+      change: '+0%',
+      positive: true,
+    },
+    {
+      title: 'Đơn đã giao',
+      value: summary.deliveredOrders.toLocaleString(),
+      change: '+0%',
+      positive: true,
+    },
+    {
+      title: 'Đơn bị huỷ',
+      value: summary.cancelledOrders.toLocaleString(),
+      change: '-0%',
+      positive: false,
+    },
+  ];
+
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       {orderStats.map((stat) => (

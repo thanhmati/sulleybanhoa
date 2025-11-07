@@ -3,15 +3,12 @@ import { Badge } from '@/components/ui/badge';
 import { Order } from '@/types/order';
 
 import { formatCurrency, formatDate } from '@/lib/utils/formatters';
-import { ORDER_STATUS, ORDER_STATUS_LABEL } from '@/lib/constants/order.constant';
+import {
+  ORDER_STATUS,
+  ORDER_STATUS_COLORS,
+  ORDER_STATUS_LABEL,
+} from '@/lib/constants/order.constant';
 import { OrderActionsCell } from './OrderActionsCell';
-
-export const STATUS_COLORS: Record<ORDER_STATUS, string> = {
-  [ORDER_STATUS.PENDING]: '#fbbf24', // vàng
-  [ORDER_STATUS.DELIVERED]: '#22c55e', // xanh lá
-  [ORDER_STATUS.CANCELLED]: '#ef4444', // đỏ
-  [ORDER_STATUS.RETURNED]: '#3b82f6', // xanh dương
-};
 
 export const orderColumns = (
   onEdit: (order: Order) => void,
@@ -51,7 +48,7 @@ export const orderColumns = (
     cell: ({ getValue }) => {
       const status = getValue<ORDER_STATUS>() ?? ORDER_STATUS.PENDING;
       return (
-        <Badge style={{ backgroundColor: STATUS_COLORS[status], color: 'white' }}>
+        <Badge style={{ backgroundColor: ORDER_STATUS_COLORS[status], color: 'white' }}>
           {ORDER_STATUS_LABEL[status]}
         </Badge>
       );
