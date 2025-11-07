@@ -40,7 +40,7 @@ export function DataTableToolbar({
             <DropdownMenuContent align="end">
               {table
                 .getAllColumns()
-                .filter((column) => column.getCanHide())
+                .filter((column) => column.getCanHide() && column.columnDef.header?.toString())
                 .map((column) => (
                   <DropdownMenuCheckboxItem
                     key={column.id}
@@ -48,7 +48,7 @@ export function DataTableToolbar({
                     checked={column.getIsVisible()}
                     onCheckedChange={(value) => column.toggleVisibility(!!value)}
                   >
-                    {column.id}
+                    {column.columnDef.header?.toString()}
                   </DropdownMenuCheckboxItem>
                 ))}
             </DropdownMenuContent>
