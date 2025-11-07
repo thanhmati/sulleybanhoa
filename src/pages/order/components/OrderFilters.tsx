@@ -20,7 +20,6 @@ export function OrderFilters<TData>({ table }: OrderFiltersProps<TData>) {
   const statusColumn = table.getColumn('status');
   const deliveryDateColumn = table.getColumn('deliveryDate');
 
-  // ✅ Local state để đồng bộ UI
   const [status, setStatus] = useState<string>((statusColumn?.getFilterValue() as string) ?? 'all');
 
   const [date, setDate] = useState<Date | undefined>(
@@ -44,8 +43,8 @@ export function OrderFilters<TData>({ table }: OrderFiltersProps<TData>) {
 
   const handleClearFilters = () => {
     setStatus('all');
-    statusColumn?.setFilterValue(undefined);
-    handleDateChange(undefined);
+    setDate(undefined);
+    table.resetColumnFilters();
   };
 
   return (
@@ -65,10 +64,8 @@ export function OrderFilters<TData>({ table }: OrderFiltersProps<TData>) {
         </SelectContent>
       </Select>
 
-      {/* 📅 Delivery date filter */}
       <DatePicker value={date} onChange={handleDateChange} />
 
-      {/* ❌ Clear filters */}
       {(status !== 'all' || date) && (
         <Button variant="ghost" size="sm" onClick={handleClearFilters}>
           <X className="mr-1 h-4 w-4" /> Xoá lọc
