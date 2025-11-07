@@ -1,14 +1,22 @@
-import { ChartAreaInteractive } from '@/components/chart-area-interactive';
-import { SectionCards } from '@/components/section-cards';
+import { OrderStats } from './components/OrderStats';
+import { OrderStatusPieChart } from './components/OrderStatusPieChart';
+import { RevenueChart } from './components/RevenueChart';
 
 export default function DashboardPage() {
   return (
-    <div className="@container/main flex flex-1 flex-col gap-2">
-      <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-        <SectionCards />
-        <div className="px-4 lg:px-6">
-          <ChartAreaInteractive />
-        </div>
+    <div className="space-y-6 p-6">
+      <div>
+        <h2 className="text-2xl font-bold tracking-tight">Bảng điều khiển</h2>
+        <p className="text-muted-foreground">Theo dõi hiệu suất đơn hàng và doanh thu</p>
+      </div>
+
+      {/* Section 1: Stats */}
+      <OrderStats />
+
+      {/* Section 2: Charts */}
+      <div className="grid gap-4 md:grid-cols-2">
+        <RevenueChart />
+        <OrderStatusPieChart />
       </div>
     </div>
   );
