@@ -19,4 +19,6 @@ export interface DashboardSummary {
   revenue: number;
   weeklyRevenue: WeeklyRevenue[];
   statusDistribution: StatusDistribution[];
+
+  previous?: DashboardSummary;
 }
