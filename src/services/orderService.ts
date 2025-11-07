@@ -1,4 +1,5 @@
 import api from '@/lib/axios';
+import { ORDER_STATUS } from '@/lib/constants/order.constant';
 import type { Order } from '@/types/order';
 
 export const orderService = {
@@ -14,6 +15,11 @@ export const orderService = {
 
   update: async (id: string, data: Partial<Order>) => {
     const res = await api.patch(`/orders/${id}`, data);
+    return res.data;
+  },
+
+  updateStatus: async (id: string, status: ORDER_STATUS): Promise<string> => {
+    const res = await api.patch(`/orders/${id}/status`, { status });
     return res.data;
   },
 

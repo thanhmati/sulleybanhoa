@@ -22,14 +22,14 @@ export function DataTablePagination() {
   return (
     <div className="flex items-center justify-between p-4">
       <div className="text-muted-foreground hidden flex-1 text-sm lg:flex">
-        {table.getFilteredSelectedRowModel().rows.length} of{' '}
-        {table.getFilteredRowModel().rows.length} row(s) selected.
+        {table.getFilteredSelectedRowModel().rows.length} trong{' '}
+        {table.getFilteredRowModel().rows.length} dòng được chọn.
       </div>
 
       <div className="flex w-full items-center gap-8 lg:w-fit">
         <div className="hidden items-center gap-2 lg:flex">
           <Label htmlFor="rows-per-page" className="text-sm font-medium">
-            Rows per page
+            Số dòng mỗi trang
           </Label>
           <Select
             value={`${table.getState().pagination.pageSize}`}
@@ -49,7 +49,7 @@ export function DataTablePagination() {
         </div>
 
         <div className="flex items-center justify-center text-sm font-medium">
-          Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+          Trang {table.getState().pagination.pageIndex + 1} trên {table.getPageCount()}
         </div>
 
         <div className="ml-auto flex items-center gap-2 lg:ml-0">

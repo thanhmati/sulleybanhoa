@@ -46,6 +46,7 @@ export const routes: RouteObject[] = [
     element: (
       <ErrorBoundary>
         <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+          <Toaster />
           <AuthGuard />
         </ThemeProvider>
       </ErrorBoundary>

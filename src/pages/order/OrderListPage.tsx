@@ -32,7 +32,7 @@ export default function OrderListPage() {
       onSuccess: () => {
         toast.success('Xoá đơn hàng thành công!');
       },
-      onError: () => toast.error('Xoá thất bại'),
+      onError: () => toast.error('Không thể xoá đơn hàng này'),
     });
   };
 

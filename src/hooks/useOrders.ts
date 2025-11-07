@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { orderService } from '@/services/orderService';
 import type { Order } from '@/types/order';
+import { ORDER_STATUS } from '@/lib/constants/order.constant';
 
 const ORDER_QUERY_KEY = ['orders'];
 
@@ -24,6 +25,15 @@ export function useUpdateOrder() {
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<Order> }) =>
       orderService.update(id, data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ORDER_QUERY_KEY }),
+  });
+}
+
+export function useUpdateOrderStatus() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, status }: { id: string; status: ORDER_STATUS }) =>
+      orderService.updateStatus(id, status),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ORDER_QUERY_KEY }),
   });
 }

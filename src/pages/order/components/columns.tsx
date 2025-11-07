@@ -1,14 +1,8 @@
 import type { ColumnDef } from '@tanstack/react-table';
-import { Badge } from '@/components/ui/badge';
 import { Order } from '@/types/order';
-
 import { formatCurrency, formatDate } from '@/lib/utils/formatters';
-import {
-  ORDER_STATUS,
-  ORDER_STATUS_COLORS,
-  ORDER_STATUS_LABEL,
-} from '@/lib/constants/order.constant';
 import { OrderActionsCell } from './OrderActionsCell';
+import { EditableStatusBadge } from './EditableStatusBadge';
 
 export const orderColumns = (
   onEdit: (order: Order) => void,
@@ -45,13 +39,10 @@ export const orderColumns = (
     accessorKey: 'status',
     header: 'Trạng thái',
     enableSorting: false,
-    cell: ({ getValue }) => {
-      const status = getValue<ORDER_STATUS>() ?? ORDER_STATUS.PENDING;
-      return (
-        <Badge style={{ backgroundColor: ORDER_STATUS_COLORS[status], color: 'white' }}>
-          {ORDER_STATUS_LABEL[status]}
-        </Badge>
-      );
+    cell: ({ cell: { row } }) => {
+      const { status: currentStatus, id } = row.original;
+
+      return <EditableStatusBadge status={currentStatus} id={id} />;
     },
   },
   {
