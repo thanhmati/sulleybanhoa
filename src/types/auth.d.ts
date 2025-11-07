@@ -12,3 +12,8 @@ export interface ILoginResponse {
     fullName: string;
   };
 }
+
+export interface IRefreshTokenRequest {
+  accessToken: string;
+  refreshToken: string;
+}

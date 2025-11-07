@@ -15,10 +15,11 @@ const defaultUser: User = {
 
 interface AuthState {
   accessToken: string | null;
+  refreshToken: string | null;
   user: User;
   isAuthenticated: boolean;
   isVerifying: boolean;
-  setAuth: (token: string, user: User | null) => void;
+  setAuth: (accessToken: string, refreshToken: string, user: User | null) => void;
   clearAuth: () => void;
   setVerifying: (v: boolean) => void;
   restoreAuth: () => void;
@@ -27,25 +28,39 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>((set) => ({
   accessToken: null,
+  refreshToken: null,
   user: defaultUser,
   isAuthenticated: false,
   isVerifying: true, // start verifying on app load
-  setAuth: (token, user) =>
-    set({
-      accessToken: token,
+  setAuth: (accessToken, refreshToken, user) => {
+    localStorage.setItem('accessToken', accessToken);
+    localStorage.setItem('refreshToken', refreshToken);
+    localStorage.setItem('user', JSON.stringify(user));
+    return set({
+      accessToken,
+      refreshToken,
       user: user ?? defaultUser,
       isAuthenticated: true,
       isVerifying: false,
-    }),
+    });
+  },
   clearAuth: () =>
-    set({ accessToken: null, user: defaultUser, isAuthenticated: false, isVerifying: false }),
+    set({
+      accessToken: null,
+      refreshToken: null,
+      user: defaultUser,
+      isAuthenticated: false,
+      isVerifying: false,
+    }),
   setVerifying: (v) => set({ isVerifying: v }),
   restoreAuth: () => {
-    const token = localStorage.getItem('accessToken');
+    const accessToken = localStorage.getItem('accessToken');
+    const refreshToken = localStorage.getItem('refreshToken');
+
     const user = localStorage.getItem('user');
 
-    if (token) {
-      set({ accessToken: token, isAuthenticated: true });
+    if (accessToken && refreshToken) {
+      set({ accessToken, refreshToken, isAuthenticated: true });
     }
 
     if (user) {
@@ -56,6 +71,6 @@ export const useAuthStore = create<AuthState>((set) => ({
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('user');
-    set({ user: defaultUser, accessToken: null, isAuthenticated: false });
+    set({ user: defaultUser, accessToken: null, refreshToken: null, isAuthenticated: false });
   },
 }));

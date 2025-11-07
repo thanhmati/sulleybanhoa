@@ -43,13 +43,8 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'form'>)
       // 🔑 Giả sử API trả về { accessToken, refreshToken, user }
       const { accessToken, refreshToken, user } = res;
 
-      // ✅ Lưu token
-      localStorage.setItem('accessToken', accessToken);
-      localStorage.setItem('refreshToken', refreshToken);
-      localStorage.setItem('user', JSON.stringify(user));
-
       // ✅ Cập nhật Zustand state
-      setAuth(accessToken, user);
+      setAuth(accessToken, refreshToken, user);
 
       // ✅ Điều hướng
       navigate(from, { replace: true });

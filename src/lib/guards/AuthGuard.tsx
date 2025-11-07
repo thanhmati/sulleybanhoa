@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuthStore } from '@/stores/auth.store';
-import { isTokenValid } from '../utils/jwt';
 
 type AuthGuardProps = {
   requiredRoles?: string[];
@@ -11,6 +10,7 @@ export function AuthGuard({ requiredRoles }: AuthGuardProps) {
   const location = useLocation();
   const {
     accessToken,
+    refreshToken,
     isAuthenticated,
     isVerifying,
     setVerifying,
@@ -35,12 +35,12 @@ export function AuthGuard({ requiredRoles }: AuthGuardProps) {
       setLocalLoading(true);
 
       try {
-        if (accessToken && isTokenValid(accessToken)) {
+        if (accessToken && refreshToken) {
           // Nếu token hợp lệ → set authenticated
           if (!isAuthenticated) {
             // ⚡ tránh re-render loop nếu state đã đúng
             const existingUser = user ?? null;
-            setAuth(accessToken, existingUser);
+            setAuth(accessToken, refreshToken, existingUser);
           }
         } else {
           // Token không hợp lệ → clear
