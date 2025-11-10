@@ -6,11 +6,12 @@ interface StatCardProps {
   value: string;
   change: string;
   positive: boolean;
+  onClick?: () => void;
 }
 
-export function StatCard({ title, value, change, positive }: StatCardProps) {
+export function StatCard({ title, value, change, positive, onClick }: StatCardProps) {
   return (
-    <Card className="p-4">
+    <Card className="p-4" onClick={onClick} style={{ cursor: onClick ? 'pointer' : 'default' }}>
       <CardHeader className="flex justify-between items-center p-0">
         <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
         {positive ? (

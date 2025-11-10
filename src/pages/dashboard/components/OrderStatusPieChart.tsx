@@ -4,6 +4,7 @@ import {
   ORDER_STATUS_COLORS,
   ORDER_STATUS_LABEL,
 } from '@/lib/constants/order.constant';
+import { useNavigate } from 'react-router-dom';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 
 interface OrderStatusPieChartProps {
@@ -14,6 +15,8 @@ interface OrderStatusPieChartProps {
 }
 
 export function OrderStatusPieChart({ data }: OrderStatusPieChartProps) {
+  const navigate = useNavigate();
+
   const total = data.reduce((sum, item) => sum + item.count, 0);
 
   const chartData = data
@@ -23,6 +26,7 @@ export function OrderStatusPieChart({ data }: OrderStatusPieChartProps) {
       value: item.count,
       percentage: total ? ((item.count / total) * 100).toFixed(1) : 0,
       color: ORDER_STATUS_COLORS[item.status] || '#94a3b8',
+      status: item.status,
     }));
 
   return (
@@ -42,6 +46,10 @@ export function OrderStatusPieChart({ data }: OrderStatusPieChartProps) {
               paddingAngle={4}
               dataKey="value"
               label={({ name, value }) => `${name} (${value})`}
+              onClick={(data) => {
+                navigate(`/admin/orders?status=${data.status}`);
+              }}
+              cursor={'pointer'}
             >
               {chartData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.color} />

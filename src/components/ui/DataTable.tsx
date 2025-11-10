@@ -211,7 +211,7 @@ export function DataTable<TData, TValue>({
                     colSpan={columns.length}
                     className="h-24 text-center text-muted-foreground"
                   >
-                    {emptyState ?? 'No data available'}
+                    {emptyState ?? 'Không có dữ liệu'}
                   </TableCell>
                 </TableRow>
               )}

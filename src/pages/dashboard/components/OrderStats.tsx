@@ -1,6 +1,8 @@
 import { DashboardSummary } from '@/types/dashboard';
 import { StatCard } from './StatCard';
 import { formatCurrency } from '@/lib/utils/formatters';
+import { useNavigate } from 'react-router-dom';
+import { ORDER_STATUS } from '@/lib/constants/order.constant';
 
 interface OrderStatsProps {
   summary: DashboardSummary;
@@ -22,6 +24,8 @@ function calculateChange(current: number, previous: number) {
 }
 
 export function OrderStats({ summary }: OrderStatsProps) {
+  const navigate = useNavigate();
+
   const prev = summary.previous;
 
   const totalOrdersChange = calculateChange(summary.totalOrders, prev?.totalOrders ?? 0);
@@ -35,6 +39,7 @@ export function OrderStats({ summary }: OrderStatsProps) {
       value: summary.totalOrders.toLocaleString(),
       change: totalOrdersChange.changeText,
       positive: totalOrdersChange.positive,
+      onClick: () => navigate('/admin/orders'),
     },
     {
       title: 'Doanh thu',
@@ -47,19 +52,21 @@ export function OrderStats({ summary }: OrderStatsProps) {
       value: summary.deliveredOrders.toLocaleString(),
       change: deliveredChange.changeText,
       positive: deliveredChange.positive,
+      onClick: () => navigate(`/admin/orders?status=${ORDER_STATUS.DELIVERED}`),
     },
     {
       title: 'Đơn bị huỷ',
       value: summary.cancelledOrders.toLocaleString(),
       change: cancelledChange.changeText,
       positive: cancelledChange.positive,
+      onClick: () => navigate(`/admin/orders?status=${ORDER_STATUS.CANCELLED}`),
     },
   ];
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       {orderStats.map((stat) => (
-        <StatCard key={stat.title} {...stat} />
+        <StatCard onClick={stat.onClick} key={stat.title} {...stat} />
       ))}
     </div>
   );

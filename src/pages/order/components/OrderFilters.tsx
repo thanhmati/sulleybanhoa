@@ -9,8 +9,9 @@ import {
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DatePicker } from '@/components/ui/date-picker';
+import { useQueryParams } from '@/hooks/useQueryParams';
 
 interface OrderFiltersProps<TData> {
   table: Table<TData>;
@@ -27,6 +28,15 @@ export function OrderFilters<TData>({ table }: OrderFiltersProps<TData>) {
       ? new Date(deliveryDateColumn.getFilterValue() as string)
       : undefined,
   );
+
+  const { queryParams } = useQueryParams<{ status: ORDER_STATUS }>();
+
+  useEffect(() => {
+    if (queryParams.status) {
+      setStatus(queryParams.status);
+      statusColumn?.setFilterValue(queryParams.status);
+    }
+  }, [queryParams.status, statusColumn]);
 
   // --- handlers
   const handleStatusChange = (value: string) => {
