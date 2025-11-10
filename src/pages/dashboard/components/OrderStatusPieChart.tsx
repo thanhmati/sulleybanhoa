@@ -41,7 +41,7 @@ export function OrderStatusPieChart({ data }: OrderStatusPieChartProps) {
               outerRadius={90}
               paddingAngle={4}
               dataKey="value"
-              label={({ name, percentage }) => `${name} (${percentage}%)`}
+              label={({ name, value }) => `${name} (${value})`}
             >
               {chartData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.color} />
