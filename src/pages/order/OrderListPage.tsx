@@ -43,7 +43,7 @@ export default function OrderListPage() {
         columns={orderColumns(handleEdit, handleDelete)}
         data={data || []}
         externalState={{
-          sorting: [{ id: 'createdAt', desc: true }],
+          sorting: [{ id: 'orderNumber', desc: true }],
           columnVisibility: { orderNumber: false },
         }}
         toolbar={(table) => (
