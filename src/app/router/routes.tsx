@@ -13,6 +13,7 @@ const AdminLayout = lazy(() => import('../layout/AdminLayout'));
 const MainLayout = lazy(() => import('../layout/MainLayout'));
 const HomePage = lazy(() => import('../../pages/home/HomePage'));
 const AboutPage = lazy(() => import('../../pages/about/AboutPage'));
+const SettingPage = lazy(() => import('../../pages/setting/SettingPage'));
 
 export const routes: RouteObject[] = [
   // 🌐 Public routes
@@ -58,6 +59,7 @@ export const routes: RouteObject[] = [
           { index: true, element: <DashboardPage /> },
           { path: 'dashboard', element: <DashboardPage /> },
           { path: 'orders', element: <OrderListPage /> },
+          { path: 'setting', element: <SettingPage /> },
         ],
       },
     ],

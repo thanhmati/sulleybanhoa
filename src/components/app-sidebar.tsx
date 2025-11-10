@@ -12,7 +12,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { useAuthStore } from '@/stores/auth.store';
 
 const data = {
   navMain: [
@@ -42,8 +41,6 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { user } = useAuthStore();
-
   return (
     <Sidebar variant="inset" {...props}>
       <SidebarHeader>
@@ -68,7 +65,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={user!} />
+        <NavUser />
       </SidebarFooter>
     </Sidebar>
   );

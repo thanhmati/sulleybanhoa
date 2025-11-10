@@ -16,16 +16,20 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
-import { useAuthStore, User } from '@/stores/auth.store';
+import { useAuthStore } from '@/stores/auth.store';
 import { useNavigate } from 'react-router-dom';
+import { AvatarImage } from '@radix-ui/react-avatar';
+import { useCurrentUserQuery } from '@/hooks/useUsers';
 
-export function NavUser({ user }: { user: User }) {
+export function NavUser() {
   const { isMobile } = useSidebar();
   const navigate = useNavigate();
+  const { data: user } = useCurrentUserQuery();
 
   const { logout } = useAuthStore();
 
-  const renderAvatar = (fullName: string) => {
+  const renderAvatar = (fullName?: string) => {
+    if (!fullName) return '';
     const names: string[] = fullName.split(' ');
     return names[names.length - 1].charAt(0);
   };
@@ -46,13 +50,14 @@ export function NavUser({ user }: { user: User }) {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg grayscale">
+                <AvatarImage src={user?.avatar} />
                 <AvatarFallback className="rounded-lg">
-                  {renderAvatar(user.fullName)}
+                  {renderAvatar(user?.fullName)}
                 </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{user.fullName}</span>
-                <span className="text-muted-foreground truncate text-xs">{user.email}</span>
+                <span className="truncate font-medium">{user?.fullName}</span>
+                <span className="text-muted-foreground truncate text-xs">{user?.email}</span>
               </div>
               <IconDotsVertical className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -66,19 +71,24 @@ export function NavUser({ user }: { user: User }) {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
+                  <AvatarImage src={user?.avatar} />
                   <AvatarFallback className="rounded-lg">
-                    {renderAvatar(user.fullName)}
+                    {renderAvatar(user?.fullName)}
                   </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{user.fullName}</span>
-                  <span className="text-muted-foreground truncate text-xs">{user.email}</span>
+                  <span className="truncate font-medium">{user?.fullName}</span>
+                  <span className="text-muted-foreground truncate text-xs">{user?.email}</span>
                 </div>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => {
+                  navigate('/admin/setting?tabActive=account');
+                }}
+              >
                 <IconUserCircle />
                 Tài khoản
               </DropdownMenuItem>
