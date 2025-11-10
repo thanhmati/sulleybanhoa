@@ -36,6 +36,11 @@ export const orderColumns = (
     cell: ({ getValue }) => <span>{formatCurrency(getValue<number>())}</span>,
   },
   {
+    accessorKey: 'deposit',
+    header: 'Tiền cọc',
+    cell: ({ getValue }) => <span>{formatCurrency(getValue<number>())}</span>,
+  },
+  {
     accessorKey: 'status',
     header: 'Trạng thái',
     enableSorting: false,
@@ -44,13 +49,6 @@ export const orderColumns = (
 
       return <EditableStatusBadge status={currentStatus} id={id} />;
     },
-  },
-  {
-    accessorKey: 'createdAt',
-    header: 'Ngày tạo',
-    cell: ({ getValue }) => <span>{formatDate(getValue<Date>())}</span>,
-    enableHiding: true,
-    sortingFn: 'datetime',
   },
   {
     id: 'actions',
