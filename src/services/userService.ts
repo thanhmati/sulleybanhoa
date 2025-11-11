@@ -1,5 +1,5 @@
 import api from '@/lib/axios';
-import { IUpdateUser, IUser } from '@/types/user';
+import { IUpdateUser, IUser, IUserListItem } from '@/types/user';
 
 export const userService = {
   getMe: async (): Promise<IUser> => {
@@ -9,6 +9,11 @@ export const userService = {
 
   updateMe: async (data: IUpdateUser): Promise<IUser> => {
     const res = await api.patch('/users/me', data);
+    return res.data;
+  },
+
+  getAll: async (): Promise<IUserListItem[]> => {
+    const res = await api.get('/users');
     return res.data;
   },
 };
