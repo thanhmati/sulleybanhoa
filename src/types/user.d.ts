@@ -4,6 +4,7 @@ export interface IUser {
   id: string;
   fullName: string;
   email: string;
+  roles: string[];
   avatar: string;
   createdAt: Date;
   updatedAt: Date;
@@ -19,7 +20,19 @@ export interface IUserListItem {
   fullName: string;
   email: string;
   avatar: string;
+  roles: string[];
   roleNames: ROLE[];
+  isAdmin: boolean;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface ICreateUser {
+  fullName: string;
+  email: string;
+  roles: string[];
+}
+
+export interface IUpdateUserRoles {
+  roles: string[];
 }

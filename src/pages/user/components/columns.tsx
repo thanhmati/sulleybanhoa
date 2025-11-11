@@ -3,8 +3,12 @@ import { IUserListItem } from '@/types/user';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { AvatarImage } from '@radix-ui/react-avatar';
 import { ROLE, ROLE_LABEL } from '@/lib/constants/role.constant';
+import { UserActionsCell } from './UserActionsCell';
 
-export const userColumns = (): ColumnDef<IUserListItem>[] => [
+export const userColumns = (
+  onEdit: (user: IUserListItem) => void,
+  onDelete: (id: string) => void,
+): ColumnDef<IUserListItem>[] => [
   {
     accessorKey: 'fullName',
     header: 'Họ và tên',
@@ -36,5 +40,19 @@ export const userColumns = (): ColumnDef<IUserListItem>[] => [
         <AvatarFallback>👤</AvatarFallback>
       </Avatar>
     ),
+  },
+  {
+    id: 'actions',
+    header: '',
+    enableSorting: false,
+    cell: ({
+      cell: {
+        row: { original: user },
+      },
+    }) => {
+      return user.isAdmin ? null : (
+        <UserActionsCell user={user} onEdit={onEdit} onDelete={onDelete} />
+      );
+    },
   },
 ];
