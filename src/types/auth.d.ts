@@ -17,3 +17,9 @@ export interface IRefreshTokenRequest {
   accessToken: string;
   refreshToken: string;
 }
+
+export interface IChangePasswordRequest {
+  email: string;
+  oldPassword: string;
+  newPassword: string;
+}

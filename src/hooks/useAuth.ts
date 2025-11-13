@@ -7,3 +7,10 @@ export function useLogin() {
     onSuccess: () => {},
   });
 }
+
+export function useChangePassword() {
+  return useMutation({
+    mutationFn: authService.changePassword,
+    onSuccess: () => {},
+  });
+}
