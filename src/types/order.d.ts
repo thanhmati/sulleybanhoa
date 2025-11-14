@@ -3,6 +3,11 @@ interface client {
   phoneNumber?: string;
 }
 
+interface Transaction {
+  amount: number;
+  type: string;
+}
+
 export interface Order {
   id: string;
   deliveryTime: string;
@@ -17,6 +22,8 @@ export interface Order {
   note: string;
   status: ORDER_STATUS;
   orderNumber: string;
+  dueAmount: number;
+  transaction: Transaction[];
   createdAt: Date;
   updatedAt: Date;
 }

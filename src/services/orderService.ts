@@ -27,4 +27,9 @@ export const orderService = {
     const res = await api.delete(`/orders/${id}`);
     return res.data;
   },
+
+  getById: async (id: string): Promise<Order> => {
+    const res = await api.get(`/orders/${id}`);
+    return res.data;
+  },
 };

@@ -9,6 +9,7 @@ import LoginPage from '@/pages/login/LoginPage';
 import { Toaster } from '@/components/ui/sonner';
 import { AuthGuard } from '@/lib/guards/AuthGuard';
 import UserListPage from '@/pages/user/UserListPage';
+import { OrderDetailPage } from '@/pages/order/components/OrderDetailPage';
 
 const AdminLayout = lazy(() => import('../layout/AdminLayout'));
 const MainLayout = lazy(() => import('../layout/MainLayout'));
@@ -60,6 +61,7 @@ export const routes: RouteObject[] = [
           { index: true, element: <DashboardPage /> },
           { path: 'dashboard', element: <DashboardPage /> },
           { path: 'orders', element: <OrderListPage /> },
+          { path: 'orders/:id', element: <OrderDetailPage /> },
           { path: 'setting', element: <SettingPage /> },
           { path: 'users', element: <UserListPage /> },
         ],

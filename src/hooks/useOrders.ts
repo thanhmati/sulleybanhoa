@@ -4,11 +4,21 @@ import type { Order } from '@/types/order';
 import { ORDER_STATUS } from '@/lib/constants/order.constant';
 
 const ORDER_QUERY_KEY = ['orders'];
+const ORDER_DETAIL_QUERY_KEY = ['order_detail'];
 
 export function useOrdersQuery() {
   return useQuery<Order[]>({
     queryKey: ORDER_QUERY_KEY,
     queryFn: orderService.getAll,
+  });
+}
+
+export function useOrderDetailQuery(orderId: string) {
+  return useQuery<Order>({
+    queryKey: ORDER_DETAIL_QUERY_KEY,
+    queryFn: () => {
+      return orderService.getById(orderId);
+    },
   });
 }
 

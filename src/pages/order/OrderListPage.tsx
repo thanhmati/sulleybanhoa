@@ -9,22 +9,21 @@ import { useState } from 'react';
 import { Order } from '@/types/order';
 import { toast } from 'sonner';
 import { OrderFilters } from './components/OrderFilters';
+import { useNavigate } from 'react-router-dom';
 
 export default function OrderListPage() {
   const { data, isLoading } = useOrdersQuery();
   const deleteOrder = useDeleteOrder();
 
   const [open, setOpen] = useState(false);
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const navigate = useNavigate();
 
   const handleCreate = () => {
-    setSelectedOrder(null);
     setOpen(true);
   };
 
   const handleEdit = (order: Order) => {
-    setSelectedOrder(order);
-    setOpen(true);
+    navigate(`/admin/orders/${order.id}`);
   };
 
   const handleDelete = (orderId: string) => {
@@ -60,7 +59,7 @@ export default function OrderListPage() {
           />
         )}
       />
-      <OrderFormDialog open={open} onOpenChange={setOpen} initialData={selectedOrder} />
+      <OrderFormDialog open={open} onOpenChange={setOpen} />
     </div>
   );
 }

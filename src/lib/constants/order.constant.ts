@@ -18,3 +18,13 @@ export const ORDER_STATUS_COLORS: Record<ORDER_STATUS, string> = {
   [ORDER_STATUS.CANCELLED]: '#ef4444',
   [ORDER_STATUS.RETURNED]: '#3b82f6',
 };
+
+export enum TRANSACTION_TYPE {
+  CASH = 'CASH',
+  BANK = 'BANK',
+}
+
+export const TRANSACTION_TYPE_LABEL = {
+  [TRANSACTION_TYPE.CASH]: 'Tiền mặt',
+  [TRANSACTION_TYPE.BANK]: 'Chuyển khoản',
+};

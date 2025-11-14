@@ -12,16 +12,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from '@/components/ui/select';
 import { useCreateOrder, useUpdateOrder } from '@/hooks/useOrders';
-import { Order } from '@/types/order';
-import { ORDER_STATUS, ORDER_STATUS_LABEL } from '@/lib/constants/order.constant';
+import { ORDER_STATUS } from '@/lib/constants/order.constant';
 import {
   Form,
   FormControl,
@@ -32,7 +24,6 @@ import {
 } from '@/components/ui/form';
 import { DatePicker } from '@/components/ui/date-picker';
 import { CurrencyInput } from '@/components/ui/currency-input';
-import dayjs from 'dayjs';
 import { Separator } from '@/components/ui/separator';
 
 const clientSchema = z.object({
@@ -78,25 +69,13 @@ type OrderFormValues = z.infer<typeof orderSchema>;
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  initialData?: Order | null;
 }
 
-export function OrderFormDialog({ open, onOpenChange, initialData }: Props) {
+export function OrderFormDialog({ open, onOpenChange }: Props) {
   const form = useForm<OrderFormValues>({
     resolver: zodResolver(orderSchema),
     defaultValues,
   });
-
-  useEffect(() => {
-    form.reset(defaultValues);
-
-    if (initialData) {
-      form.reset({
-        ...initialData,
-        deliveryDate: dayjs(initialData.deliveryDate).toISOString(),
-      });
-    }
-  }, [form, initialData]);
 
   useEffect(() => {
     if (!open) {
@@ -113,26 +92,13 @@ export function OrderFormDialog({ open, onOpenChange, initialData }: Props) {
       deliveryDate: values.deliveryDate ? new Date(values.deliveryDate) : new Date(),
     };
 
-    if (initialData) {
-      updateOrder.mutate(
-        { id: initialData.id, data: payload },
-        {
-          onSuccess: () => {
-            toast.success('Cập nhật đơn hàng thành công!');
-            onOpenChange(false);
-          },
-          onError: () => toast.error('Cập nhật thất bại'),
-        },
-      );
-    } else {
-      createOrder.mutate(payload, {
-        onSuccess: () => {
-          toast.success('Tạo đơn hàng thành công!');
-          onOpenChange(false);
-        },
-        onError: () => toast.error('Tạo thất bại'),
-      });
-    }
+    createOrder.mutate(payload, {
+      onSuccess: () => {
+        toast.success('Tạo đơn hàng thành công!');
+        onOpenChange(false);
+      },
+      onError: () => toast.error('Tạo thất bại'),
+    });
   };
 
   const isLoading = createOrder.isPending || updateOrder.isPending;
@@ -141,7 +107,7 @@ export function OrderFormDialog({ open, onOpenChange, initialData }: Props) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-3xl overflow-y-auto max-h-[90vh]">
         <DialogHeader>
-          <DialogTitle>{initialData ? 'Chỉnh sửa đơn hàng' : 'Tạo đơn hàng'}</DialogTitle>
+          <DialogTitle>Tạo đơn hàng</DialogTitle>
         </DialogHeader>
 
         <Form {...form}>
@@ -331,33 +297,6 @@ export function OrderFormDialog({ open, onOpenChange, initialData }: Props) {
                   </FormItem>
                 )}
               />
-
-              {initialData && (
-                <FormField
-                  control={form.control}
-                  name="status"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Trạng thái</FormLabel>
-                      <FormControl>
-                        <Select onValueChange={field.onChange} value={field.value}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Chọn trạng thái" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {Object.values(ORDER_STATUS).map((status) => (
-                              <SelectItem key={status} value={status}>
-                                {ORDER_STATUS_LABEL[status]}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
             </div>
 
             <DialogFooter>
