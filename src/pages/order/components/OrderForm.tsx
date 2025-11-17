@@ -230,7 +230,7 @@ export default function OrderForm() {
         </div>
       </FormSectionWrapper>
 
-      {transactions?.length && (
+      {!!transactions?.length && (
         <FormSectionWrapper title="Thông tin thanh toán">
           <PaymentInfo transactions={transactions} />
         </FormSectionWrapper>

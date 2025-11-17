@@ -14,7 +14,7 @@ export default function SettingPage() {
   ];
 
   return (
-    <div>
+    <div className="container mx-auto p-6">
       <Tabs
         defaultValue={queryParams.tabActive || 'account'}
         orientation="horizontal"

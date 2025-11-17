@@ -36,7 +36,7 @@ export default function OrderListPage() {
   };
 
   return (
-    <div className="container mx-auto py-10">
+    <div className="container mx-auto p-6">
       <DataTable
         isLoading={isLoading}
         columns={orderColumns(handleEdit, handleDelete)}
