@@ -3,6 +3,7 @@ import { Order } from '@/types/order';
 import { formatCurrency, formatDate } from '@/lib/utils/formatters';
 import { OrderActionsCell } from './OrderActionsCell';
 import { EditableStatusBadge } from './EditableStatusBadge';
+import { ORDER_STATUS } from '@/lib/constants/order.constant';
 
 export const orderColumns = (
   onEdit: (order: Order) => void,
@@ -36,9 +37,21 @@ export const orderColumns = (
     cell: ({ getValue }) => <span>{formatCurrency(getValue<number>())}</span>,
   },
   {
-    accessorKey: 'deposit',
-    header: 'Tiền cọc',
-    cell: ({ getValue }) => <span>{formatCurrency(getValue<number>())}</span>,
+    accessorKey: 'dueAmount',
+    header: 'Số tiền còn nợ',
+    cell: ({
+      getValue,
+      cell: {
+        row: { original: order },
+      },
+    }) => {
+      let dueAmount = getValue<number>();
+      if (order.status === ORDER_STATUS.PAID) {
+        dueAmount = 0;
+      }
+
+      return <span>{formatCurrency(dueAmount)}</span>;
+    },
   },
   {
     accessorKey: 'status',
