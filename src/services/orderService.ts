@@ -1,6 +1,6 @@
 import api from '@/lib/axios';
 import { ORDER_STATUS } from '@/lib/constants/order.constant';
-import type { Order } from '@/types/order';
+import type { IPayOrder, Order } from '@/types/order';
 
 export const orderService = {
   getAll: async (): Promise<Order[]> => {
@@ -30,6 +30,11 @@ export const orderService = {
 
   getById: async (id: string): Promise<Order> => {
     const res = await api.get(`/orders/${id}`);
+    return res.data;
+  },
+
+  pay: async (id: string, data: IPayOrder) => {
+    const res = await api.post(`/orders/${id}/pay`, data);
     return res.data;
   },
 };

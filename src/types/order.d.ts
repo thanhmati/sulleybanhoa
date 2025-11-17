@@ -1,11 +1,14 @@
+import { TRANSACTION_TYPE } from '@/lib/constants/order.constant';
+
 interface client {
   name: string;
   phoneNumber?: string;
 }
 
-interface Transaction {
+export interface ITransaction {
   amount: number;
-  type: string;
+  type: TRANSACTION_TYPE;
+  paymentDate: string;
 }
 
 export interface Order {
@@ -23,7 +26,13 @@ export interface Order {
   status: ORDER_STATUS;
   orderNumber: string;
   dueAmount: number;
-  transaction: Transaction[];
+  transaction: ITransaction[];
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface IPayOrder {
+  amount: number;
+  type: TRANSACTION_TYPE;
+  paymentDate: string;
 }

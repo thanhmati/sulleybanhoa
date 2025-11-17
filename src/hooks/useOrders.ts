@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { orderService } from '@/services/orderService';
-import type { Order } from '@/types/order';
+import type { IPayOrder, Order } from '@/types/order';
 import { ORDER_STATUS } from '@/lib/constants/order.constant';
 
 const ORDER_QUERY_KEY = ['orders'];
@@ -53,5 +53,16 @@ export function useDeleteOrder() {
   return useMutation({
     mutationFn: orderService.delete,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ORDER_QUERY_KEY }),
+  });
+}
+
+export function usePayOrder() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: IPayOrder }) => orderService.pay(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ORDER_DETAIL_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: ORDER_QUERY_KEY });
+    },
   });
 }
