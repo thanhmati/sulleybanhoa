@@ -24,7 +24,7 @@ import {
 } from '@/components/ui/form';
 import { DatePicker } from '@/components/ui/date-picker';
 import { CurrencyInput } from '@/components/ui/currency-input';
-import { Separator } from '@/components/ui/separator';
+import FormSectionWrapper from '@/components/form-section-wrapper';
 
 const clientSchema = z.object({
   name: z.string().min(1, 'Tên khách hàng không được để trống'),
@@ -112,193 +112,187 @@ export function OrderFormDialog({ open, onOpenChange }: Props) {
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <h3 className="text-sm font-semibold text-muted-foreground mt-2">
-              Thông tin khách hàng
-            </h3>
-            <Separator className="my-3" />
+            <FormSectionWrapper title="Thông tin khách hàng">
+              <div className="grid grid-cols-2 gap-4 my-4">
+                <FormField
+                  control={form.control}
+                  name="client.name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Tên khách hàng</FormLabel>
+                      <FormControl>
+                        <Input type="text" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <div className="grid grid-cols-2 gap-4 my-4">
-              <FormField
-                control={form.control}
-                name="client.name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Tên khách hàng</FormLabel>
-                    <FormControl>
-                      <Input type="text" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={form.control}
+                  name="client.phoneNumber"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Số điện thoại</FormLabel>
+                      <FormControl>
+                        <Input type="text" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </FormSectionWrapper>
+            <FormSectionWrapper title="Thông tin đơn hàng">
+              <div className="grid grid-cols-12 gap-4 my-4">
+                <FormField
+                  control={form.control}
+                  name="deliveryDate"
+                  render={({ field }) => (
+                    <FormItem className="col-span-6">
+                      <FormLabel>Ngày giao</FormLabel>
+                      <FormControl>
+                        <DatePicker
+                          value={field.value ? new Date(field.value) : undefined}
+                          onChange={(val) => field.onChange(val?.toISOString() ?? '')}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="client.phoneNumber"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Số điện thoại</FormLabel>
-                    <FormControl>
-                      <Input type="text" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+                <FormField
+                  control={form.control}
+                  name="deliveryTime"
+                  render={({ field }) => (
+                    <FormItem className="col-span-6">
+                      <FormLabel>Giờ giao hàng</FormLabel>
+                      <FormControl>
+                        <Input type="text" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <h3 className="text-sm font-semibold text-muted-foreground">Thông tin đơn hàng</h3>
-            <Separator className="my-3" />
+                <FormField
+                  control={form.control}
+                  name="type"
+                  render={({ field }) => (
+                    <FormItem className="col-span-6">
+                      <FormLabel>Loại</FormLabel>
+                      <FormControl>
+                        <Input type="text" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <div className="grid grid-cols-12 gap-4 my-4">
-              <FormField
-                control={form.control}
-                name="deliveryDate"
-                render={({ field }) => (
-                  <FormItem className="col-span-6">
-                    <FormLabel>Ngày giao</FormLabel>
-                    <FormControl>
-                      <DatePicker
-                        value={field.value ? new Date(field.value) : undefined}
-                        onChange={(val) => field.onChange(val?.toISOString() ?? '')}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={form.control}
+                  name="tone"
+                  render={({ field }) => (
+                    <FormItem className="col-span-6">
+                      <FormLabel>Tone</FormLabel>
+                      <FormControl>
+                        <Input type="text" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="deliveryTime"
-                render={({ field }) => (
-                  <FormItem className="col-span-6">
-                    <FormLabel>Giờ giao hàng</FormLabel>
-                    <FormControl>
-                      <Input type="text" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={form.control}
+                  name="address"
+                  render={({ field }) => (
+                    <FormItem className="col-span-12">
+                      <FormLabel>Địa chỉ</FormLabel>
+                      <FormControl>
+                        <Input type="text" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="type"
-                render={({ field }) => (
-                  <FormItem className="col-span-6">
-                    <FormLabel>Loại</FormLabel>
-                    <FormControl>
-                      <Input type="text" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={form.control}
+                  name="price"
+                  render={() => (
+                    <FormItem className="col-span-4">
+                      <FormLabel>Giá tiền</FormLabel>
+                      <FormControl>
+                        <Controller
+                          control={form.control}
+                          name="price"
+                          render={({ field: { value, onChange } }) => (
+                            <CurrencyInput value={value} onChange={onChange} />
+                          )}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="tone"
-                render={({ field }) => (
-                  <FormItem className="col-span-6">
-                    <FormLabel>Tone</FormLabel>
-                    <FormControl>
-                      <Input type="text" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={form.control}
+                  name="deposit"
+                  render={() => (
+                    <FormItem className="col-span-4">
+                      <FormLabel>Cọc</FormLabel>
+                      <FormControl>
+                        <Controller
+                          control={form.control}
+                          name="deposit"
+                          render={({ field: { value, onChange } }) => (
+                            <CurrencyInput value={value} onChange={onChange} />
+                          )}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="address"
-                render={({ field }) => (
-                  <FormItem className="col-span-12">
-                    <FormLabel>Địa chỉ</FormLabel>
-                    <FormControl>
-                      <Input type="text" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={form.control}
+                  name="ship"
+                  render={() => (
+                    <FormItem className="col-span-4">
+                      <FormLabel>Phí ship</FormLabel>
+                      <FormControl>
+                        <Controller
+                          control={form.control}
+                          name="ship"
+                          render={({ field: { value, onChange } }) => (
+                            <CurrencyInput value={value} onChange={onChange} />
+                          )}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="price"
-                render={() => (
-                  <FormItem className="col-span-4">
-                    <FormLabel>Giá tiền</FormLabel>
-                    <FormControl>
-                      <Controller
-                        control={form.control}
-                        name="price"
-                        render={({ field: { value, onChange } }) => (
-                          <CurrencyInput value={value} onChange={onChange} />
-                        )}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="deposit"
-                render={() => (
-                  <FormItem className="col-span-4">
-                    <FormLabel>Cọc</FormLabel>
-                    <FormControl>
-                      <Controller
-                        control={form.control}
-                        name="deposit"
-                        render={({ field: { value, onChange } }) => (
-                          <CurrencyInput value={value} onChange={onChange} />
-                        )}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="ship"
-                render={() => (
-                  <FormItem className="col-span-4">
-                    <FormLabel>Phí ship</FormLabel>
-                    <FormControl>
-                      <Controller
-                        control={form.control}
-                        name="ship"
-                        render={({ field: { value, onChange } }) => (
-                          <CurrencyInput value={value} onChange={onChange} />
-                        )}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="note"
-                render={({ field }) => (
-                  <FormItem className="col-span-12">
-                    <FormLabel>Ghi chú</FormLabel>
-                    <FormControl>
-                      <Input type="text" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
+                <FormField
+                  control={form.control}
+                  name="note"
+                  render={({ field }) => (
+                    <FormItem className="col-span-12">
+                      <FormLabel>Ghi chú</FormLabel>
+                      <FormControl>
+                        <Input type="text" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </FormSectionWrapper>
             <DialogFooter>
               <Button variant="outline" type="button" onClick={() => onOpenChange(false)}>
                 Huỷ
