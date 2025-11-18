@@ -1,17 +1,17 @@
 export enum ORDER_STATUS {
   PENDING = 'PENDING',
   DELIVERED = 'DELIVERED',
+  PAID = 'PAID',
   CANCELLED = 'CANCELLED',
   RETURNED = 'RETURNED',
-  PAID = 'PAID',
 }
 
 export const ORDER_STATUS_LABEL = {
   [ORDER_STATUS.PENDING]: 'Chưa giao',
   [ORDER_STATUS.DELIVERED]: 'Đã giao',
+  [ORDER_STATUS.PAID]: 'Đã thanh toán',
   [ORDER_STATUS.CANCELLED]: 'Huỷ',
   [ORDER_STATUS.RETURNED]: 'Trả hàng',
-  [ORDER_STATUS.PAID]: 'Đã thanh toán',
 };
 
 export const ORDER_STATUS_COLORS: Record<ORDER_STATUS, string> = {
