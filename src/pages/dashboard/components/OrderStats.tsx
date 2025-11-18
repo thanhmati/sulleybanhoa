@@ -30,7 +30,7 @@ export function OrderStats({ summary }: OrderStatsProps) {
 
   const totalOrdersChange = calculateChange(summary.totalOrders, prev?.totalOrders ?? 0);
   const revenueChange = calculateChange(summary.revenue, prev?.revenue ?? 0);
-  const deliveredChange = calculateChange(summary.deliveredOrders, prev?.deliveredOrders ?? 0);
+  const deliveredChange = calculateChange(summary.paidOrders, prev?.paidOrders ?? 0);
   const cancelledChange = calculateChange(summary.cancelledOrders, prev?.cancelledOrders ?? 0);
 
   const orderStats = [
@@ -48,11 +48,11 @@ export function OrderStats({ summary }: OrderStatsProps) {
       positive: revenueChange.positive,
     },
     {
-      title: 'Đơn đã giao',
-      value: summary.deliveredOrders.toLocaleString(),
+      title: 'Đơn đã thanh toán',
+      value: summary.paidOrders.toLocaleString(),
       change: deliveredChange.changeText,
       positive: deliveredChange.positive,
-      onClick: () => navigate(`/admin/orders?status=${ORDER_STATUS.DELIVERED}`),
+      onClick: () => navigate(`/admin/orders?status=${ORDER_STATUS.PAID}`),
     },
     {
       title: 'Đơn bị huỷ',

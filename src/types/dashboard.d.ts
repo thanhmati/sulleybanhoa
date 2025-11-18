@@ -12,7 +12,7 @@ export interface WeeklyRevenue {
 
 export interface DashboardSummary {
   totalOrders: number;
-  deliveredOrders: number;
+  paidOrders: number;
   cancelledOrders: number;
   pendingOrders: number;
   returnedOrders: number;
