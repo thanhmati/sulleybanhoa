@@ -5,6 +5,10 @@ import { RevenueChart } from './components/RevenueChart';
 import { useDashboardSummary } from '@/hooks/useDashboardSummary';
 import { DashboardFilter } from './components/DashboardFilter';
 
+function Wrapper({ children }: { children: React.ReactNode }) {
+  return <div className="space-y-6 p-6">{children}</div>;
+}
+
 export default function DashboardPage() {
   const [params, setParams] = useState<{
     startDate?: string;
@@ -16,11 +20,21 @@ export default function DashboardPage() {
 
   const { data, isLoading } = useDashboardSummary(params);
 
-  if (isLoading) return <div>Đang tải dữ liệu...</div>;
-  if (!data) return <div>Không có dữ liệu thống kê</div>;
+  if (isLoading)
+    return (
+      <Wrapper>
+        <div>Đang tải dữ liệu...</div>
+      </Wrapper>
+    );
+  if (!data)
+    return (
+      <Wrapper>
+        <div>Không có dữ liệu thống kê</div>
+      </Wrapper>
+    );
 
   return (
-    <div className="space-y-6 p-6">
+    <Wrapper>
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
@@ -38,6 +52,6 @@ export default function DashboardPage() {
         <RevenueChart data={data.weeklyRevenue} />
         <OrderStatusPieChart data={data.statusDistribution} />
       </div>
-    </div>
+    </Wrapper>
   );
 }
