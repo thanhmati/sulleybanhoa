@@ -57,13 +57,32 @@ export const routes: RouteObject[] = [
     children: [
       {
         element: <AdminLayout />,
+        handle: {
+          breadcrumb: 'Quản trị',
+        },
         children: [
-          { index: true, element: <DashboardPage /> },
-          { path: 'dashboard', element: <DashboardPage /> },
-          { path: 'orders', element: <OrderListPage /> },
-          { path: 'orders/:id', element: <OrderDetailPage /> },
-          { path: 'setting', element: <SettingPage /> },
-          { path: 'users', element: <UserListPage /> },
+          { index: true, element: <DashboardPage />, handle: { breadcrumb: 'Bảng điều khiển' } },
+          {
+            path: 'dashboard',
+            element: <DashboardPage />,
+            handle: { breadcrumb: 'Bảng điều khiển' },
+          },
+          {
+            path: 'orders',
+            element: <OrderListPage />,
+            handle: { breadcrumb: 'Danh sách đơn hàng' },
+          },
+          {
+            path: 'orders/:id',
+            element: <OrderDetailPage />,
+            handle: { breadcrumb: 'Chi tiết đơn hàng' },
+          },
+          { path: 'setting', element: <SettingPage />, handle: { breadcrumb: 'Cài đặt' } },
+          {
+            path: 'users',
+            element: <UserListPage />,
+            handle: { breadcrumb: 'Danh sách người dùng' },
+          },
         ],
       },
     ],
