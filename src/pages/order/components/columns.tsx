@@ -32,6 +32,11 @@ export const orderColumns = (
     cell: ({ getValue }) => <span>{getValue<string>()}</span>,
   },
   {
+    accessorKey: 'type',
+    header: 'Loại',
+    cell: ({ getValue }) => <span>{getValue<string>()}</span>,
+  },
+  {
     accessorKey: 'price',
     header: 'Giá tiền',
     cell: ({ getValue }) => <span>{formatCurrency(getValue<number>())}</span>,
