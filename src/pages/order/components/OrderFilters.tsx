@@ -20,8 +20,10 @@ interface OrderFiltersProps<TData> {
 export function OrderFilters<TData>({ table }: OrderFiltersProps<TData>) {
   const statusColumn = table.getColumn('status');
   const deliveryDateColumn = table.getColumn('deliveryDate');
+  const paidColumn = table.getColumn('isPaid');
 
-  const [status, setStatus] = useState<string>((statusColumn?.getFilterValue() as string) ?? 'all');
+  const [status, setStatus] = useState<string>((statusColumn?.getFilterValue() as string) ?? '');
+  const [paid, setPaid] = useState<string>((paidColumn?.getFilterValue() as string) ?? '');
 
   const [date, setDate] = useState<Date | undefined>(
     deliveryDateColumn?.getFilterValue()
@@ -51,9 +53,20 @@ export function OrderFilters<TData>({ table }: OrderFiltersProps<TData>) {
     );
   };
 
+  const handlePaidChange = (value: string) => {
+    setPaid(value);
+
+    if (value === 'all') {
+      paidColumn?.setFilterValue(undefined);
+    } else {
+      paidColumn?.setFilterValue(value === 'true');
+    }
+  };
+
   const handleClearFilters = () => {
-    setStatus('all');
+    setStatus('');
     setDate(undefined);
+    setPaid('');
     table.resetColumnFilters();
   };
 
@@ -74,9 +87,21 @@ export function OrderFilters<TData>({ table }: OrderFiltersProps<TData>) {
         </SelectContent>
       </Select>
 
+      {/* 💰 Paid filter */}
+      <Select value={paid} onValueChange={handlePaidChange}>
+        <SelectTrigger className="w-[160px]">
+          <SelectValue placeholder="Thanh toán" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">Tất cả</SelectItem>
+          <SelectItem value="true">Đã thanh toán</SelectItem>
+          <SelectItem value="false">Chưa thanh toán</SelectItem>
+        </SelectContent>
+      </Select>
+
       <DatePicker value={date} onChange={handleDateChange} />
 
-      {(status !== 'all' || date) && (
+      {(status !== 'all' || paid !== 'all' || date) && (
         <Button variant="ghost" size="sm" onClick={handleClearFilters}>
           <X className="mr-1 h-4 w-4" /> Xoá lọc
         </Button>

@@ -1,7 +1,6 @@
 export enum ORDER_STATUS {
   PENDING = 'PENDING',
   DELIVERED = 'DELIVERED',
-  PAID = 'PAID',
   CANCELLED = 'CANCELLED',
   RETURNED = 'RETURNED',
 }
@@ -9,7 +8,6 @@ export enum ORDER_STATUS {
 export const ORDER_STATUS_LABEL = {
   [ORDER_STATUS.PENDING]: 'Chưa giao',
   [ORDER_STATUS.DELIVERED]: 'Đã giao',
-  [ORDER_STATUS.PAID]: 'Đã thanh toán',
   [ORDER_STATUS.CANCELLED]: 'Huỷ',
   [ORDER_STATUS.RETURNED]: 'Trả hàng',
 };
@@ -19,7 +17,6 @@ export const ORDER_STATUS_COLORS: Record<ORDER_STATUS, string> = {
   [ORDER_STATUS.DELIVERED]: '#22c55e',
   [ORDER_STATUS.CANCELLED]: '#ef4444',
   [ORDER_STATUS.RETURNED]: '#f87171',
-  [ORDER_STATUS.PAID]: '#3b82f6',
 };
 
 export enum TRANSACTION_TYPE {
