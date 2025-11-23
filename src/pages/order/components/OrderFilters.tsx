@@ -101,7 +101,7 @@ export function OrderFilters<TData>({ table }: OrderFiltersProps<TData>) {
 
       <DatePicker value={date} onChange={handleDateChange} />
 
-      {(status !== 'all' || paid !== 'all' || date) && (
+      {(status !== '' || paid !== '' || date) && (
         <Button variant="ghost" size="sm" onClick={handleClearFilters}>
           <X className="mr-1 h-4 w-4" /> Xoá lọc
         </Button>
