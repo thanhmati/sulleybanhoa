@@ -31,36 +31,50 @@ export function OrderFilters<TData>({ table }: OrderFiltersProps<TData>) {
       : undefined,
   );
 
-  const { queryParams } = useQueryParams<{ status: ORDER_STATUS }>();
+  const { queryParams, setQueryParams, clearQueryParams } = useQueryParams<{
+    status: ORDER_STATUS;
+    paid: string;
+    date: string;
+  }>();
 
   useEffect(() => {
     if (queryParams.status) {
-      setStatus(queryParams.status);
-      statusColumn?.setFilterValue(queryParams.status);
+      handleStatusChange(queryParams.status);
     }
-  }, [queryParams.status, statusColumn]);
+
+    if (queryParams.paid) {
+      handlePaidChange(queryParams.paid);
+    }
+
+    if (queryParams.date) {
+      handleDateChange(new Date(queryParams.date));
+    }
+  }, [JSON.stringify(queryParams)]);
 
   // --- handlers
   const handleStatusChange = (value: string) => {
     setStatus(value);
-    statusColumn?.setFilterValue(value === 'all' ? undefined : value);
+
+    const filterValue = value === 'all' ? undefined : value;
+    statusColumn?.setFilterValue(filterValue);
+    setQueryParams({ status: filterValue });
   };
 
   const handleDateChange = (selectedDate?: Date) => {
     setDate(selectedDate);
-    deliveryDateColumn?.setFilterValue(
-      selectedDate ? selectedDate.toISOString().split('T')[0] : undefined,
-    );
+
+    const filterValue = selectedDate ? selectedDate.toISOString() : undefined;
+    deliveryDateColumn?.setFilterValue(filterValue);
+    setQueryParams({ date: filterValue });
   };
 
   const handlePaidChange = (value: string) => {
     setPaid(value);
 
-    if (value === 'all') {
-      paidColumn?.setFilterValue(undefined);
-    } else {
-      paidColumn?.setFilterValue(value === 'true');
-    }
+    const filterValue = value === 'all' ? undefined : value;
+
+    paidColumn?.setFilterValue(filterValue ? JSON.parse(filterValue) : '');
+    setQueryParams({ paid: filterValue });
   };
 
   const handleClearFilters = () => {
@@ -68,6 +82,7 @@ export function OrderFilters<TData>({ table }: OrderFiltersProps<TData>) {
     setDate(undefined);
     setPaid('');
     table.resetColumnFilters();
+    clearQueryParams();
   };
 
   return (

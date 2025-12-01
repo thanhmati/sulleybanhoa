@@ -32,8 +32,13 @@ export function useQueryParams<T extends Record<string, string> = any>() {
     [location.pathname, location.search, navigate],
   );
 
+  const clearQueryParams = useCallback(() => {
+    navigate(location.pathname, { replace: true });
+  }, [navigate, location.pathname]);
+
   return {
     queryParams,
     setQueryParams,
+    clearQueryParams,
   };
 }
