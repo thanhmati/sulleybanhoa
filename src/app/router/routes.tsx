@@ -10,6 +10,7 @@ import { Toaster } from '@/components/ui/sonner';
 import { AuthGuard } from '@/lib/guards/AuthGuard';
 import UserListPage from '@/pages/user/UserListPage';
 import { OrderDetailPage } from '@/pages/order/components/OrderDetailPage';
+import FinanceTransactionListPage from '@/pages/finance-transaction/FinanceTransactionPage';
 
 const AdminLayout = lazy(() => import('../layout/AdminLayout'));
 const MainLayout = lazy(() => import('../layout/MainLayout'));
@@ -82,6 +83,11 @@ export const routes: RouteObject[] = [
             path: 'users',
             element: <UserListPage />,
             handle: { breadcrumb: 'Danh sách người dùng' },
+          },
+          {
+            path: 'finance-transaction',
+            element: <FinanceTransactionListPage />,
+            handle: { breadcrumb: 'Danh sách thu chi' },
           },
         ],
       },
