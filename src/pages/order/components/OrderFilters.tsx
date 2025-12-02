@@ -38,18 +38,25 @@ export function OrderFilters<TData>({ table }: OrderFiltersProps<TData>) {
   }>();
 
   useEffect(() => {
-    if (queryParams.status) {
-      handleStatusChange(queryParams.status);
-    }
+    const filters: { id: string; value: any }[] = [];
 
     if (queryParams.paid) {
-      handlePaidChange(queryParams.paid);
+      setPaid(queryParams.paid);
+      filters.push({ id: 'isPaid', value: queryParams.paid });
+    }
+
+    if (queryParams.status) {
+      setStatus(queryParams.status);
+      filters.push({ id: 'status', value: queryParams.status });
     }
 
     if (queryParams.date) {
-      handleDateChange(new Date(queryParams.date));
+      setDate(new Date(queryParams.date));
+      filters.push({ id: 'deliveryDate', value: queryParams.date });
     }
-  }, [JSON.stringify(queryParams)]);
+
+    table.setColumnFilters(filters);
+  }, [queryParams.date, queryParams.paid, queryParams.status, table]);
 
   // --- handlers
   const handleStatusChange = (value: string) => {

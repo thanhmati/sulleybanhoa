@@ -29,6 +29,7 @@ export interface Order {
   transaction: ITransaction[];
   createdAt: Date;
   updatedAt: Date;
+  isPaid: boolean;
 }
 
 export interface IPayOrder {

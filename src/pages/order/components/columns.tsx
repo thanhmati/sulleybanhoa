@@ -57,12 +57,18 @@ export const orderColumns = (
 
       return <EditableStatusBadge status={currentStatus} id={id} />;
     },
+    filterFn: (row, id, filterValue) => {
+      return row.original.status === filterValue;
+    },
   },
   {
     accessorKey: 'isPaid',
     header: 'Thanh toán',
     enableSorting: false,
     cell: ({ getValue }) => <PaidIcon isPaid={getValue<boolean>()} />,
+    filterFn: (row, id, filterValue) => {
+      return row.original.isPaid === JSON.parse(filterValue);
+    },
   },
   {
     id: 'actions',
