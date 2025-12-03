@@ -36,8 +36,8 @@ export const financeTransactionColumns = (
     cell: ({ getValue }) => <span>{getValue<string>()}</span>,
   },
   {
-    accessorKey: 'createdAt',
-    header: 'Ngày tạo',
+    accessorKey: 'date',
+    header: 'Ngày giao dịch',
     cell: ({ getValue }) => <span>{formatDate(getValue<Date>(), 'DD/MM/YYYY')}</span>,
   },
   {

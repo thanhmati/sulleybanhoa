@@ -17,6 +17,7 @@ export interface IFinanceTransaction {
   note?: string;
   categoryId: string;
   category: IFinanceCategory;
+  date: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -25,10 +26,12 @@ export interface ICreateFinanceTransaction {
   amount: number;
   note?: string;
   categoryId: string;
+  date: string;
 }
 
 export interface IUpdateFinanceTransaction {
   amount: number;
   note?: string;
   categoryId: string;
+  date: string;
 }
