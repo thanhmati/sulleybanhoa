@@ -25,8 +25,12 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useFinanceCategoriesQuery } from '@/hooks/useFinanceCategory';
-import { useCreateFinanceTransaction } from '@/hooks/useFinanceTransaction';
+import {
+  useCreateFinanceTransaction,
+  useUpdateFinanceTransaction,
+} from '@/hooks/useFinanceTransaction';
 import { FINANCE_CATEGORY_LABEL } from '@/lib/constants/finance-transaction.constant';
+import { IFinanceTransaction } from '@/types/finance-transaction';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -50,41 +54,64 @@ const defaultValues: FinanceTransactionFormValues = {
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  data?: IFinanceTransaction;
 }
 
-export function FinanceTransactionFormDialog({ open, onOpenChange }: Props) {
+export function FinanceTransactionFormDialog({ open, onOpenChange, data }: Props) {
   const form = useForm<FinanceTransactionFormValues>({
     resolver: zodResolver(financeTransactionSchema),
     defaultValues,
   });
 
+  const isEditing = !!data;
+
   useEffect(() => {
     if (!open) {
-      form.reset();
+      form.reset(defaultValues);
     }
   }, [open, form]);
 
+  useEffect(() => {
+    if (data) {
+      form.reset(data);
+    }
+  }, [data, form]);
+
   const createTransaction = useCreateFinanceTransaction();
+  const updateTransaction = useUpdateFinanceTransaction();
 
   const { data: categories } = useFinanceCategoriesQuery();
 
-  const isLoading = createTransaction.isPending;
+  const isLoading = createTransaction.isPending || updateTransaction.isPending;
 
   const onSubmit = (values: FinanceTransactionFormValues) => {
-    createTransaction.mutate(values, {
-      onSuccess: () => {
-        toast.success('Tạo giao dịch thành công!');
-        onOpenChange(false);
-      },
-      onError: () => toast.error('Tạo thất bại'),
-    });
+    if (isEditing && data.id) {
+      updateTransaction.mutate(
+        { id: data.id, data: values },
+        {
+          onSuccess: () => {
+            toast.success('Cập nhật giao dịch thành công!');
+            onOpenChange(false);
+          },
+          onError: () => toast.error('Tạo thất bại'),
+        },
+      );
+    } else {
+      createTransaction.mutate(values, {
+        onSuccess: () => {
+          toast.success('Tạo giao dịch thành công!');
+          onOpenChange(false);
+        },
+        onError: () => toast.error('Tạo thất bại'),
+      });
+    }
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-xl overflow-y-auto max-h-[90vh]">
         <DialogHeader>
-          <DialogTitle>Tạo giao dịch</DialogTitle>
+          <DialogTitle>{isEditing ? 'Cập nhật giao dịch' : 'Tạo giao dịch'}</DialogTitle>
         </DialogHeader>
 
         <Form {...form}>

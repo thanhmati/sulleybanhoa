@@ -26,3 +26,9 @@ export interface ICreateFinanceTransaction {
   note?: string;
   categoryId: string;
 }
+
+export interface IUpdateFinanceTransaction {
+  amount: number;
+  note?: string;
+  categoryId: string;
+}
