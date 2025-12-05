@@ -41,7 +41,7 @@ export default function DashboardPage() {
           <h2 className="text-2xl font-bold tracking-tight">Bảng điều khiển</h2>
           <p className="text-muted-foreground">Theo dõi hiệu suất đơn hàng và doanh thu</p>
         </div>
-        <DashboardFilter onChange={setParams} />
+        <DashboardFilter onChange={setParams} value={params} />
       </div>
 
       {/* Section 1: Stats */}

@@ -2,7 +2,6 @@ import { DashboardSummary } from '@/types/dashboard';
 import { StatCard } from './StatCard';
 import { formatCurrency } from '@/lib/utils/formatters';
 import { useNavigate } from 'react-router-dom';
-import { ORDER_STATUS } from '@/lib/constants/order.constant';
 
 interface OrderStatsProps {
   summary: DashboardSummary;
@@ -30,8 +29,8 @@ export function OrderStats({ summary }: OrderStatsProps) {
 
   const totalOrdersChange = calculateChange(summary.totalOrders, prev?.totalOrders ?? 0);
   const revenueChange = calculateChange(summary.revenue, prev?.revenue ?? 0);
-  const deliveredChange = calculateChange(summary.deliveredOrders, prev?.deliveredOrders ?? 0);
-  const cancelledChange = calculateChange(summary.cancelledOrders, prev?.cancelledOrders ?? 0);
+  const expenseChange = calculateChange(summary.totalExpense, prev?.totalExpense ?? 0);
+  const profitChange = calculateChange(summary.totalProfit, prev?.totalProfit ?? 0);
 
   const orderStats = [
     {
@@ -48,18 +47,16 @@ export function OrderStats({ summary }: OrderStatsProps) {
       positive: revenueChange.positive,
     },
     {
-      title: 'Đơn đã giao',
-      value: summary.deliveredOrders.toLocaleString(),
-      change: deliveredChange.changeText,
-      positive: deliveredChange.positive,
-      onClick: () => navigate(`/admin/orders?status=${ORDER_STATUS.DELIVERED}`),
+      title: 'Chi phí',
+      value: summary.totalExpense.toLocaleString(),
+      change: expenseChange.changeText,
+      positive: expenseChange.positive,
     },
     {
-      title: 'Đơn bị huỷ',
-      value: summary.cancelledOrders.toLocaleString(),
-      change: cancelledChange.changeText,
-      positive: cancelledChange.positive,
-      onClick: () => navigate(`/admin/orders?status=${ORDER_STATUS.CANCELLED}`),
+      title: 'Lợi nhuận',
+      value: summary.totalProfit.toLocaleString(),
+      change: profitChange.changeText,
+      positive: profitChange.positive,
     },
   ];
 

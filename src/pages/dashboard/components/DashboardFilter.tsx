@@ -2,16 +2,17 @@ import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { CalendarIcon } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DateRange } from 'react-day-picker';
 import dayjs from 'dayjs';
 import { vi as viLocale } from 'react-day-picker/locale';
 
 interface DashboardFilterProps {
   onChange: (range: { startDate?: string; endDate?: string }) => void;
+  value?: { startDate?: string; endDate?: string };
 }
 
-export function DashboardFilter({ onChange }: DashboardFilterProps) {
+export function DashboardFilter({ onChange, value }: DashboardFilterProps) {
   const [range, setRange] = useState<DateRange | undefined>({
     from: dayjs().startOf('month').toDate(),
     to: dayjs().endOf('month').toDate(),
@@ -25,6 +26,15 @@ export function DashboardFilter({ onChange }: DashboardFilterProps) {
       });
     }
   };
+
+  useEffect(() => {
+    if (value?.startDate && value?.endDate) {
+      setRange({
+        from: dayjs(value.startDate).toDate(),
+        to: dayjs(value.endDate).toDate(),
+      });
+    }
+  }, [value]);
 
   return (
     <div className="flex items-center gap-2">
