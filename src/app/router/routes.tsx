@@ -13,25 +13,10 @@ import { OrderDetailPage } from '@/pages/order/components/OrderDetailPage';
 import FinanceTransactionListPage from '@/pages/finance-transaction/FinanceTransactionPage';
 
 const AdminLayout = lazy(() => import('../layout/AdminLayout'));
-const MainLayout = lazy(() => import('../layout/MainLayout'));
-const HomePage = lazy(() => import('../../pages/home/HomePage'));
-const AboutPage = lazy(() => import('../../pages/about/AboutPage'));
 const SettingPage = lazy(() => import('../../pages/setting/SettingPage'));
 
 export const routes: RouteObject[] = [
   // 🌐 Public routes
-  {
-    path: '/',
-    element: (
-      <ErrorBoundary>
-        <MainLayout />
-      </ErrorBoundary>
-    ),
-    children: [
-      { index: true, element: <HomePage /> },
-      { path: 'about', element: <AboutPage /> },
-    ],
-  },
 
   // 🔓 Login route (public)
   {
