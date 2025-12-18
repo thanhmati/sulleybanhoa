@@ -47,7 +47,7 @@ export function OrderStatusPieChart({ data }: OrderStatusPieChartProps) {
               dataKey="value"
               label={({ name, value }) => `${name} (${value})`}
               onClick={(data) => {
-                navigate(`/orders?status=${data.status}`);
+                navigate(`/admin/orders?status=${data.status}`);
               }}
               cursor={'pointer'}
             >

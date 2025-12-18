@@ -86,7 +86,7 @@ export function NavUser() {
             <DropdownMenuGroup>
               <DropdownMenuItem
                 onClick={() => {
-                  navigate('/setting?tabActive=account');
+                  navigate('/admin/setting?tabActive=account');
                 }}
               >
                 <IconUserCircle />

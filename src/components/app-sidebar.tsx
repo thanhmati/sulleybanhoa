@@ -17,29 +17,29 @@ const data = {
   navMain: [
     {
       title: 'Bảng điều khiển',
-      url: '/dashboard',
+      url: '/admin/dashboard',
       icon: ChartBarIcon,
     },
     {
       title: 'Đơn hàng',
-      url: '/orders',
+      url: '/admin/orders',
       icon: ListOrderedIcon,
     },
     {
       title: 'Thu chi',
-      url: '/finance-transaction',
+      url: '/admin/finance-transaction',
       icon: DollarSign,
     },
     {
       title: 'Tài khoản',
-      url: '/users',
+      url: '/admin/users',
       icon: Users,
     },
   ],
   navSecondary: [
     {
       title: 'Cài đặt',
-      url: '/setting',
+      url: '/admin/setting',
       icon: Settings,
     },
   ],

@@ -38,7 +38,7 @@ export function OrderStats({ summary }: OrderStatsProps) {
       value: summary.totalOrders.toLocaleString(),
       change: totalOrdersChange.changeText,
       positive: totalOrdersChange.positive,
-      onClick: () => navigate('/orders'),
+      onClick: () => navigate('/admin/orders'),
     },
     {
       title: 'Doanh thu',

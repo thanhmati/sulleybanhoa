@@ -31,7 +31,7 @@ export const routes: RouteObject[] = [
 
   // 🔒 Protected admin routes
   {
-    path: '/',
+    path: '/admin',
     element: (
       <ErrorBoundary>
         <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
