@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Link } from 'react-router-dom';
 import { Product } from '@/types/product';
 import heroBg from '@/assets/hero-bg.png';
 import product1 from '@/assets/product-1.png';
@@ -70,33 +69,8 @@ export default function ShopPage() {
       : MOCK_PRODUCTS.filter((p) => p.category === activeCategory);
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] text-[#4A4A4A] font-sans selection:bg-[#eecbcb] selection:text-white">
-      {/* Navigation (Simplified for Shop Page - consistent with Landing) */}
-      <nav className="sticky top-0 z-50 w-full bg-[#FDFBF7]/80 backdrop-blur-md border-b border-[#eecbcb]/20">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <Link to="/" className="text-2xl font-serif font-bold tracking-tight text-[#4A4A4A]">
-            Sulley<span className="text-[#eecbcb]">.</span>
-          </Link>
-          <div className="hidden md:flex gap-8 items-center text-sm font-medium tracking-wide">
-            <Link to="/" className="hover:text-[#eecbcb] transition-colors">
-              Trang chủ
-            </Link>
-            <Link to="/shop" className="text-[#eecbcb] font-semibold transition-colors">
-              Cửa hàng
-            </Link>
-            <Link to="/about" className="hover:text-[#eecbcb] transition-colors">
-              Về chúng tôi
-            </Link>
-            <Link to="/contact" className="hover:text-[#eecbcb] transition-colors">
-              Liên hệ
-            </Link>
-          </div>
-          {/* Empty div to balance flex layout if needed, or social icons */}
-          <div className="w-[100px] flex justify-end">
-            {/* Can add search or social icons here later */}
-          </div>
-        </div>
-      </nav>
+    <>
+      {/* Navigation removed */}
 
       <div className="container mx-auto px-4 py-12">
         <div className="text-center mb-16 space-y-4">
@@ -180,14 +154,6 @@ export default function ShopPage() {
           ))}
         </div>
       </div>
-
-      {/* Footer (Simplified reuse) */}
-      <footer className="bg-[#4A4A4A] text-[#FDFBF7] py-16 mt-20">
-        <div className="container mx-auto px-4 text-center">
-          <h3 className="text-2xl font-serif font-bold mb-4">Sulley.</h3>
-          <p className="text-white/60 text-sm">© 2024 Sulley Flower Shop. Bảo lưu mọi quyền.</p>
-        </div>
-      </footer>
-    </div>
+    </>
   );
 }

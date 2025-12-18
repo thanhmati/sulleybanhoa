@@ -1,38 +1,14 @@
-import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { ArrowRight, Star, Instagram, Facebook, Twitter } from 'lucide-react';
+import { ArrowRight, Star } from 'lucide-react';
 import heroBg from '@/assets/hero-bg.png';
 import product1 from '@/assets/product-1.png';
 import product2 from '@/assets/product-2.png';
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-[#FDFBF7] text-[#4A4A4A] font-sans selection:bg-[#eecbcb] selection:text-white">
-      {/* Navigation */}
-      <nav className="sticky top-0 z-50 w-full bg-[#FDFBF7]/80 backdrop-blur-md border-b border-[#eecbcb]/20">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="text-2xl font-serif font-bold tracking-tight text-[#4A4A4A]">
-            Sulley<span className="text-[#eecbcb]">.</span>
-          </div>
-          <div className="hidden md:flex gap-8 items-center text-sm font-medium tracking-wide">
-            <Link to="/" className="hover:text-[#eecbcb] transition-colors">
-              Trang chủ
-            </Link>
-            <Link to="/shop" className="hover:text-[#eecbcb] transition-colors">
-              Cửa hàng
-            </Link>
-            <Link to="/about" className="hover:text-[#eecbcb] transition-colors">
-              Về chúng tôi
-            </Link>
-            <Link to="/contact" className="hover:text-[#eecbcb] transition-colors">
-              Liên hệ
-            </Link>
-          </div>
-          <div className="flex gap-4">{/* Login and Cart buttons removed as per request */}</div>
-        </div>
-      </nav>
-
+    <>
+      {/* Navigation removed */}
       {/* Hero Section */}
       <section className="relative pt-20 pb-32 overflow-hidden">
         <div className="absolute top-0 right-0 w-1/2 h-full bg-[#faefe3] rounded-bl-[100px] -z-10 opacity-60" />
@@ -177,101 +153,6 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-[#4A4A4A] text-[#FDFBF7] py-16">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-            <div className="space-y-4">
-              <h3 className="text-xl font-serif font-bold">Sulley.</h3>
-              <p className="text-white/60 text-sm leading-relaxed">
-                Mang sự tĩnh lặng của thiên nhiên vào ngôi nhà bạn với những thiết kế hoa tinh tế.
-              </p>
-            </div>
-
-            <div className="space-y-4">
-              <h4 className="font-medium tracking-wide">Cửa hàng</h4>
-              <ul className="space-y-2 text-sm text-white/60">
-                <li>
-                  <Link to="#" className="hover:text-white transition-colors">
-                    Tất cả sản phẩm
-                  </Link>
-                </li>
-                <li>
-                  <Link to="#" className="hover:text-white transition-colors">
-                    Hoa tươi
-                  </Link>
-                </li>
-                <li>
-                  <Link to="#" className="hover:text-white transition-colors">
-                    Hoa khô
-                  </Link>
-                </li>
-                <li>
-                  <Link to="#" className="hover:text-white transition-colors">
-                    Bình hoa
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            <div className="space-y-4">
-              <h4 className="font-medium tracking-wide">Công ty</h4>
-              <ul className="space-y-2 text-sm text-white/60">
-                <li>
-                  <Link to="#" className="hover:text-white transition-colors">
-                    Về chúng tôi
-                  </Link>
-                </li>
-                <li>
-                  <Link to="#" className="hover:text-white transition-colors">
-                    Bài viết
-                  </Link>
-                </li>
-                <li>
-                  <Link to="#" className="hover:text-white transition-colors">
-                    Liên hệ
-                  </Link>
-                </li>
-                <li>
-                  <Link to="#" className="hover:text-white transition-colors">
-                    Điều khoản
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            <div className="space-y-4">
-              <h4 className="font-medium tracking-wide">Đăng ký nhận tin</h4>
-              <div className="flex gap-2">
-                <input
-                  type="email"
-                  placeholder="Email của bạn"
-                  className="bg-white/10 border-none rounded-lg px-4 py-2 text-sm w-full focus:ring-1 focus:ring-[#eecbcb]"
-                />
-                <Button size="icon" className="bg-[#eecbcb] hover:bg-[#e6bcb9]">
-                  <ArrowRight size={16} />
-                </Button>
-              </div>
-              <div className="flex gap-4 pt-2">
-                <Instagram
-                  size={20}
-                  className="text-white/60 hover:text-white cursor-pointer transition-colors"
-                />
-                <Facebook
-                  size={20}
-                  className="text-white/60 hover:text-white cursor-pointer transition-colors"
-                />
-                <Twitter
-                  size={20}
-                  className="text-white/60 hover:text-white cursor-pointer transition-colors"
-                />
-              </div>
-            </div>
-          </div>
-          <div className="border-t border-white/10 pt-8 text-center text-sm text-white/40">
-            © 2024 Sulley Flower Shop. Bảo lưu mọi quyền.
-          </div>
-        </div>
-      </footer>
-    </div>
+    </>
   );
 }

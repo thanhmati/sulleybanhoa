@@ -13,6 +13,9 @@ import { OrderDetailPage } from '@/pages/order/components/OrderDetailPage';
 import FinanceTransactionListPage from '@/pages/finance-transaction/FinanceTransactionPage';
 import LandingPage from '@/pages/landing/LandingPage';
 import ShopPage from '@/pages/shop/ShopPage';
+import AboutPage from '@/pages/about/AboutPage';
+import ContactPage from '@/pages/contact/ContactPage';
+import MainLayout from '../layout/MainLayout';
 
 const AdminLayout = lazy(() => import('../layout/AdminLayout'));
 const SettingPage = lazy(() => import('../../pages/setting/SettingPage'));
@@ -20,12 +23,25 @@ const SettingPage = lazy(() => import('../../pages/setting/SettingPage'));
 export const routes: RouteObject[] = [
   // 🌐 Public routes
   {
-    path: '/',
-    element: <LandingPage />,
-  },
-  {
-    path: '/shop',
-    element: <ShopPage />,
+    element: <MainLayout />,
+    children: [
+      {
+        path: '/',
+        element: <LandingPage />,
+      },
+      {
+        path: '/shop',
+        element: <ShopPage />,
+      },
+      {
+        path: '/about',
+        element: <AboutPage />,
+      },
+      {
+        path: '/contact',
+        element: <ContactPage />,
+      },
+    ],
   },
 
   // 🔓 Login route (public)
