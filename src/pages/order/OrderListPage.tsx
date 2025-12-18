@@ -23,7 +23,7 @@ export default function OrderListPage() {
   };
 
   const handleEdit = (order: Order) => {
-    navigate(`/admin/orders/${order.id}`);
+    navigate(`/orders/${order.id}`);
   };
 
   const handleDelete = (orderId: string) => {

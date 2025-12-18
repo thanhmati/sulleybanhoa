@@ -34,7 +34,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'form'>)
   const location = useLocation();
   const { setAuth } = useAuthStore(); // ✅ lấy setter từ Zustand
 
-  const from = (location.state as { from?: string })?.from || '/admin/orders';
+  const from = (location.state as { from?: string })?.from || '/orders';
 
   const onSubmit = async (values: LoginFormValues) => {
     try {

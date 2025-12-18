@@ -3,11 +3,11 @@ import { LayoutDashboard, Package, Users, Flower2, Settings } from 'lucide-react
 import { cn } from '@/lib/utils';
 
 const navItems = [
-  { to: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/admin/orders', label: 'Orders', icon: Package },
-  { to: '/admin/products', label: 'Products', icon: Flower2 },
-  { to: '/admin/customers', label: 'Customers', icon: Users },
-  { to: '/admin/settings', label: 'Settings', icon: Settings },
+  { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { to: '/orders', label: 'Orders', icon: Package },
+  { to: '/products', label: 'Products', icon: Flower2 },
+  { to: '/customers', label: 'Customers', icon: Users },
+  { to: '/settings', label: 'Settings', icon: Settings },
 ];
 
 export function AdminSidebar() {
