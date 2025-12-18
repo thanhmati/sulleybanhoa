@@ -12,6 +12,7 @@ import UserListPage from '@/pages/user/UserListPage';
 import { OrderDetailPage } from '@/pages/order/components/OrderDetailPage';
 import FinanceTransactionListPage from '@/pages/finance-transaction/FinanceTransactionPage';
 import LandingPage from '@/pages/landing/LandingPage';
+import ShopPage from '@/pages/shop/ShopPage';
 
 const AdminLayout = lazy(() => import('../layout/AdminLayout'));
 const SettingPage = lazy(() => import('../../pages/setting/SettingPage'));
@@ -21,6 +22,10 @@ export const routes: RouteObject[] = [
   {
     path: '/',
     element: <LandingPage />,
+  },
+  {
+    path: '/shop',
+    element: <ShopPage />,
   },
 
   // 🔓 Login route (public)

@@ -29,16 +29,7 @@ export default function LandingPage() {
               Liên hệ
             </Link>
           </div>
-          <div className="flex gap-4">
-            <Link to="/login">
-              <Button variant="ghost" className="hover:bg-[#eecbcb]/10 hover:text-[#eecbcb]">
-                Đăng nhập
-              </Button>
-            </Link>
-            <Button className="bg-[#4A4A4A] hover:bg-[#2d2d2d] text-white rounded-full px-6 transition-transform active:scale-95 shadow-lg shadow-[#4A4A4A]/20">
-              Mua ngay
-            </Button>
-          </div>
+          <div className="flex gap-4">{/* Login and Cart buttons removed as per request */}</div>
         </div>
       </nav>
 
@@ -120,12 +111,7 @@ export default function LandingPage() {
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300" />
-                  <Button
-                    className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[90%] bg-white/90 hover:bg-white text-[#4A4A4A] shadow-lg"
-                    variant="secondary"
-                  >
-                    Thêm vào giỏ
-                  </Button>
+                  {/* Add to Cart button removed */}
                 </div>
                 <CardContent className="px-1 py-0 space-y-1">
                   <div className="flex justify-between items-start">
