@@ -2,10 +2,14 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ArrowRight, Star } from 'lucide-react';
 import heroBg from '@/assets/hero-bg.png';
-import product1 from '@/assets/product-1.png';
-import product2 from '@/assets/product-2.png';
+import { MOCK_PRODUCTS } from '@/data/products';
+import { Link } from 'react-router-dom';
 
 export default function LandingPage() {
+  // Select featured products (e.g., Best Sellers or specific IDs)
+  // Selecting: Sương Mai (1), Khúc Giao Hòa (2), Hồng Nhung Say Đắm (7)
+  const featuredProducts = MOCK_PRODUCTS.filter((p) => ['1', '2', '7'].includes(p.id));
+
   return (
     <>
       {/* Navigation removed */}
@@ -26,12 +30,14 @@ export default function LandingPage() {
               Quốc đến không gian của bạn.
             </p>
             <div className="flex gap-4 pt-4">
-              <Button
-                size="lg"
-                className="bg-[#eecbcb] hover:bg-[#e6bwb9] text-white rounded-full px-8 h-14 text-lg shadow-xl shadow-[#eecbcb]/30 transition-all hover:-translate-y-1"
-              >
-                Xem bộ sưu tập
-              </Button>
+              <Link to="/shop">
+                <Button
+                  size="lg"
+                  className="bg-[#eecbcb] hover:bg-[#e6bwb9] text-white rounded-full px-8 h-14 text-lg shadow-xl shadow-[#eecbcb]/30 transition-all hover:-translate-y-1"
+                >
+                  Xem bộ sưu tập
+                </Button>
+              </Link>
               <Button
                 size="lg"
                 variant="outline"
@@ -68,49 +74,57 @@ export default function LandingPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              { title: 'Sương Mai', price: '450.000₫', image: product1, tag: 'Bán chạy' },
-              { title: 'Khúc Giao Hòa', price: '520.000₫', image: product2, tag: 'Mới' },
-              { title: 'Lời Thì Thầm', price: '380.000₫', image: product1, tag: 'Giới hạn' }, // Reusing product 1 for demo
-            ].map((item, index) => (
-              <Card
-                key={index}
-                className="group border-none shadow-none bg-transparent overflow-hidden"
-              >
-                <div className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-[#FDFBF7] mb-4">
-                  <div className="absolute top-4 left-4 z-10 bg-white/80 backdrop-blur px-3 py-1 rounded-full text-xs font-medium uppercase tracking-wider">
-                    {item.tag}
+            {featuredProducts.map((product) => (
+              <Link key={product.id} to={`/product/${product.id}`} className="group block h-full">
+                <Card className="border-none shadow-none bg-transparent overflow-hidden h-full">
+                  <div className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-[#FDFBF7] mb-4">
+                    {product.isBestSeller && (
+                      <div className="absolute top-4 left-4 z-10 bg-white/80 backdrop-blur px-3 py-1 rounded-full text-xs font-medium uppercase tracking-wider text-[#4A4A4A]">
+                        Bán chạy
+                      </div>
+                    )}
+                    {product.isNew && (
+                      <div className="absolute top-4 left-4 z-10 bg-[#eecbcb] px-3 py-1 rounded-full text-xs font-medium uppercase tracking-wider text-white">
+                        Mới
+                      </div>
+                    )}
+                    <img
+                      src={product.imageUrl}
+                      alt={product.name}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300" />
                   </div>
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300" />
-                  {/* Add to Cart button removed */}
-                </div>
-                <CardContent className="px-1 py-0 space-y-1">
-                  <div className="flex justify-between items-start">
-                    <h3 className="text-lg font-medium font-serif group-hover:text-[#eecbcb] transition-colors">
-                      {item.title}
-                    </h3>
-                    <span className="font-semibold">{item.price}</span>
-                  </div>
-                  <div className="flex gap-1 text-[#eecbcb]">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} size={14} fill="currentColor" strokeWidth={0} />
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+                  <CardContent className="px-1 py-0 space-y-1">
+                    <div className="flex justify-between items-start">
+                      <h3 className="text-lg font-medium font-serif group-hover:text-[#eecbcb] transition-colors">
+                        {product.name}
+                      </h3>
+                      <span className="font-semibold">
+                        {new Intl.NumberFormat('vi-VN', {
+                          style: 'currency',
+                          currency: 'VND',
+                        }).format(product.price)}
+                      </span>
+                    </div>
+                    <div className="flex gap-1 text-[#eecbcb]">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} size={14} fill="currentColor" strokeWidth={0} />
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
             ))}
           </div>
 
           <div className="mt-16 text-center">
-            <Button variant="link" className="text-[#4A4A4A] text-lg hover:text-[#eecbcb] group">
-              Xem tất cả{' '}
-              <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </Button>
+            <Link to="/shop">
+              <Button variant="link" className="text-[#4A4A4A] text-lg hover:text-[#eecbcb] group">
+                Xem tất cả{' '}
+                <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
@@ -122,7 +136,7 @@ export default function LandingPage() {
             <div className="aspect-square bg-[#eecbcb]/10 rounded-full absolute -top-10 -left-10 w-full h-full scale-110 -z-10" />
             <div className="grid grid-cols-2 gap-4">
               <img
-                src={product2}
+                src={MOCK_PRODUCTS[1].imageUrl} // Khúc Giao Hòa
                 className="rounded-2xl mt-12 w-full h-64 object-cover shadow-lg"
                 alt="Trang trí"
               />

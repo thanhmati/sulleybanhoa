@@ -4,7 +4,10 @@ export interface Product {
   price: number;
   description: string;
   imageUrl: string;
-  category: 'fresh' | 'dried' | 'vase';
+  category: 'bouquet' | 'basket' | 'box' | 'plant' | 'stand';
   isBestSeller?: boolean;
   isNew?: boolean;
+  images?: string[];
+  flowerType?: string[];
+  occasion?: string[];
 }

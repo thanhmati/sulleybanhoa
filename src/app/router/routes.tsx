@@ -13,6 +13,7 @@ import { OrderDetailPage } from '@/pages/order/components/OrderDetailPage';
 import FinanceTransactionListPage from '@/pages/finance-transaction/FinanceTransactionPage';
 import LandingPage from '@/pages/landing/LandingPage';
 import ShopPage from '@/pages/shop/ShopPage';
+import ProductDetailPage from '@/pages/shop/ProductDetailPage';
 import AboutPage from '@/pages/about/AboutPage';
 import ContactPage from '@/pages/contact/ContactPage';
 import MainLayout from '../layout/MainLayout';
@@ -32,6 +33,10 @@ export const routes: RouteObject[] = [
       {
         path: '/shop',
         element: <ShopPage />,
+      },
+      {
+        path: '/product/:id',
+        element: <ProductDetailPage />,
       },
       {
         path: '/about',

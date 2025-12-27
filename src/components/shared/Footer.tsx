@@ -8,7 +8,7 @@ export function Footer() {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           <div className="space-y-4">
-            <h3 className="text-xl font-serif font-bold">Sulleybanhoa</h3>
+            <h3 className="text-xl font-serif font-bold">sulleybanhoa</h3>
             <p className="text-white/60 text-sm leading-relaxed">
               Mang sự tĩnh lặng của thiên nhiên vào ngôi nhà bạn với những thiết kế hoa tinh tế.
             </p>
