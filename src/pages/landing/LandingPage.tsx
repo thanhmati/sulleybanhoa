@@ -4,6 +4,7 @@ import { ArrowRight, Star } from 'lucide-react';
 import heroBg from '@/assets/hero-bg.png';
 import { MOCK_PRODUCTS } from '@/data/products';
 import { Link } from 'react-router-dom';
+import { SEO } from '@/components/shared/SEO';
 
 export default function LandingPage() {
   // Select featured products (e.g., Best Sellers or specific IDs)
@@ -12,6 +13,10 @@ export default function LandingPage() {
 
   return (
     <>
+      <SEO
+        title="Trang chủ"
+        description="Sulleybanhoa - Tiệm hoa trên mây, mang đến những thiết kế hoa tươi tinh tế phong cách Hàn Quốc."
+      />
       {/* Navigation removed */}
       {/* Hero Section */}
       <section className="relative pt-20 pb-32 overflow-hidden">

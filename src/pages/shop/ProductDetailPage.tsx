@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { MOCK_PRODUCTS } from '@/data/products';
 import { ArrowLeft, Star, Truck, ShieldCheck, Phone, MessageCircle } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import { SEO } from '@/components/shared/SEO';
 
 export default function ProductDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -38,6 +39,7 @@ export default function ProductDetailPage() {
 
   return (
     <div className="container mx-auto px-4 py-12">
+      <SEO title={product.name} description={product.description} image={product.imageUrl} />
       {/* Breadcrumb / Back Navigation */}
       <div className="mb-8">
         <Link

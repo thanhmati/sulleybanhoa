@@ -3,10 +3,15 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { MapPin, Phone, Mail, Clock, Send } from 'lucide-react';
+import { SEO } from '@/components/shared/SEO';
 
 export default function ContactPage() {
   return (
     <>
+      <SEO
+        title="Liên hệ"
+        description="Liên hệ với Sulleybanhoa để được tư vấn thiết kế hoa tươi, quà tặng. Hotline: 034 908 1629."
+      />
       {/* Navigation removed */}
 
       {/* Hero / Header */}

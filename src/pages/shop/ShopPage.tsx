@@ -6,6 +6,7 @@ import ProductFilters from '@/components/shop/ProductFilters';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
 import { Filter } from 'lucide-react';
+import { SEO } from '@/components/shared/SEO';
 
 const CATEGORIES = [
   { id: 'all', label: 'Tất cả' },
@@ -57,6 +58,10 @@ export default function ShopPage() {
 
   return (
     <>
+      <SEO
+        title="Cửa hàng"
+        description="Khám phá bộ sưu tập hoa tươi đa dạng: hoa bó, giỏ hoa, hoa hộp, cây cảnh và kệ hoa chúc mừng."
+      />
       <div className="container mx-auto px-4 py-12">
         <div className="text-center mb-12 space-y-4">
           <h1 className="text-4xl md:text-5xl font-serif">Cửa Hàng</h1>

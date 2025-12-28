@@ -3,10 +3,15 @@ import { Button } from '@/components/ui/button';
 import heroBg from '@/assets/hero-bg.png';
 import product1 from '@/assets/product-1.png';
 import { ArrowRight } from 'lucide-react';
+import { SEO } from '@/components/shared/SEO';
 
 export default function AboutPage() {
   return (
     <>
+      <SEO
+        title="Về chúng tôi"
+        description="Câu chuyện của Sulleybanhoa - Nơi kết nối cảm xúc qua những thiết kế hoa phong cách Hàn Quốc tối giản và tinh tế."
+      />
       {/* Navigation removed */}
 
       {/* Hero Section */}
