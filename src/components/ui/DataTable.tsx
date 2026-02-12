@@ -93,7 +93,7 @@ export function DataTable<TData, TValue>({
   // --- local state fallback if external not provided
   const [sorting, setSorting] = useState<SortingState>(externalState?.sorting ?? []);
   const [paginationState, setPaginationState] = useState<PaginationState>(
-    externalState?.pagination ?? { pageIndex: 0, pageSize: 10 },
+    externalState?.pagination ?? { pageIndex: 0, pageSize: 20 },
   );
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
     externalState?.columnFilters ?? [],

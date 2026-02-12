@@ -28,6 +28,7 @@ export const orderColumns = (
   },
   {
     accessorKey: 'client.name',
+    id: 'clientName',
     header: 'Tên khách hàng',
     cell: ({ getValue }) => <span>{getValue<string>()}</span>,
   },
