@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Field, FieldDescription, FieldGroup } from '@/components/ui/field';
@@ -6,51 +7,69 @@ import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from './ui/form';
-import { useLogin } from '@/hooks/useAuth';
+import { useLogin, useRegister } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/stores/auth.store';
 
-const loginSchema = z.object({
-  email: z.string().min(1, 'Vui lòng nhập email'),
-  password: z.string().min(1, 'Vui lòng nhập mật khẩu'),
+const authSchema = z.object({
+  email: z.string().min(1, 'Vui lòng nhập email').email('Email không đúng định dạng'),
+  password: z.string().min(6, 'Mật khẩu phải từ 6 ký tự'),
+  fullName: z.string().optional(),
 });
 
-type LoginFormValues = z.infer<typeof loginSchema>;
+type AuthFormValues = z.infer<typeof authSchema>;
 
-const defaultValues: LoginFormValues = {
+const defaultValues: AuthFormValues = {
   email: '',
   password: '',
+  fullName: '',
 };
 
 export function LoginForm({ className, ...props }: React.ComponentProps<'form'>) {
-  const form = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
+  const [isRegistering, setIsRegistering] = useState(false);
+  const form = useForm<AuthFormValues>({
+    resolver: zodResolver(authSchema),
     defaultValues,
   });
 
-  const { isPending, mutateAsync } = useLogin();
+  const { isPending: isLoginPending, mutateAsync: loginMutate } = useLogin();
+  const { isPending: isRegisterPending, mutateAsync: registerMutate } = useRegister();
   const navigate = useNavigate();
   const location = useLocation();
-  const { setAuth } = useAuthStore(); // ✅ lấy setter từ Zustand
+  const { setAuth } = useAuthStore();
 
   const from = (location.state as { from?: string })?.from || '/admin/orders';
+  const isPending = isLoginPending || isRegisterPending;
 
-  const onSubmit = async (values: LoginFormValues) => {
+  const onSubmit = async (values: AuthFormValues) => {
     try {
-      const res = await mutateAsync(values);
+      if (isRegistering) {
+        if (!values.fullName || values.fullName.trim() === '') {
+          toast.error('Vui lòng nhập họ và tên để đăng ký');
+          return;
+        }
+        await registerMutate({
+          email: values.email,
+          password: values.password,
+          fullName: values.fullName,
+        });
+        toast.success('Đăng ký tài khoản thành công! Bạn có thể đăng nhập ngay.');
+        setIsRegistering(false);
+        form.setValue('password', '');
+      } else {
+        const res = await loginMutate({
+          email: values.email,
+          password: values.password,
+        });
 
-      // 🔑 Giả sử API trả về { accessToken, refreshToken, user }
-      const { accessToken, refreshToken, user } = res;
-
-      // ✅ Cập nhật Zustand state
-      setAuth(accessToken, refreshToken, user);
-
-      // ✅ Điều hướng
-      navigate(from, { replace: true });
-      toast.success('Đăng nhập thành công');
+        const { accessToken, refreshToken, user } = res;
+        setAuth(accessToken, refreshToken, user);
+        navigate(from, { replace: true });
+        toast.success('Đăng nhập thành công');
+      }
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Đăng nhập thất bại');
+      toast.error(error.message || 'Đã có lỗi xảy ra');
     }
   };
 
@@ -63,9 +82,31 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'form'>)
       >
         <FieldGroup>
           <div className="flex flex-col items-center gap-1 text-center">
-            <h1 className="text-2xl font-bold">Đăng nhập</h1>
-            <p className="text-muted-foreground text-sm">Nhập email và mật khẩu để tiếp tục</p>
+            <h1 className="text-2xl font-bold">
+              {isRegistering ? 'Đăng ký tài khoản' : 'Đăng nhập'}
+            </h1>
+            <p className="text-muted-foreground text-sm">
+              {isRegistering
+                ? 'Nhập thông tin bên dưới để tạo tài khoản mới'
+                : 'Nhập email và mật khẩu để tiếp tục'}
+            </p>
           </div>
+
+          {isRegistering && (
+            <FormField
+              control={form.control}
+              name="fullName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel htmlFor="fullName">Họ và tên</FormLabel>
+                  <FormControl>
+                    <Input id="fullName" placeholder="Admin Sulley" required {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
 
           <FormField
             control={form.control}
@@ -94,9 +135,11 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'form'>)
               <FormItem>
                 <div className="flex items-center">
                   <FormLabel htmlFor="password">Mật khẩu</FormLabel>
-                  <a href="#" className="ml-auto text-sm underline-offset-4 hover:underline">
-                    Quên?
-                  </a>
+                  {!isRegistering && (
+                    <a href="#" className="ml-auto text-sm underline-offset-4 hover:underline">
+                      Quên?
+                    </a>
+                  )}
                 </div>
                 <FormControl>
                   <Input id="password" type="password" required {...field} />
@@ -108,16 +151,41 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'form'>)
 
           <Field>
             <Button type="submit" className="w-full" disabled={isPending}>
-              {isPending ? 'Đang đăng nhập...' : 'Đăng nhập'}
+              {isPending
+                ? isRegistering
+                  ? 'Đang đăng ký...'
+                  : 'Đang đăng nhập...'
+                : isRegistering
+                  ? 'Đăng ký'
+                  : 'Đăng nhập'}
             </Button>
           </Field>
 
           <Field>
             <FieldDescription className="text-center text-sm">
-              Chưa có tài khoản?{' '}
-              <a href="#" className="underline underline-offset-4">
-                Đăng ký
-              </a>
+              {isRegistering ? (
+                <>
+                  Đã có tài khoản?{' '}
+                  <button
+                    type="button"
+                    onClick={() => setIsRegistering(false)}
+                    className="underline underline-offset-4 cursor-pointer font-medium text-primary bg-transparent border-0 p-0"
+                  >
+                    Đăng nhập
+                  </button>
+                </>
+              ) : (
+                <>
+                  Chưa có tài khoản?{' '}
+                  <button
+                    type="button"
+                    onClick={() => setIsRegistering(true)}
+                    className="underline underline-offset-4 cursor-pointer font-medium text-primary bg-transparent border-0 p-0"
+                  >
+                    Đăng ký
+                  </button>
+                </>
+              )}
             </FieldDescription>
           </Field>
         </FieldGroup>

@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { supabase } from '@/lib/supabase';
 
 export interface User {
   id: string;
@@ -33,9 +34,6 @@ export const useAuthStore = create<AuthState>((set) => ({
   isAuthenticated: false,
   isVerifying: true, // start verifying on app load
   setAuth: (accessToken, refreshToken, user) => {
-    localStorage.setItem('accessToken', accessToken);
-    localStorage.setItem('refreshToken', refreshToken);
-    localStorage.setItem('user', JSON.stringify(user));
     return set({
       accessToken,
       refreshToken,
@@ -53,24 +51,79 @@ export const useAuthStore = create<AuthState>((set) => ({
       isVerifying: false,
     }),
   setVerifying: (v) => set({ isVerifying: v }),
-  restoreAuth: () => {
-    const accessToken = localStorage.getItem('accessToken');
-    const refreshToken = localStorage.getItem('refreshToken');
-
-    const user = localStorage.getItem('user');
-
-    if (accessToken && refreshToken) {
-      set({ accessToken, refreshToken, isAuthenticated: true });
-    }
-
-    if (user) {
-      set({ user: JSON.parse(user) });
+  restoreAuth: async () => {
+    set({ isVerifying: true });
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (session) {
+        const user: User = {
+          id: session.user.id,
+          email: session.user.email ?? '',
+          fullName: session.user.user_metadata?.full_name || session.user.user_metadata?.name || '',
+          roles: session.user.app_metadata?.roles || [],
+        };
+        set({
+          accessToken: session.access_token,
+          refreshToken: session.refresh_token,
+          user,
+          isAuthenticated: true,
+          isVerifying: false,
+        });
+      } else {
+        set({
+          accessToken: null,
+          refreshToken: null,
+          user: defaultUser,
+          isAuthenticated: false,
+          isVerifying: false,
+        });
+      }
+    } catch (error) {
+      console.error('[restoreAuth] Error:', error);
+      set({ isVerifying: false });
     }
   },
-  logout: () => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('user');
-    set({ user: defaultUser, accessToken: null, refreshToken: null, isAuthenticated: false });
+  logout: async () => {
+    try {
+      await supabase.auth.signOut();
+      set({
+        accessToken: null,
+        refreshToken: null,
+        user: defaultUser,
+        isAuthenticated: false,
+        isVerifying: false,
+      });
+    } catch (error) {
+      console.error('[logout] Error:', error);
+    }
   },
 }));
+
+// Subscribe to Supabase auth changes to sync the store
+supabase.auth.onAuthStateChange((_event, session) => {
+  if (session) {
+    const user: User = {
+      id: session.user.id,
+      email: session.user.email ?? '',
+      fullName: session.user.user_metadata?.full_name || session.user.user_metadata?.name || '',
+      roles: session.user.app_metadata?.roles || [],
+    };
+    useAuthStore.setState({
+      accessToken: session.access_token,
+      refreshToken: session.refresh_token,
+      user,
+      isAuthenticated: true,
+      isVerifying: false,
+    });
+  } else {
+    useAuthStore.setState({
+      accessToken: null,
+      refreshToken: null,
+      user: defaultUser,
+      isAuthenticated: false,
+      isVerifying: false,
+    });
+  }
+});
