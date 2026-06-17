@@ -1,4 +1,7 @@
 import { DataTable } from '@/components/ui/DataTable';
+import { DataTableToolbar } from '@/components/ui/DataTableToolbar';
+import { Button } from '@/components/ui/button';
+import { PlusCircleIcon } from 'lucide-react';
 import { userColumns } from './components/columns';
 import { useDeleteUser, useUsersQuery } from '@/hooks/useUsers';
 import { useState } from 'react';
@@ -13,6 +16,11 @@ export default function UserListPage() {
 
   const [open, setOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<IUserListItem | null>(null);
+
+  const handleCreate = () => {
+    setSelectedUser(null);
+    setOpen(true);
+  };
 
   const handleEdit = (user: IUserListItem) => {
     setSelectedUser(user);
@@ -37,6 +45,16 @@ export default function UserListPage() {
         externalState={{
           sorting: [{ id: 'fullName', desc: false }],
         }}
+        toolbar={() => (
+          <DataTableToolbar
+            actions={
+              <Button onClick={handleCreate}>
+                <PlusCircleIcon className="mr-2 h-4 w-4" />
+                Tạo tài khoản
+              </Button>
+            }
+          />
+        )}
       />
       <UserFormDialog open={open} onOpenChange={setOpen} initialData={selectedUser} />
     </div>
