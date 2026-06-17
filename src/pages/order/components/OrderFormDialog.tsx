@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { z } from 'zod';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import dayjs from 'dayjs';
 import {
   Dialog,
   DialogContent,
@@ -89,7 +90,7 @@ export function OrderFormDialog({ open, onOpenChange }: Props) {
   const onSubmit = (values: OrderFormValues) => {
     const payload = {
       ...values,
-      deliveryDate: values.deliveryDate ? new Date(values.deliveryDate) : new Date(),
+      deliveryDate: values.deliveryDate || dayjs().format('YYYY-MM-DD'),
     };
 
     createOrder.mutate(payload, {
@@ -153,8 +154,10 @@ export function OrderFormDialog({ open, onOpenChange }: Props) {
                       <FormLabel>Ngày giao</FormLabel>
                       <FormControl>
                         <DatePicker
-                          value={field.value ? new Date(field.value) : undefined}
-                          onChange={(val) => field.onChange(val?.toISOString() ?? '')}
+                          value={field.value ? dayjs(field.value).toDate() : undefined}
+                          onChange={(val) =>
+                            field.onChange(val ? dayjs(val).format('YYYY-MM-DD') : '')
+                          }
                         />
                       </FormControl>
                       <FormMessage />

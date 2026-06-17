@@ -1,6 +1,7 @@
 import FormSectionWrapper from '@/components/form-section-wrapper';
 import { CurrencyInput } from '@/components/ui/currency-input';
 import { DatePicker } from '@/components/ui/date-picker';
+import dayjs from 'dayjs';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import {
@@ -64,8 +65,8 @@ export default function OrderForm() {
                 <FormLabel>Ngày giao</FormLabel>
                 <FormControl>
                   <DatePicker
-                    value={field.value ? new Date(field.value) : undefined}
-                    onChange={(val) => field.onChange(val?.toISOString() ?? '')}
+                    value={field.value ? dayjs(field.value).toDate() : undefined}
+                    onChange={(val) => field.onChange(val ? dayjs(val).format('YYYY-MM-DD') : '')}
                   />
                 </FormControl>
                 <FormMessage />

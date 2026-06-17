@@ -52,7 +52,7 @@ const defaultValues: FinanceTransactionFormValues = {
   amount: 0,
   categoryId: '',
   note: '',
-  date: dayjs().toISOString(),
+  date: dayjs().format('YYYY-MM-DD'),
 };
 
 interface Props {
@@ -180,7 +180,9 @@ export function FinanceTransactionFormDialog({ open, onOpenChange, data }: Props
                       <FormControl>
                         <DatePicker
                           value={field.value ? dayjs(field.value).toDate() : undefined}
-                          onChange={(val) => field.onChange(val?.toISOString() ?? '')}
+                          onChange={(val) =>
+                            field.onChange(val ? dayjs(val).format('YYYY-MM-DD') : '')
+                          }
                         />
                       </FormControl>
                       <FormMessage />

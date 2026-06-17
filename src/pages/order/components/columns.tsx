@@ -4,6 +4,7 @@ import { formatCurrency, formatDate } from '@/lib/utils/formatters';
 import { OrderActionsCell } from './OrderActionsCell';
 import { EditableStatusBadge } from './EditableStatusBadge';
 import { PaidIcon } from './PaidIcon';
+import dayjs from 'dayjs';
 
 export const orderColumns = (
   onEdit: (order: Order) => void,
@@ -20,6 +21,14 @@ export const orderColumns = (
     accessorKey: 'deliveryDate',
     header: 'Ngày giao',
     cell: ({ getValue }) => <span>{formatDate(getValue<Date>(), 'DD/MM/YYYY')}</span>,
+    filterFn: (row, columnId, filterValue) => {
+      if (!filterValue) return true;
+      const rowDate = row.getValue<Date | string>(columnId);
+      if (!rowDate) return false;
+      const rowDateStr = dayjs(rowDate).format('YYYY-MM-DD');
+      const filterDateStr = dayjs(filterValue).format('YYYY-MM-DD');
+      return rowDateStr === filterDateStr;
+    },
   },
   {
     accessorKey: 'deliveryTime',

@@ -14,7 +14,7 @@ export interface ITransaction {
 export interface Order {
   id: string;
   deliveryTime: string;
-  deliveryDate: Date;
+  deliveryDate: Date | string;
   client: client;
   address: string;
   type: string;

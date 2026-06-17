@@ -13,6 +13,7 @@ import { useEffect, useState } from 'react';
 import { DatePicker } from '@/components/ui/date-picker';
 import { useQueryParams } from '@/hooks/useQueryParams';
 import { Input } from '@/components/ui/input';
+import dayjs from 'dayjs';
 
 interface OrderFiltersProps<TData> {
   table: Table<TData>;
@@ -32,7 +33,7 @@ export function OrderFilters<TData>({ table }: OrderFiltersProps<TData>) {
 
   const [date, setDate] = useState<Date | undefined>(
     deliveryDateColumn?.getFilterValue()
-      ? new Date(deliveryDateColumn.getFilterValue() as string)
+      ? dayjs(deliveryDateColumn.getFilterValue() as string).toDate()
       : undefined,
   );
 
@@ -57,7 +58,7 @@ export function OrderFilters<TData>({ table }: OrderFiltersProps<TData>) {
     }
 
     if (queryParams.date) {
-      setDate(new Date(queryParams.date));
+      setDate(dayjs(queryParams.date).toDate());
       filters.push({ id: 'deliveryDate', value: queryParams.date });
     }
 
@@ -88,7 +89,7 @@ export function OrderFilters<TData>({ table }: OrderFiltersProps<TData>) {
   const handleDateChange = (selectedDate?: Date) => {
     setDate(selectedDate);
 
-    const filterValue = selectedDate ? selectedDate.toISOString() : undefined;
+    const filterValue = selectedDate ? dayjs(selectedDate).format('YYYY-MM-DD') : undefined;
     deliveryDateColumn?.setFilterValue(filterValue);
     setQueryParams({ date: filterValue });
   };

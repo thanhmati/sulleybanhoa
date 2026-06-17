@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase';
 import { ORDER_STATUS } from '@/lib/constants/order.constant';
 import type { IPayOrder, Order } from '@/types/order';
+import dayjs from 'dayjs';
 
 export function mapOrderFromDb(dbOrder: any): Order {
   return {
@@ -39,9 +40,9 @@ function mapOrderToDb(order: Partial<Order>): any {
     const d: any = order.deliveryDate;
     dbOrder.delivery_date =
       d instanceof Date
-        ? d.toISOString().split('T')[0]
+        ? dayjs(d).format('YYYY-MM-DD')
         : typeof d === 'string'
-          ? d.split('T')[0]
+          ? dayjs(d).format('YYYY-MM-DD')
           : d;
   }
   if (order.client !== undefined) {

@@ -75,7 +75,7 @@ export function OrderDetailPage() {
     if (order) {
       form.reset({
         ...order,
-        deliveryDate: dayjs(order.deliveryDate).toISOString(),
+        deliveryDate: dayjs(order.deliveryDate).format('YYYY-MM-DD'),
       });
     }
   }, [form, order]);
@@ -87,7 +87,7 @@ export function OrderDetailPage() {
 
     const payload = {
       ...values,
-      deliveryDate: values.deliveryDate ? new Date(values.deliveryDate) : new Date(),
+      deliveryDate: values.deliveryDate || dayjs().format('YYYY-MM-DD'),
     };
 
     updateOrder.mutate(
