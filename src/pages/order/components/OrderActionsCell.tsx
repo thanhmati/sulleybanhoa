@@ -6,10 +6,12 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal } from 'lucide-react';
+import { MoreHorizontal, Printer, Pencil, Trash2 } from 'lucide-react';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { Order } from '@/types/order';
+import { OrderReceiptDialog } from './OrderReceiptDialog';
 
 interface OrderActionsCellProps {
   order: Order;
@@ -19,6 +21,7 @@ interface OrderActionsCellProps {
 
 export function OrderActionsCell({ order, onEdit, onDelete }: OrderActionsCellProps) {
   const [openConfirm, setOpenConfirm] = useState(false);
+  const [openReceipt, setOpenReceipt] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<Order>();
 
   return (
@@ -31,17 +34,29 @@ export function OrderActionsCell({ order, onEdit, onDelete }: OrderActionsCellPr
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Thao tác</DropdownMenuLabel>
-          <DropdownMenuItem onClick={() => onEdit?.(order)}>Chỉnh sửa</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setOpenReceipt(true)}>
+            <Printer className="mr-2 h-4 w-4 text-primary" />
+            In hoá đơn
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={() => onEdit?.(order)}>
+            <Pencil className="mr-2 h-4 w-4" />
+            Chỉnh sửa
+          </DropdownMenuItem>
           <DropdownMenuItem
+            className="text-destructive focus:text-destructive"
             onClick={() => {
               setOpenConfirm(true);
               setSelectedOrder(order);
             }}
           >
+            <Trash2 className="mr-2 h-4 w-4" />
             Xoá
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+
+      <OrderReceiptDialog open={openReceipt} onOpenChange={setOpenReceipt} order={order} />
 
       <ConfirmDialog
         open={openConfirm}
