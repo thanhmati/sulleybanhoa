@@ -4,6 +4,7 @@ import { formatCurrency, formatDate } from '@/lib/utils/formatters';
 import { OrderActionsCell } from './OrderActionsCell';
 import { EditableStatusBadge } from './EditableStatusBadge';
 import { PaidIcon } from './PaidIcon';
+import { OrderNoteCell } from './OrderNoteCell';
 import dayjs from 'dayjs';
 
 export const orderColumns = (
@@ -78,6 +79,12 @@ export const orderColumns = (
         </span>
       );
     },
+  },
+  {
+    accessorKey: 'note',
+    header: 'Ghi chú',
+    enableSorting: false,
+    cell: ({ getValue }) => <OrderNoteCell note={getValue<string>()} />,
   },
   {
     accessorKey: 'status',
