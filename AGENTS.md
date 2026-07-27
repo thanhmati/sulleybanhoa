@@ -106,3 +106,26 @@ Consistency is mandatory. Stick to the following naming conventions and architec
 - **DON'T** mix business logic with UI view structures. Form validations should always be done via `zod` schemas coupled with `react-hook-form` controllers.
 - **DON'T** use default/cliché tech styling colors (like Fintech blues, deep cyan, or neon purple gradients) unless explicitly requested. The branding style uses natural flower tones: peachy accents (`#eecbcb`), pastel orange background (`#faefe3`), soft light beige (`#FDFBF7`), clean green (`#dae5d0`), and dark charcoal (`#4A4A4A`) with serif typography headers (`font-serif`).
 - **DON'T** use inline styles. Always write utility class names provided by Tailwind CSS.
+
+## 6️⃣ Database Safety (Supabase)
+
+The connected Supabase project should always be treated as **production** unless the user explicitly states otherwise.
+
+### Rules
+
+- **NEVER** execute destructive Supabase CLI commands without explicit user approval.
+- **NEVER** run:
+  - `supabase db reset`
+  - `supabase db push`
+  - `supabase db remote commit`
+  - `supabase migration repair`
+  - `supabase migration squash`
+- **NEVER** generate or execute SQL containing:
+  - `DROP`
+  - `TRUNCATE`
+  - `DELETE`
+  - `ALTER ... DROP`
+  - `CASCADE`
+- **NEVER** modify database schema or production data unless the task explicitly requires it and the user has confirmed.
+- Default to **read-only** operations (schema inspection, `SELECT`, type generation).
+- If any task may modify schema or data, **stop, explain the impact, and ask for confirmation before proceeding**.

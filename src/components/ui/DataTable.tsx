@@ -15,6 +15,7 @@ import {
   Table as UiTable,
   TableBody,
   TableCell,
+  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -38,6 +39,7 @@ export interface DataTableProps<TData, TValue> {
   enableColumnVisibility?: boolean;
 
   // --- UI Injection
+  topContent?: (table: Table<TData>) => React.ReactNode;
   toolbar?: (table: Table<TData>) => React.ReactNode;
   footer?: ReactNode;
   pagination?: ReactNode;
@@ -80,6 +82,7 @@ export function DataTable<TData, TValue>({
   manualSorting = false,
   manualFiltering = false,
   pageCount,
+  topContent,
   toolbar,
   footer,
   pagination,
@@ -143,9 +146,17 @@ export function DataTable<TData, TValue>({
 
   const memoizedTable = useMemo(() => table, [table]);
 
+  const hasColumnFooters = useMemo(() => {
+    return table
+      .getFooterGroups()
+      .some((footerGroup) => footerGroup.headers.some((header) => header.column.columnDef.footer));
+  }, [table]);
+
   return (
     <DataTableProvider table={memoizedTable}>
       <div className="space-y-4">
+        {topContent && topContent(table)}
+
         {toolbar && <div className="flex items-center justify-between">{toolbar(table)}</div>}
 
         <div className="overflow-hidden rounded-md border">
@@ -216,6 +227,22 @@ export function DataTable<TData, TValue>({
                 </TableRow>
               )}
             </TableBody>
+
+            {!isLoading && hasColumnFooters && table.getRowModel().rows?.length > 0 && (
+              <TableFooter className="bg-muted/60 border-t font-semibold">
+                {table.getFooterGroups().map((footerGroup) => (
+                  <TableRow key={footerGroup.id}>
+                    {footerGroup.headers.map((header) => (
+                      <TableCell key={header.id}>
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(header.column.columnDef.footer, header.getContext())}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableFooter>
+            )}
           </UiTable>
         </div>
 

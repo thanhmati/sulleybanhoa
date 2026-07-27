@@ -20,6 +20,7 @@ export const orderColumns = (
   {
     accessorKey: 'deliveryDate',
     header: 'Ngày giao',
+    footer: () => <span className="font-bold text-foreground">Tổng cộng</span>,
     cell: ({ getValue }) => <span>{formatDate(getValue<Date>(), 'DD/MM/YYYY')}</span>,
     filterFn: (row, columnId, filterValue) => {
       if (!filterValue) return true;
@@ -50,12 +51,32 @@ export const orderColumns = (
     accessorKey: 'price',
     header: 'Giá tiền',
     cell: ({ getValue }) => <span>{formatCurrency(getValue<number>())}</span>,
+    footer: ({ table }) => {
+      const rows = table.getFilteredRowModel().rows;
+      const total = rows.reduce((sum, row) => sum + (Number(row.original.price) || 0), 0);
+      return <span className="font-bold text-foreground">{formatCurrency(total)}</span>;
+    },
   },
   {
     accessorKey: 'dueAmount',
     header: 'Số tiền còn nợ',
     cell: ({ getValue }) => {
       return <span>{formatCurrency(getValue<number>())}</span>;
+    },
+    footer: ({ table }) => {
+      const rows = table.getFilteredRowModel().rows;
+      const total = rows.reduce((sum, row) => sum + (Number(row.original.dueAmount) || 0), 0);
+      return (
+        <span
+          className={
+            total > 0
+              ? 'font-bold text-amber-600 dark:text-amber-400'
+              : 'font-bold text-emerald-600 dark:text-emerald-400'
+          }
+        >
+          {formatCurrency(total)}
+        </span>
+      );
     },
   },
   {

@@ -10,6 +10,7 @@ import { Order } from '@/types/order';
 import { toast } from 'sonner';
 import { OrderFilters } from './components/OrderFilters';
 import { useNavigate } from 'react-router-dom';
+import { OrderSummaryCards } from './components/OrderSummaryCards';
 
 export default function OrderListPage() {
   const { data, isLoading } = useOrdersQuery();
@@ -41,6 +42,7 @@ export default function OrderListPage() {
         isLoading={isLoading}
         columns={orderColumns(handleEdit, handleDelete)}
         data={data || []}
+        topContent={(table) => <OrderSummaryCards table={table} isLoading={isLoading} />}
         externalState={{
           sorting: [{ id: 'orderNumber', desc: true }],
           columnVisibility: { orderNumber: false },
