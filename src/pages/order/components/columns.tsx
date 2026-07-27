@@ -6,6 +6,7 @@ import { EditableStatusBadge } from './EditableStatusBadge';
 import { PaidIcon } from './PaidIcon';
 import { OrderNoteCell } from './OrderNoteCell';
 import dayjs from 'dayjs';
+import { ORDER_STATUS, ORDER_STATUS_PRIORITY } from '@/lib/constants/order.constant';
 
 export const orderColumns = (
   onEdit: (order: Order) => void,
@@ -89,7 +90,13 @@ export const orderColumns = (
   {
     accessorKey: 'status',
     header: 'Trạng thái',
-    enableSorting: false,
+    sortingFn: (rowA, rowB, columnId) => {
+      const statusA = rowA.getValue<ORDER_STATUS>(columnId);
+      const statusB = rowB.getValue<ORDER_STATUS>(columnId);
+      const priorityA = ORDER_STATUS_PRIORITY[statusA] ?? 99;
+      const priorityB = ORDER_STATUS_PRIORITY[statusB] ?? 99;
+      return priorityA - priorityB;
+    },
     cell: ({ cell: { row } }) => {
       const { status: currentStatus, id } = row.original;
 

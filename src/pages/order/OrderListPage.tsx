@@ -44,7 +44,10 @@ export default function OrderListPage() {
         data={data || []}
         topContent={(table) => <OrderSummaryCards table={table} isLoading={isLoading} />}
         externalState={{
-          sorting: [{ id: 'orderNumber', desc: true }],
+          sorting: [
+            { id: 'status', desc: false },
+            { id: 'orderNumber', desc: true },
+          ],
           columnVisibility: { orderNumber: false },
         }}
         toolbar={(table) => (
