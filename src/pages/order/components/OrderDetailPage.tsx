@@ -106,7 +106,10 @@ export function OrderDetailPage() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <FormLayout form={<OrderForm />} footer={<OrderFooter isLoading={isLoading} />} />
+        <FormLayout
+          form={<OrderForm />}
+          footer={<OrderFooter isLoading={isLoading} order={order} />}
+        />
       </form>
     </Form>
   );
