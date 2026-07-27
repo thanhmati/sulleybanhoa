@@ -1,6 +1,7 @@
 import { createPortal } from 'react-dom';
 import { Order } from '@/types/order';
 import { formatCurrency, formatDate } from '@/lib/utils/formatters';
+import { CONTACT } from '@/lib/constants/contact.constant';
 
 interface OrderReceiptProps {
   order: Order;
@@ -19,10 +20,10 @@ export function OrderReceipt({ order }: OrderReceiptProps) {
       {/* Header Branding */}
       <div className="text-center space-y-0.5 pb-1.5 border-b border-dashed border-zinc-400">
         <h1 className="text-sm font-extrabold uppercase tracking-wider font-serif text-zinc-900 print:text-black">
-          Sulley Bán Hoa
+          SULLEY FLORAL STUDIO
         </h1>
         <p className="text-[9px] text-zinc-600 print:text-black italic">
-          Hoa tươi phong cách Hàn Quốc
+          Hotline: {CONTACT.INFO.phoneNumber}
         </p>
       </div>
 
@@ -117,26 +118,11 @@ export function OrderReceipt({ order }: OrderReceiptProps) {
         </div>
       </div>
 
-      {/* Outstanding Balance Banner */}
-      <div className="py-1 text-center">
-        {dueAmount > 0 ? (
-          <div className="p-1.5 border-2 border-dashed border-zinc-900 print:border-black rounded bg-zinc-50 print:bg-white text-zinc-900 print:text-black">
-            <p className="text-[9px] font-bold uppercase tracking-wider">CẦN THU HỒI TỪ KHÁCH</p>
-            <p className="text-sm font-extrabold tracking-tight">{formatCurrency(dueAmount)}</p>
-          </div>
-        ) : (
-          <div className="p-1 bg-zinc-100 print:bg-zinc-100 rounded text-center">
-            <p className="text-[10px] font-bold uppercase tracking-wide">ĐÃ THANH TOÁN 100%</p>
-          </div>
-        )}
-      </div>
-
       {/* Footer Thank You */}
-      <div className="text-center pt-1 border-t border-dashed border-zinc-400 space-y-0.5">
+      <div className="text-center pt-1.5 space-y-0.5">
         <p className="text-[9px] font-medium italic">
           Cảm ơn quý khách đã tin tưởng và lựa chọn Sulley Bán Hoa! 🌸
         </p>
-        <p className="text-[8px] text-zinc-500 print:text-black">Hotline / Zalo hỗ trợ đơn hàng</p>
       </div>
     </>
   );
