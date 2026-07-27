@@ -16,23 +16,24 @@ export function OrderReceipt({ order }: OrderReceiptProps) {
   return (
     <div
       id="printable-receipt"
-      className="w-full max-w-[300px] mx-auto bg-white text-zinc-900 p-4 font-mono text-xs leading-snug border border-zinc-200 rounded-sm shadow-xs print:shadow-none print:border-none print:p-0 print:m-0 print:w-[76mm] print:max-w-none print:text-black"
+      className="w-full max-w-[75mm] min-h-[125mm] mx-auto bg-white text-zinc-900 p-3 font-mono text-[11px] leading-tight border border-zinc-200 rounded-sm shadow-xs print:shadow-none print:border-none print:p-0 print:m-0 print:w-[75mm] print:max-w-none print:text-black flex flex-col justify-between"
     >
       {/* CSS print override */}
       <style>{`
         @media print {
           @page {
-            size: 80mm auto;
+            size: 75mm 125mm;
             margin: 0;
           }
           html, body {
-            height: auto !important;
-            min-height: 0 !important;
+            height: 125mm !important;
+            min-height: 125mm !important;
+            max-height: 125mm !important;
             margin: 0 !important;
             padding: 0 !important;
             background: white !important;
             color: black !important;
-            overflow: visible !important;
+            overflow: hidden !important;
           }
           /* Collapse root app background so it takes 0 height */
           #root {
@@ -49,18 +50,23 @@ export function OrderReceipt({ order }: OrderReceiptProps) {
           }
           /* Fixed positioning starting at exact top-left corner (0,0) */
           #printable-receipt {
-            display: block !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: space-between !important;
             position: fixed !important;
             left: 0 !important;
             top: 0 !important;
-            width: 76mm !important;
-            max-width: 76mm !important;
+            width: 75mm !important;
+            max-width: 75mm !important;
+            height: 125mm !important;
+            max-height: 125mm !important;
             margin: 0 !important;
             padding: 3mm 4mm !important;
             background: white !important;
             color: black !important;
             box-sizing: border-box !important;
             z-index: 999999 !important;
+            overflow: hidden !important;
             page-break-inside: avoid !important;
             break-inside: avoid !important;
             page-break-after: avoid !important;

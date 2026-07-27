@@ -29,7 +29,7 @@ export function OrderReceiptDialog({ open, onOpenChange, order }: OrderReceiptDi
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Printer className="h-5 w-5 text-primary" />
-            Xem trước hoá đơn K80
+            Xem trước hoá đơn (75mm x 125mm)
           </DialogTitle>
         </DialogHeader>
 
