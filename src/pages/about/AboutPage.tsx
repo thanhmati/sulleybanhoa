@@ -4,8 +4,13 @@ import heroBg from '@/assets/hero-bg.png';
 import product1 from '@/assets/product-1.png';
 import { ArrowUpRight, Heart, ShieldCheck, Flower2 } from 'lucide-react';
 import { SEO } from '@/components/shared/SEO';
+import { useStoreSettingsQuery } from '@/hooks/useStoreSettings';
+import { renderFormattedTitle } from '@/lib/utils/renderTitle';
 
 export default function AboutPage() {
+  const { data: settings } = useStoreSettingsQuery();
+  const aboutConfig = settings?.about_page;
+
   return (
     <>
       <SEO
@@ -22,19 +27,19 @@ export default function AboutPage() {
           <div className="grid md:grid-cols-12 gap-12 items-center">
             {/* Story Text */}
             <div className="md:col-span-6 space-y-6 text-left">
-              <div className="eyebrow-tag">CÂU CHUYỆN CỦA CHÚNG TÔI</div>
+              <div className="eyebrow-tag">
+                {aboutConfig?.storyEyebrow || 'CÂU CHUYỆN CỦA CHÚNG TÔI'}
+              </div>
               <h1 className="text-4xl md:text-5xl font-serif text-foreground leading-tight">
-                Hơn cả những <br />
-                <span className="italic text-primary">bông hoa</span> đẹp.
+                {renderFormattedTitle(aboutConfig?.storyTitle, 'Hơn cả những {bông hoa} đẹp.')}
               </h1>
               <p className="text-base text-[#4A4A4A]/70 leading-relaxed">
-                Sulley được thành lập với niềm tin rằng hoa không chỉ là món đồ trang trí vô tri, mà
-                là phương tiện để truyền tải cảm xúc, kết nối con người và mang thiên nhiên vào
-                không gian sống.
+                {aboutConfig?.storyParagraph1 ||
+                  'Sulley được thành lập với niềm tin rằng hoa không chỉ là món đồ trang trí vô tri, mà là phương tiện để truyền tải cảm xúc, kết nối con người và mang thiên nhiên vào không gian sống.'}
               </p>
               <p className="text-base text-[#4A4A4A]/70 leading-relaxed">
-                Mỗi thiết kế của chúng tôi đều mang đậm phong cách tối giản Hàn Quốc, tôn vinh vẻ
-                đẹp tự nhiên của từng nhành hoa, chiếc lá với góc nhìn tinh tế và giàu cảm xúc.
+                {aboutConfig?.storyParagraph2 ||
+                  'Mỗi thiết kế của chúng tôi đều mang đậm phong cách tối giản Hàn Quốc, tôn vinh vẻ đẹp tự nhiên của từng nhành hoa, chiếc lá với góc nhìn tinh tế và giàu cảm xúc.'}
               </p>
             </div>
 

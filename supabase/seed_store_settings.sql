@@ -4,8 +4,8 @@ INSERT INTO public.store_settings (key, value)
 VALUES
   ('landing_hero', '{
     "eyebrow": "FLORAL BOUTIQUE COLLECTION 2026",
-    "title": "Cửa Hàng Hoa Tươi",
-    "subtitle": "Những thiết kế hoa tươi phong cách Hàn Quốc tinh tế, lưu giữ từng cảm xúc chân thành trong từng cành hoa.",
+    "title": "Tô điểm {khoảnh khắc} cùng thiên nhiên.",
+    "subtitle": "Những cành hoa được tuyển chọn kỹ lưỡng, cắm nghệ thuật mang phong cách tối giản Hàn Quốc đến không gian sống của bạn.",
     "badge1": "Hoa nhập tươi trong ngày",
     "badge2": "Giao hoa 2H nội thành",
     "badge3": "Đảm bảo hài lòng 100%"

@@ -4,13 +4,17 @@ import { Card, CardContent } from '@/components/ui/card';
 import { ArrowUpRight, Star, Heart, Truck, Clock, Flower2 } from 'lucide-react';
 import heroBg from '@/assets/hero-bg.png';
 import { useProductsQuery } from '@/hooks/useProducts';
+import { useStoreSettingsQuery } from '@/hooks/useStoreSettings';
 import { Link } from 'react-router-dom';
 import { SEO } from '@/components/shared/SEO';
 import { BouquetBuilder } from '@/components/landing/BouquetBuilder';
 import { OccasionShowcase } from '@/components/landing/OccasionShowcase';
+import { renderHeroTitle } from '@/lib/utils/renderTitle';
 
 export default function LandingPage() {
   const { data: products = [] } = useProductsQuery();
+  const { data: settings } = useStoreSettingsQuery();
+  const hero = settings?.landing_hero;
 
   // Mouse position state for interactive parallax depth
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -77,33 +81,17 @@ export default function LandingPage() {
             {/* Left Content */}
             <div className="md:col-span-7 space-y-8 text-left">
               {/* Eyebrow Badge */}
-              <div className="eyebrow-tag">BỘ SƯU TẬP FLOWER ART 2026</div>
+              <div className="eyebrow-tag">{hero?.eyebrow || 'BỘ SƯU TẬP FLOWER ART 2026'}</div>
 
               {/* Main Display Headline */}
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif text-foreground leading-[1.15] tracking-tight">
-                Tô điểm <br />
-                <span className="italic font-serif text-primary relative">
-                  khoảnh khắc
-                  <svg
-                    className="absolute -bottom-2 left-0 w-full h-2 text-primary/40"
-                    viewBox="0 0 100 20"
-                    preserveAspectRatio="none"
-                  >
-                    <path
-                      d="M0,15 Q50,0 100,15"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    />
-                  </svg>
-                </span>{' '}
-                cùng thiên nhiên.
+                {renderHeroTitle(hero)}
               </h1>
 
               {/* Description */}
               <p className="text-base sm:text-lg text-foreground/70 max-w-lg leading-relaxed">
-                Những cành hoa được tuyển chọn kỹ lưỡng, cắm nghệ thuật mang phong cách tối giản Hàn
-                Quốc đến không gian sống của bạn.
+                {hero?.subtitle ||
+                  'Những cành hoa được tuyển chọn kỹ lưỡng, cắm nghệ thuật mang phong cách tối giản Hàn Quốc đến không gian sống của bạn.'}
               </p>
 
               {/* Button-in-Button CTAs */}
@@ -122,54 +110,36 @@ export default function LandingPage() {
 
                 <Link to="/about">
                   <Button
-                    size="lg"
                     variant="outline"
-                    className="border-2 border-foreground/20 bg-white/60 hover:bg-foreground text-foreground hover:text-white rounded-full px-7 h-14 text-base font-medium backdrop-blur-sm transition-all duration-300 group flex items-center gap-3"
+                    size="lg"
+                    className="rounded-full border border-border bg-white/80 backdrop-blur-sm text-foreground hover:bg-white px-7 h-14 text-base font-medium transition-all"
                   >
-                    <span>Câu chuyện thương hiệu</span>
-                    <span className="w-8 h-8 rounded-full bg-foreground/10 group-hover:bg-white/20 flex items-center justify-center text-foreground group-hover:text-white transition-colors duration-300">
-                      <ArrowUpRight size={16} />
-                    </span>
+                    Về Sulley Studio
                   </Button>
                 </Link>
               </div>
             </div>
 
-            {/* Parallax Layer 2 & 3: Right Doppelrand Hero Showcase */}
-            <div className="md:col-span-5 relative flex justify-center">
-              {/* Outer Shell Card with Parallax Mouse Depth */}
+            {/* Right Column: Hero Visual Container with Doppelrand Frame */}
+            <div className="md:col-span-5 relative">
               <div
-                className="p-2.5 rounded-[2.5rem] bg-white/60 border border-border shadow-2xl shadow-primary/20 backdrop-blur-md w-full max-w-[440px] transition-transform duration-300 ease-out"
+                className="p-3 rounded-[2.5rem] bg-white border border-border shadow-2xl shadow-primary/20 transition-transform duration-300 ease-out"
                 style={{
-                  transform: `perspective(1000px) rotateY(${mousePos.x * 10}deg) rotateX(${mousePos.y * -10}deg) translate3d(${mousePos.x * -25}px, ${mousePos.y * -20}px, 0)`,
+                  transform: `translate3d(${mousePos.x * -20}px, ${mousePos.y * -15}px, 0)`,
                 }}
               >
-                {/* Inner Core */}
-                <div className="relative rounded-[calc(2.5rem-0.625rem)] overflow-hidden aspect-[4/5] bg-cream">
+                <div className="rounded-[calc(2.5rem-0.75rem)] overflow-hidden aspect-[4/5] relative bg-cream">
                   <img
                     src={heroBg}
-                    alt="Bình hoa phong cách Hàn Quốc"
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)]"
+                    alt="Hoa tươi Hàn Quốc Sulley"
+                    className="w-full h-full object-cover"
                   />
-
-                  {/* Parallax Layer 3: Floating Glass Tag Badge */}
-                  <div
-                    className="absolute bottom-6 left-6 right-6 p-4 rounded-2xl bg-white/85 backdrop-blur-xl border border-white/70 shadow-lg shadow-black/5 flex items-center justify-between transition-transform duration-300 ease-out"
-                    style={{
-                      transform: `translate3d(${mousePos.x * 35}px, ${mousePos.y * 25}px, 15px)`,
-                    }}
-                  >
-                    <div>
-                      <p className="text-xs font-semibold uppercase tracking-wider text-primary-dark">
-                        Bán chạy nhất
-                      </p>
-                      <h4 className="text-base font-serif font-bold text-foreground">
-                        Sương Mai (Korea Style)
-                      </h4>
-                    </div>
-                    <span className="text-sm font-semibold text-foreground bg-primary/30 px-3 py-1 rounded-full">
-                      580.000 đ
-                    </span>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                  <div className="absolute bottom-6 left-6 right-6 text-white text-left space-y-1">
+                    <p className="text-xs font-medium tracking-widest uppercase text-white/80">
+                      Lựa chọn thiết kế
+                    </p>
+                    <p className="text-lg font-serif font-bold">Korean Floral Studio</p>
                   </div>
                 </div>
               </div>
@@ -178,94 +148,80 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Featured Collection Section */}
-      <section className="py-24 bg-white/70 backdrop-blur-sm border-y border-border bg-grid-pattern relative">
-        <div className="container mx-auto px-4 max-w-6xl">
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
-            <div className="space-y-3">
-              <div className="eyebrow-tag-sage">BỘ SƯU TẬP NỔI BẬT</div>
-              <h2 className="text-3xl sm:text-4xl font-serif text-foreground">
-                Dành Riêng Cho Bạn
-              </h2>
-              <p className="text-base text-gray-500 max-w-md">
-                Mỗi thiết kế là một tác phẩm nghệ thuật độc bản gửi gắm những cảm xúc chân thành.
-              </p>
-            </div>
+      {/* Interactive Bouquet Builder Showcase */}
+      <BouquetBuilder />
 
+      {/* Occasion Showcase (Sinh Nhật, Kỷ Niệm, Khai Trương...) */}
+      <OccasionShowcase />
+
+      {/* Featured Curated Products Section */}
+      <section className="py-20 bg-white/60 border-t border-border">
+        <div className="container mx-auto px-4 max-w-6xl">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
+            <div className="text-left space-y-2">
+              <div className="eyebrow-tag">HOA NỔI BẬT</div>
+              <h2 className="text-3xl sm:text-4xl font-serif text-foreground">
+                Thiết Kế Được Yêu Thích
+              </h2>
+            </div>
             <Link to="/shop">
               <Button
-                variant="outline"
-                className="rounded-full border-foreground/20 text-foreground hover:bg-foreground hover:text-white px-6 h-12 gap-2 text-sm font-medium transition-all group"
+                variant="ghost"
+                className="text-primary-dark hover:text-foreground hover:bg-primary/10 text-sm font-medium gap-1"
               >
-                <span>Xem tất cả sản phẩm</span>
-                <ArrowUpRight size={16} className="group-hover:rotate-45 transition-transform" />
+                Xem tất cả mẫu hoa <ArrowUpRight size={16} />
               </Button>
             </Link>
           </div>
 
-          {/* Product Cards Grid with Doppelrand */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {featuredProducts.map((product) => (
-              <Link key={product.id} to={`/product/${product.id}`} className="group block h-full">
-                <Card className="p-2 rounded-[2rem] bg-cream border border-border hover:border-primary shadow-sm hover:shadow-xl hover:shadow-primary/20 transition-all duration-500 h-full flex flex-col justify-between">
-                  <div className="relative aspect-[3/4] rounded-[calc(2rem-0.5rem)] overflow-hidden bg-white mb-4">
-                    {product.isBestSeller && (
-                      <div className="absolute top-4 left-4 z-10 bg-white/90 backdrop-blur-md px-3.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wider text-foreground shadow-sm border border-white/50">
-                        Bán chạy
-                      </div>
-                    )}
-                    {product.isNew && (
-                      <div className="absolute top-4 left-4 z-10 bg-primary px-3.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wider text-white shadow-sm">
-                        Mới
-                      </div>
-                    )}
+              <Card
+                key={product.id}
+                className="group p-2.5 rounded-[2.2rem] bg-white border border-border shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-500 overflow-hidden flex flex-col justify-between"
+              >
+                <div>
+                  <div className="relative aspect-[4/5] rounded-[calc(2.2rem-0.625rem)] overflow-hidden bg-cream mb-4">
                     <img
                       src={product.imageUrl}
                       alt={product.name}
-                      className="w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-108"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                     />
+                    {product.isBestSeller && (
+                      <span className="absolute top-3 left-3 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-xs font-medium text-charcoal border border-white/50">
+                        Bán chạy
+                      </span>
+                    )}
                   </div>
-
-                  <CardContent className="px-3 pb-3 space-y-2">
-                    <div className="flex justify-between items-start">
-                      <h3 className="text-lg font-serif font-bold text-foreground group-hover:text-primary-dark transition-colors">
-                        {product.name}
-                      </h3>
-                      <span className="font-semibold text-sm text-foreground bg-primary/20 px-2.5 py-1 rounded-full">
-                        {new Intl.NumberFormat('vi-VN', {
-                          style: 'currency',
-                          currency: 'VND',
-                        }).format(product.price)}
-                      </span>
+                  <CardContent className="p-4 pt-0 text-left space-y-2">
+                    <div className="flex items-center gap-1 text-xs text-primary-dark font-medium">
+                      <Star size={12} fill="currentColor" /> 5.0
                     </div>
-
-                    <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed">
-                      {product.description}
-                    </p>
-
-                    <div className="flex justify-between items-center pt-2 border-t border-gray-100">
-                      <div className="flex gap-1 text-primary">
-                        {[...Array(5)].map((_, i) => (
-                          <Star key={i} size={13} fill="currentColor" strokeWidth={0} />
-                        ))}
-                      </div>
-                      <span className="text-xs font-medium text-primary-dark group-hover:translate-x-1 transition-transform flex items-center gap-1">
-                        Xem chi tiết <ArrowUpRight size={12} />
-                      </span>
-                    </div>
+                    <h3 className="text-xl font-serif font-bold text-foreground group-hover:text-primary-dark transition-colors">
+                      {product.name}
+                    </h3>
+                    <p className="text-xs text-gray-500 line-clamp-2">{product.description}</p>
                   </CardContent>
-                </Card>
-              </Link>
+                </div>
+
+                <div className="p-4 pt-0 flex items-center justify-between border-t border-gray-100 mt-2">
+                  <span className="text-lg font-bold text-primary-dark font-serif tracking-tight">
+                    {product.price.toLocaleString('vi-VN')} đ
+                  </span>
+                  <Link to={`/product/${product.id}`}>
+                    <Button
+                      size="sm"
+                      className="rounded-full bg-cream hover:bg-primary text-charcoal hover:text-white text-xs font-semibold px-4 transition-colors"
+                    >
+                      Chi tiết
+                    </Button>
+                  </Link>
+                </div>
+              </Card>
             ))}
           </div>
         </div>
       </section>
-
-      {/* NEW FEATURE 1: Interactive Bouquet Builder Customizer */}
-      <BouquetBuilder />
-
-      {/* NEW FEATURE 2: Dynamic Occasion Showcase & Live Reviews */}
-      <OccasionShowcase />
 
       {/* Philosophy Section */}
       <section className="py-24 relative overflow-hidden bg-dot-pattern border-t border-border">
@@ -338,14 +294,12 @@ export default function LandingPage() {
                   key={idx}
                   className="p-1.5 rounded-[2rem] bg-white border border-secondary/40 shadow-sm hover:shadow-lg transition-all duration-300"
                 >
-                  <div className="p-6 rounded-[calc(2rem-0.375rem)] bg-cream space-y-4 text-left h-full flex flex-col justify-between">
-                    <div className="w-12 h-12 rounded-full bg-primary/30 text-primary-dark flex items-center justify-center">
+                  <div className="p-6 rounded-[calc(2rem-0.375rem)] bg-cream h-full text-left space-y-4">
+                    <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center text-primary-dark">
                       <IconComp size={22} />
                     </div>
-                    <div className="space-y-2">
-                      <h3 className="font-serif font-bold text-lg text-foreground">{item.title}</h3>
-                      <p className="text-xs text-gray-500 leading-relaxed">{item.desc}</p>
-                    </div>
+                    <h3 className="text-lg font-serif font-bold text-foreground">{item.title}</h3>
+                    <p className="text-xs text-gray-500 leading-relaxed">{item.desc}</p>
                   </div>
                 </div>
               );

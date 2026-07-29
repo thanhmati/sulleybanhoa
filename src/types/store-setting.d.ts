@@ -1,10 +1,25 @@
 export interface LandingHeroConfig {
   eyebrow: string;
-  title: string;
+  title?: string;
+  titlePrefix?: string;
+  titleHighlight?: string;
+  titleSuffix?: string;
   subtitle: string;
   badge1: string;
   badge2: string;
   badge3: string;
+}
+
+export interface ShopHeaderConfig {
+  title: string;
+  subtitle: string;
+}
+
+export interface AboutPageConfig {
+  storyEyebrow: string;
+  storyTitle: string;
+  storyParagraph1: string;
+  storyParagraph2: string;
 }
 
 export interface StoreContactConfig {
