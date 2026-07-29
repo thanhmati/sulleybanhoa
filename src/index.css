@@ -98,7 +98,7 @@
   --ring: #eecbcb;
 }
 
-/* Sulley Floral Studio Reusable Component Classes */
+/* Sulley Floral Studio Reusable Component & Pattern Classes */
 @layer components {
   /* Eyebrow Tags driven by semantic tokens */
   .eyebrow-tag {
@@ -151,6 +151,19 @@
   .doppelrand-card:hover {
     border-color: var(--primary);
     box-shadow: 0 20px 25px -5px rgba(238, 203, 203, 0.25);
+  }
+
+  /* Visual Background Patterns */
+  .bg-dot-pattern {
+    background-image: radial-gradient(rgba(238, 203, 203, 0.35) 1.2px, transparent 1.2px);
+    background-size: 28px 28px;
+  }
+
+  .bg-grid-pattern {
+    background-image:
+      linear-gradient(to right, rgba(238, 203, 203, 0.15) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(238, 203, 203, 0.15) 1px, transparent 1px);
+    background-size: 40px 40px;
   }
 }
 

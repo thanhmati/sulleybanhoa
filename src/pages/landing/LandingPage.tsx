@@ -58,7 +58,7 @@ export default function LandingPage() {
       {/* Hero Section with Interactive Parallax Mouse Motion */}
       <section
         onMouseMove={handleMouseMove}
-        className="relative pt-12 pb-24 md:py-24 overflow-hidden"
+        className="relative pt-12 pb-24 md:py-24 overflow-hidden bg-dot-pattern"
       >
         {/* Parallax Layer 1: Ambient background blur orbs */}
         <div
@@ -175,7 +175,7 @@ export default function LandingPage() {
       </section>
 
       {/* Featured Collection Section */}
-      <section className="py-24 bg-white/70 backdrop-blur-sm border-y border-border">
+      <section className="py-24 bg-white/70 backdrop-blur-sm border-y border-border bg-grid-pattern relative">
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
             <div className="space-y-3">
@@ -264,7 +264,10 @@ export default function LandingPage() {
       <OccasionShowcase />
 
       {/* Philosophy Section */}
-      <section className="py-24 relative overflow-hidden">
+      <section className="py-24 relative overflow-hidden bg-dot-pattern border-t border-border">
+        {/* Ambient Glow */}
+        <div className="absolute top-1/2 left-10 -translate-y-1/2 w-[500px] h-[300px] bg-gradient-to-tr from-secondary/30 to-primary/20 rounded-full blur-[130px] -z-10 pointer-events-none" />
+
         <div className="container mx-auto px-4 max-w-6xl grid md:grid-cols-12 gap-16 items-center">
           {/* Left Staggered Doppelrand Images */}
           <div className="md:col-span-6 relative">
@@ -314,7 +317,7 @@ export default function LandingPage() {
       </section>
 
       {/* Value Pillars Grid Section */}
-      <section className="py-20 bg-secondary/15 border-t border-secondary/30">
+      <section className="py-20 bg-secondary/15 border-t border-secondary/30 bg-grid-pattern relative">
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
             <h2 className="text-3xl font-serif text-foreground">Cam Kết Từ Sulley</h2>

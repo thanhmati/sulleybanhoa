@@ -97,7 +97,7 @@ export function OccasionShowcase() {
   const activeOccasionInfo = OCCASION_TABS.find((t) => t.id === activeTab);
 
   return (
-    <section className="py-24 bg-cream relative overflow-hidden">
+    <section className="py-24 bg-cream relative overflow-hidden bg-grid-pattern">
       <div className="container mx-auto px-4 max-w-6xl space-y-20">
         {/* Section 1: Occasion Explorer Header & Tabs */}
         <div className="space-y-12">

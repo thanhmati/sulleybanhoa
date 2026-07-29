@@ -168,7 +168,7 @@ export function BouquetBuilder() {
   );
 
   return (
-    <section className="py-24 relative overflow-hidden bg-white/90 border-y border-border backdrop-blur-sm">
+    <section className="py-24 relative overflow-hidden bg-white/90 border-y border-border backdrop-blur-sm bg-dot-pattern">
       {/* Background ambient glow */}
       <div
         className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[750px] h-[450px] bg-gradient-to-tr ${selectedTone.bgGradient} rounded-full blur-[150px] -z-10 transition-all duration-700 pointer-events-none`}

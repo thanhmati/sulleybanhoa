@@ -14,7 +14,10 @@ export default function AboutPage() {
       />
 
       {/* Hero Section */}
-      <section className="relative py-16 md:py-24 overflow-hidden">
+      <section className="relative py-16 md:py-24 overflow-hidden bg-dot-pattern">
+        {/* Ambient background blur orbs */}
+        <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[600px] h-[350px] bg-gradient-to-tr from-primary/30 to-secondary/30 rounded-full blur-[130px] -z-10 pointer-events-none" />
+
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="grid md:grid-cols-12 gap-12 items-center">
             {/* Story Text */}
@@ -48,7 +51,7 @@ export default function AboutPage() {
       </section>
 
       {/* Philosophy Pillars Section */}
-      <section className="py-20 bg-white/70 border-y border-border">
+      <section className="py-20 bg-white/70 border-y border-border bg-grid-pattern relative">
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="text-center max-w-xl mx-auto mb-16 space-y-3">
             <h2 className="text-3xl font-serif text-foreground">Giá Trị Cốt Lõi</h2>
@@ -103,7 +106,7 @@ export default function AboutPage() {
       </section>
 
       {/* Artisan Florist Showcase */}
-      <section className="py-20">
+      <section className="py-20 relative overflow-hidden bg-dot-pattern">
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="grid md:grid-cols-12 gap-12 items-center">
             <div className="md:col-span-5">
@@ -129,7 +132,7 @@ export default function AboutPage() {
               </p>
               <div className="pt-2">
                 <Link to="/contact">
-                  <Button className="rounded-full bg-[#4A4A4A] hover:bg-[#333] text-white px-7 h-12 text-sm font-medium gap-2 group">
+                  <Button className="rounded-full bg-brand-dark hover:bg-[#333] text-white px-7 h-12 text-sm font-medium gap-2 group">
                     <span>Liên hệ hợp tác & tư vấn</span>
                     <ArrowUpRight
                       size={16}
