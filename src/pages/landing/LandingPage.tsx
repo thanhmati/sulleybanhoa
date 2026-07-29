@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { ArrowUpRight, Star, Heart, Truck, Clock, Flower2 } from 'lucide-react';
+import { ArrowUpRight, Star, Heart, Truck, Clock, Flower2, ShieldCheck } from 'lucide-react';
 import heroBg from '@/assets/hero-bg.png';
 import { useProductsQuery } from '@/hooks/useProducts';
 import { useStoreSettingsQuery } from '@/hooks/useStoreSettings';
@@ -117,6 +117,22 @@ export default function LandingPage() {
                     Về Sulley Studio
                   </Button>
                 </Link>
+              </div>
+
+              {/* Badge Bar – Cam Kết Dịch Vụ */}
+              <div className="flex flex-wrap gap-3 pt-2">
+                <div className="flex items-center gap-1.5 bg-white/80 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-border/80 shadow-xs text-xs font-semibold text-charcoal">
+                  <Flower2 size={14} className="text-primary-dark" />
+                  {hero?.badge1 || 'Hoa nhập tươi trong ngày'}
+                </div>
+                <div className="flex items-center gap-1.5 bg-white/80 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-border/80 shadow-xs text-xs font-semibold text-charcoal">
+                  <Truck size={14} className="text-secondary-dark" />
+                  {hero?.badge2 || 'Giao hoa 2H nội thành'}
+                </div>
+                <div className="flex items-center gap-1.5 bg-white/80 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-border/80 shadow-xs text-xs font-semibold text-charcoal">
+                  <ShieldCheck size={14} className="text-primary-dark" />
+                  {hero?.badge3 || 'Đảm bảo hài lòng 100%'}
+                </div>
               </div>
             </div>
 

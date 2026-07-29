@@ -130,7 +130,7 @@ export default function ShopPage() {
 
   return (
     <>
-      <SEO title={hero.title} description={hero.subtitle} />
+      <SEO title={hero.title || 'Cửa Hàng Hoa Tươi'} description={hero.subtitle || ''} />
       <div className="relative overflow-hidden bg-dot-pattern min-h-screen pb-20">
         {/* Background Ambient Glows */}
         <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-gradient-to-tr from-primary/20 via-peach/30 to-secondary/20 rounded-full blur-[140px] -z-10 pointer-events-none" />

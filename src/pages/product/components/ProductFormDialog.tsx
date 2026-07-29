@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import {
@@ -57,8 +57,8 @@ export function ProductFormDialog({
   const [uploading, setUploading] = useState(false);
   const [previewImage, setPreviewImage] = useState<string>('');
 
-  const form = useForm<ProductFormValues>({
-    resolver: zodResolver(productSchema),
+  const form = useForm<ProductFormValues, unknown, ProductFormValues>({
+    resolver: zodResolver(productSchema) as any,
     defaultValues: {
       name: '',
       price: 100000,
@@ -154,7 +154,10 @@ export function ProductFormDialog({
           <DialogTitle>{product ? 'Chỉnh Sửa Sản Phẩm' : 'Thêm Sản Phẩm Mới'}</DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={form.handleSubmit(handleSubmitForm)} className="space-y-4 py-2">
+        <form
+          onSubmit={form.handleSubmit(handleSubmitForm as SubmitHandler<ProductFormValues>)}
+          className="space-y-4 py-2"
+        >
           {/* Tên sản phẩm & Giá */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
