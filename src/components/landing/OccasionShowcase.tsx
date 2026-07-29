@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { MOCK_PRODUCTS } from '@/data/products';
+import { useProductsQuery } from '@/hooks/useProducts';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Star, ArrowUpRight, Heart, Gift, Sparkles, Quote, CheckCircle2 } from 'lucide-react';
@@ -88,11 +88,12 @@ const MOCK_REVIEWS: ReviewItem[] = [
 
 export function OccasionShowcase() {
   const [activeTab, setActiveTab] = useState<string>('Love');
+  const { data: products = [] } = useProductsQuery();
 
   // Filter products by active occasion tab
-  const occasionProducts = MOCK_PRODUCTS.filter(
-    (p) => p.occasion && p.occasion.includes(activeTab),
-  ).slice(0, 3);
+  const occasionProducts = products
+    .filter((p) => p.occasion && p.occasion.includes(activeTab))
+    .slice(0, 3);
 
   const activeOccasionInfo = OCCASION_TABS.find((t) => t.id === activeTab);
 

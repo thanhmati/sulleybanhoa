@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { MOCK_PRODUCTS } from '@/data/products';
+import { useProductDetailQuery, useProductsQuery } from '@/hooks/useProducts';
 import {
   ArrowLeft,
   Star,
@@ -10,13 +10,15 @@ import {
   Phone,
   MessageCircle,
   ArrowUpRight,
+  Loader2,
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { SEO } from '@/components/shared/SEO';
 
 export default function ProductDetailPage() {
-  const { id } = useParams<{ id: string }>();
-  const product = MOCK_PRODUCTS.find((p) => p.id === id);
+  const { id = '' } = useParams<{ id: string }>();
+  const { data: product, isLoading } = useProductDetailQuery(id);
+  const { data: allProducts = [] } = useProductsQuery();
   const [activeImage, setActiveImage] = useState<string>('');
 
   useEffect(() => {
@@ -24,6 +26,15 @@ export default function ProductDetailPage() {
       setActiveImage(product.imageUrl);
     }
   }, [product]);
+
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-4 py-32 text-center flex flex-col items-center justify-center space-y-3">
+        <Loader2 size={32} className="animate-spin text-primary-dark" />
+        <p className="text-sm text-gray-500 font-serif">Đang tải thông tin hoa tươi...</p>
+      </div>
+    );
+  }
 
   if (!product) {
     return (
@@ -42,9 +53,9 @@ export default function ProductDetailPage() {
   }
 
   // Get related products
-  const relatedProducts = MOCK_PRODUCTS.filter(
-    (p) => p.category === product.category && p.id !== product.id,
-  ).slice(0, 3);
+  const relatedProducts = allProducts
+    .filter((p) => p.category === product.category && p.id !== product.id)
+    .slice(0, 3);
 
   const galleryImages =
     product.images && product.images.length > 0 ? product.images : [product.imageUrl];

@@ -1,5 +1,14 @@
 import * as React from 'react';
-import { ChartBarIcon, Command, ListOrderedIcon, Settings, Users, DollarSign } from 'lucide-react';
+import {
+  ChartBarIcon,
+  Command,
+  ListOrderedIcon,
+  Settings,
+  Users,
+  DollarSign,
+  Flower2,
+  Store,
+} from 'lucide-react';
 import { NavMain } from '@/components/nav-main';
 import { NavSecondary } from '@/components/nav-secondary';
 import { NavUser } from '@/components/nav-user';
@@ -19,6 +28,16 @@ const data = {
       title: 'Bảng điều khiển',
       url: '/admin/dashboard',
       icon: ChartBarIcon,
+    },
+    {
+      title: 'Sản phẩm',
+      url: '/admin/products',
+      icon: Flower2,
+    },
+    {
+      title: 'Cửa hàng',
+      url: '/admin/store-config',
+      icon: Store,
     },
     {
       title: 'Đơn hàng',

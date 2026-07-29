@@ -4,13 +4,25 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { MapPin, Phone, Mail, Clock, Send } from 'lucide-react';
 import { SEO } from '@/components/shared/SEO';
+import { useStoreSettingsQuery } from '@/hooks/useStoreSettings';
+import type { StoreContactConfig } from '@/types/store-setting';
 
 export default function ContactPage() {
+  const { data: settings } = useStoreSettingsQuery();
+
+  const contact: StoreContactConfig = settings?.store_contact || {
+    phone: '034 908 1629',
+    email: 'sulleybanhoa@gmail.com',
+    address: '62/291 Lý Chính Thắng, P. Võ Thị Sáu, Q.3, TP.HCM',
+    zaloUrl: 'https://zalo.me',
+    openHours: 'Thứ 2 - CN: 8:00 - 21:00',
+  };
+
   return (
     <>
       <SEO
         title="Liên hệ"
-        description="Liên hệ với Sulleybanhoa để được tư vấn thiết kế hoa tươi, quà tặng phong cách Hàn Quốc. Hotline: 034 908 1629."
+        description={`Liên hệ với Sulleybanhoa để được tư vấn thiết kế hoa tươi phong cách Hàn Quốc. Hotline: ${contact.phone}.`}
       />
 
       <div className="relative overflow-hidden bg-dot-pattern min-h-screen">
@@ -44,7 +56,7 @@ export default function ContactPage() {
                     <div>
                       <h3 className="font-semibold text-sm text-foreground">Địa chỉ</h3>
                       <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">
-                        62/291 Lý Chính Thắng, P. Võ Thị Sáu, Q.3, TP.HCM
+                        {contact.address}
                       </p>
                     </div>
                   </div>
@@ -57,7 +69,7 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <h3 className="font-semibold text-sm text-foreground">Điện thoại</h3>
-                      <p className="text-xs text-gray-500 mt-0.5">034 908 1629</p>
+                      <p className="text-xs text-gray-500 mt-0.5">{contact.phone}</p>
                     </div>
                   </div>
                 </div>
@@ -69,7 +81,7 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <h3 className="font-semibold text-sm text-foreground">Email</h3>
-                      <p className="text-xs text-gray-500 mt-0.5">dotanthanhvlog@gmail.com</p>
+                      <p className="text-xs text-gray-500 mt-0.5">{contact.email}</p>
                     </div>
                   </div>
                 </div>
@@ -81,7 +93,7 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <h3 className="font-semibold text-sm text-foreground">Giờ mở cửa</h3>
-                      <p className="text-xs text-gray-500 mt-0.5">Thứ 2 - CN: 9:00 - 18:30</p>
+                      <p className="text-xs text-gray-500 mt-0.5">{contact.openHours}</p>
                     </div>
                   </div>
                 </div>

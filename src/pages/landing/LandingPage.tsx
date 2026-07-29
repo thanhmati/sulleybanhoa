@@ -3,13 +3,15 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ArrowUpRight, Star, Heart, Truck, Clock, Flower2 } from 'lucide-react';
 import heroBg from '@/assets/hero-bg.png';
-import { MOCK_PRODUCTS } from '@/data/products';
+import { useProductsQuery } from '@/hooks/useProducts';
 import { Link } from 'react-router-dom';
 import { SEO } from '@/components/shared/SEO';
 import { BouquetBuilder } from '@/components/landing/BouquetBuilder';
 import { OccasionShowcase } from '@/components/landing/OccasionShowcase';
 
 export default function LandingPage() {
+  const { data: products = [] } = useProductsQuery();
+
   // Mouse position state for interactive parallax depth
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
@@ -23,7 +25,9 @@ export default function LandingPage() {
   }, []);
 
   // Select featured products
-  const featuredProducts = MOCK_PRODUCTS.filter((p) => ['1', '2', '7'].includes(p.id));
+  const featuredProducts = products
+    .filter((p) => p.isBestSeller || ['1', '2', '7'].includes(p.id))
+    .slice(0, 3);
 
   const valuePillars = [
     {
@@ -274,7 +278,7 @@ export default function LandingPage() {
             <div className="p-2.5 rounded-[2.5rem] bg-white border border-border shadow-xl max-w-md mx-auto md:mx-0">
               <div className="rounded-[calc(2.5rem-0.625rem)] overflow-hidden aspect-[4/3]">
                 <img
-                  src={MOCK_PRODUCTS[1].imageUrl}
+                  src={products[1]?.imageUrl || heroBg}
                   alt="Triết lý hoa"
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
                 />

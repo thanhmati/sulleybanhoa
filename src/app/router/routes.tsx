@@ -20,6 +20,8 @@ import MainLayout from '../layout/MainLayout';
 
 const AdminLayout = lazy(() => import('../layout/AdminLayout'));
 const SettingPage = lazy(() => import('../../pages/setting/SettingPage'));
+const ProductListPage = lazy(() => import('../../pages/product/ProductListPage'));
+const StoreConfigPage = lazy(() => import('../../pages/setting/components/StoreConfigPage'));
 
 export const routes: RouteObject[] = [
   // 🌐 Public routes
@@ -85,6 +87,11 @@ export const routes: RouteObject[] = [
             handle: { breadcrumb: 'Bảng điều khiển' },
           },
           {
+            path: 'products',
+            element: <ProductListPage />,
+            handle: { breadcrumb: 'Quản lý sản phẩm' },
+          },
+          {
             path: 'orders',
             element: <OrderListPage />,
             handle: { breadcrumb: 'Danh sách đơn hàng' },
@@ -95,6 +102,11 @@ export const routes: RouteObject[] = [
             handle: { breadcrumb: 'Chi tiết đơn hàng' },
           },
           { path: 'setting', element: <SettingPage />, handle: { breadcrumb: 'Cài đặt' } },
+          {
+            path: 'store-config',
+            element: <StoreConfigPage />,
+            handle: { breadcrumb: 'Cửa hàng & Banner' },
+          },
           {
             path: 'users',
             element: <UserListPage />,
