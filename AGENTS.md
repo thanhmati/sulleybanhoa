@@ -23,51 +23,83 @@ The frontend is built on a modern, high-performance TypeScript web stack:
 - **Build Engine:** Vite `v7.1.2` with `@vitejs/plugin-react` `v5.0.0`
 - **Package Manager:** `pnpm` (configured in `pnpm-lock.yaml`)
 - **Styling Framework:** **Tailwind CSS v4** (`tailwindcss` `v4.1.12`) integrating `@tailwindcss/postcss` and `@tailwindcss/vite`. It relies on modern CSS-first theme configuration (`src/index.css`) utilizing OKLCH color spaces, Sass (`sass` `v1.92.0`), and animations via `tw-animate-css` `v1.4.0`.
-- **Routing:** `react-router-dom` `v7.8.2` supporting lazy loading (`React.lazy`/`Suspense`) and route metadata.
+- **Routing:** `react-router-dom` `v7.8.2` supporting lazy loading (`React.lazy`/`Suspense`), route breadcrumbs, and metadata.
 - **State Management:**
   - **Server Cache:** `@tanstack/react-query` `v5.85.9` for asynchronous queries, caching, retries, and data mutations.
-  - **Global Client State:** `zustand` `v5.0.8` for session management (JWT tokens, user roles, localStorage persistence).
-- **Forms & Validation:** `react-hook-form` `v7.65.0` with `@hookform/resolvers` and `zod` `v4.1.12` schema validation.
-- **Backend & Database SDK:** `@supabase/supabase-js` for serverless communication (Auth, database tables, and public storage buckets). Axios is deprecated.
+  - **Global Client State:** `zustand` `v5.0.8` for session management (JWT tokens, user roles, session state) synchronized with Supabase Auth.
+- **Forms & Validation:** `react-hook-form` `v7.65.0` with `@hookform/resolvers`, `zod` `v4.1.12` schema validation, and `dayjs` for date formatting.
+- **Backend & Database SDK:** `@supabase/supabase-js` for serverless communication (Auth, database tables like `orders`, `order_transactions`, `finance_transactions`, `finance_categories`, and public storage buckets).
 - **UI & Primitives:** Radix UI primitives wrapped in customized **Shadcn/UI** components, `@tanstack/react-table` for data tables, `recharts` for charts, `vaul` for bottom sheets, and `sonner` for toast notifications.
 - **Metadata & SEO:** `react-helmet-async` `v2.0.5`
 - **Linter & Code Quality:** TypeScript `~5.8.3`, ESLint `v9.33.0`, Prettier `v3.6.2`, and Husky with `lint-staged`.
 
 ---
 
-## 3️⃣ Project Structure
+## 3️⃣ Project Structure & Architecture
 
-The folder structure under `src/` is cleanly organized according to domain-driven design and architectural separations:
+The codebase follows domain-driven design and architectural separations verified via Codegraph symbol mappings:
 
 ```yaml
 src/
-├── app/                       # Application configuration and setup
-│   ├── layout/                # Root layouts (e.g., AdminLayout.tsx, MainLayout.tsx)
-│   └── router/                # Route configuration and Lazy-loaded paths (routes.tsx)
+├── app/                       # Application configuration and routing
+│   ├── layout/                # Root layouts (AdminLayout.tsx, MainLayout.tsx)
+│   └── router/                # Route configuration (routes.tsx, RouterProvider.tsx)
 ├── assets/                    # Static assets (images, icons)
-├── components/                # Shared reusable components
+├── components/                # Shared reusable UI components
 │   ├── layout/                # Header, footer, sidebar sub-components
-│   ├── shared/                # SEO wrappers, standard Navigation components
+│   ├── shared/                # SEO wrappers, Navigation components
 │   ├── shop/                  # ProductFilters, ProductCards, etc.
-│   └── ui/                    # Shadcn/UI primitives and custom widgets (DataTable, Field wrappers, DatePicker)
+│   └── ui/                    # Shadcn/UI primitives and custom widgets (DataTable, CurrencyInput, DatePicker, ConfirmDialog, FormLayout)
 ├── data/                      # Local static metadata or mock configurations
-├── hooks/                     # Custom hooks wrapping react-query logic (e.g., useOrders, useUsers)
-├── lib/                       # Third-party setups and global helper functions
-│   ├── constants/             # Enums, roles, and status mappings
+├── hooks/                     # Custom hooks wrapping React Query logic (useOrders, useUsers, useFinanceTransaction, useAuth)
+├── lib/                       # Helpers, guards, and SDK setup
+│   ├── constants/             # Enums, roles, and status mappings (order.constant.ts)
 │   ├── guards/                # AuthGuard.tsx (RBAC route guard)
 │   ├── utils/                 # formatters.ts (VND currency, date formats)
 │   ├── supabase.ts            # Supabase client singleton setup
 │   └── utils.ts               # cn() utility for merging Tailwind classes
-├── pages/                     # Routed page views organized by feature folders (dashboard, shop, order, finance-transaction, etc.)
-├── providers/                 # React Context providers (QueryClientProvider, etc.)
-├── services/                  # Client service layer making HTTP calls to the backend (orderService, authService, etc.)
-├── stores/                    # Zustand stores (auth.store.ts)
-└── types/                     # TypeScript type definitions (*.d.ts files mapping API interfaces)
+├── pages/                     # Routed views organized by feature
+│   ├── about/                 # About page view
+│   ├── contact/               # Contact page view
+│   ├── dashboard/             # Admin Dashboard metrics view
+│   ├── error/                 # ErrorBoundary and NotFoundPage
+│   ├── finance-transaction/   # Finance transaction ledger view & dialogs
+│   ├── landing/               # Public Landing page view
+│   ├── login/                 # Auth login view
+│   ├── order/                 # Order list, detail, and transaction dialogs
+│   ├── setting/               # Settings & ChangePassword view
+│   ├── shop/                  # Storefront product catalog & detail views
+│   └── user/                  # Admin User management views
+├── providers/                 # React Context providers (QueryClientProvider, ThemeProvider)
+├── services/                  # Client service layer executing Supabase queries (orderService, userService, authService, financeTransactionService)
+├── stores/                    # Zustand stores (auth.store.ts with supabase.auth.onAuthStateChange)
+└── types/                     # TypeScript interfaces (*.d.ts files mapping API schemas)
 ```
 
 ---
 
-## 4️⃣ Conventions
+## 4️⃣ Key Architectural Flows
+
+### A. Routing & Access Control
+
+- **Public Storefront Routes:** `MainLayout` wrapping `/`, `/shop`, `/product/:id`, `/about`, `/contact`.
+- **Authentication Route:** `/login` wrapped with `ThemeProvider` and `Toaster`.
+- **Protected Admin Routes:** Base path `/admin` protected by `<AuthGuard />` and wrapped with `<ErrorBoundary>`. Lazy-loaded sub-routes include `dashboard`, `orders`, `orders/:id`, `users`, `finance-transaction`, and `setting`.
+
+### B. Service & Data Layer Pattern
+
+- **Services (`src/services/`):** Encapsulate direct Supabase table operations (`supabase.from(...)`). Handle database row mapping functions (e.g., `mapOrderFromDb`, `mapFinanceTransactionFromDb`).
+- **React Query Hooks (`src/hooks/`):** Manage asynchronous queries and cache invalidations using explicit query keys (e.g., `['orders']`, `['users']`, `['current_user']`, `['order_detail']`).
+- **UI Components (`src/pages/` & `src/components/`):** Consume custom hooks (`useOrdersQuery`, `usePayOrder`, `useUsersQuery`). UI components must remain stateless regarding raw network calls.
+
+### C. Authentication & State Synchronization
+
+- **Zustand Store (`src/stores/auth.store.ts`):** Holds `user`, `accessToken`, `refreshToken`, `isAuthenticated`, and `isVerifying`.
+- **Session Sync:** Automatically listens to `supabase.auth.onAuthStateChange` and provides `restoreAuth()` to retrieve session data on application startup.
+
+---
+
+## 5️⃣ Conventions
 
 Consistency is mandatory. Stick to the following naming conventions and architectural patterns:
 
@@ -83,21 +115,21 @@ Consistency is mandatory. Stick to the following naming conventions and architec
 
 ### B. Architectural Patterns
 
-1. **Stateless UI Components:** Components must only manage rendering and styling. They should not directly call API services.
+1. **Stateless UI Components:** Components must only manage rendering and styling. They should not directly call API services or raw Supabase queries.
 2. **Business Logic in Custom Hooks:** Keep network requests and cache keys encapsulated inside custom hooks (in `src/hooks/*`) utilizing TanStack Query.
 3. **Data Formatting:** Always format currencies, numbers, and dates using formatting functions defined in `src/lib/utils/formatters.ts`.
 4. **Token Refresh Lifecycle:** Handled automatically by the Supabase client SDK. Session states and token renewals are synchronized through auth state change subscriptions in the Zustand store.
 
 ---
 
-## 5️⃣ Do's & Don'ts
+## 6️⃣ Do's & Don'ts
 
 ### Do's
 
 - **DO** use the custom hook abstractions (`src/hooks/*`) to query and mutate data. Never call services or write inline `useQuery` configurations inside UI components.
 - **DO** write strict TypeScript types and interfaces inside `src/types/*.d.ts`. Make sure to avoid utilizing `any` (prefer exact types or `unknown` where appropriate), despite the rule being off in ESLint settings.
 - **DO** utilize formatting helpers from `src/lib/utils/formatters.ts` for currencies (`VND`) and date structures.
-- **DO** utilize custom-wrapped UI helpers in `src/components/ui/` such as `DataTable`, `confirm-dialog`, `date-picker`, and `field` (form fields helper) to keep layouts and user feedback uniform.
+- **DO** utilize custom-wrapped UI helpers in `src/components/ui/` such as `DataTable`, `confirm-dialog`, `date-picker`, `currency-input`, and `field` (form fields helper) to keep layouts and user feedback uniform.
 - **DO** follow the Tailwind CSS v4 configuration patterns. Add custom tokens under `@theme inline` inside `src/index.css` and use base theme values like `--radius: 0.625rem` or color variables.
 
 ### Don'ts
@@ -107,7 +139,9 @@ Consistency is mandatory. Stick to the following naming conventions and architec
 - **DON'T** use default/cliché tech styling colors (like Fintech blues, deep cyan, or neon purple gradients) unless explicitly requested. The branding style uses natural flower tones: peachy accents (`#eecbcb`), pastel orange background (`#faefe3`), soft light beige (`#FDFBF7`), clean green (`#dae5d0`), and dark charcoal (`#4A4A4A`) with serif typography headers (`font-serif`).
 - **DON'T** use inline styles. Always write utility class names provided by Tailwind CSS.
 
-## 6️⃣ Database Safety (Supabase)
+---
+
+## 7️⃣ Database Safety (Supabase)
 
 The connected Supabase project should always be treated as **production** unless the user explicitly states otherwise.
 
