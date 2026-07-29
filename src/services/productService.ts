@@ -2,14 +2,28 @@ import { supabase } from '@/lib/supabase';
 import type { Product, ICreateProductRequest, ProductFiltersParam } from '@/types/product';
 import { MOCK_PRODUCTS } from '@/data/products';
 
+/**
+ * Normalizes legacy /src/assets/ paths to /images/ served from public/.
+ * In dev, Vite serves /src/assets/ directly.
+ * In production builds, only files in /public are available at root URL.
+ */
+function normalizeImageUrl(url: string | null | undefined): string {
+  if (!url) return '';
+  // Convert /src/assets/product-X.png → /images/product-X.png
+  if (url.startsWith('/src/assets/')) {
+    return url.replace('/src/assets/', '/images/');
+  }
+  return url;
+}
+
 export function mapProductFromDb(row: any): Product {
   return {
     id: row.id,
     name: row.name,
     price: Number(row.price),
     description: row.description || '',
-    imageUrl: row.image_url,
-    images: row.images || [row.image_url],
+    imageUrl: normalizeImageUrl(row.image_url),
+    images: (row.images || [row.image_url]).map(normalizeImageUrl),
     category: row.category,
     flowerType: row.flower_type || [],
     occasion: row.occasion || [],
