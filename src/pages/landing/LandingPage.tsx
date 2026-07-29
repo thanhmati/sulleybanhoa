@@ -1,3 +1,4 @@
+import { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ArrowUpRight, Star, Heart, Truck, Clock, Flower2 } from 'lucide-react';
@@ -5,8 +6,22 @@ import heroBg from '@/assets/hero-bg.png';
 import { MOCK_PRODUCTS } from '@/data/products';
 import { Link } from 'react-router-dom';
 import { SEO } from '@/components/shared/SEO';
+import { BouquetBuilder } from '@/components/landing/BouquetBuilder';
+import { OccasionShowcase } from '@/components/landing/OccasionShowcase';
 
 export default function LandingPage() {
+  // Mouse position state for interactive parallax depth
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const { clientX, clientY } = e;
+    const { innerWidth, innerHeight } = window;
+    // Calculate normalized offset from center (-0.5 to 0.5)
+    const x = clientX / innerWidth - 0.5;
+    const y = clientY / innerHeight - 0.5;
+    setMousePos({ x, y });
+  }, []);
+
   // Select featured products
   const featuredProducts = MOCK_PRODUCTS.filter((p) => ['1', '2', '7'].includes(p.id));
 
@@ -37,13 +52,21 @@ export default function LandingPage() {
     <>
       <SEO
         title="Trang chủ"
-        description="Sulleybanhoa - Tiệm hoa trên mây, mang đến những thiết kế hoa tươi tinh tế phong cách Hàn Quốc."
+        description="Sulley Floral Studio - Tiệm hoa trên mây, mang đến những thiết kế hoa tươi tinh tế phong cách Hàn Quốc."
       />
 
-      {/* Hero Section */}
-      <section className="relative pt-12 pb-24 md:py-24 overflow-hidden">
-        {/* Ambient background blur orbs */}
-        <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[600px] h-[350px] bg-gradient-to-tr from-primary/30 to-secondary/30 rounded-full blur-[120px] -z-10 pointer-events-none" />
+      {/* Hero Section with Interactive Parallax Mouse Motion */}
+      <section
+        onMouseMove={handleMouseMove}
+        className="relative pt-12 pb-24 md:py-24 overflow-hidden"
+      >
+        {/* Parallax Layer 1: Ambient background blur orbs */}
+        <div
+          className="absolute top-10 left-1/2 -translate-x-1/2 w-[600px] h-[350px] bg-gradient-to-tr from-primary/30 to-secondary/30 rounded-full blur-[120px] -z-10 pointer-events-none transition-transform duration-300 ease-out"
+          style={{
+            transform: `translate3d(calc(-50% + ${mousePos.x * 40}px), ${mousePos.y * 30}px, 0)`,
+          }}
+        />
 
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-12 items-center">
@@ -108,10 +131,15 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Right Doppelrand Hero Showcase */}
+            {/* Parallax Layer 2 & 3: Right Doppelrand Hero Showcase */}
             <div className="md:col-span-5 relative flex justify-center">
-              {/* Outer Shell */}
-              <div className="p-2.5 rounded-[2.5rem] bg-white/60 border border-border shadow-2xl shadow-primary/20 backdrop-blur-md w-full max-w-[440px]">
+              {/* Outer Shell Card with Parallax Mouse Depth */}
+              <div
+                className="p-2.5 rounded-[2.5rem] bg-white/60 border border-border shadow-2xl shadow-primary/20 backdrop-blur-md w-full max-w-[440px] transition-transform duration-300 ease-out"
+                style={{
+                  transform: `perspective(1000px) rotateY(${mousePos.x * 10}deg) rotateX(${mousePos.y * -10}deg) translate3d(${mousePos.x * -25}px, ${mousePos.y * -20}px, 0)`,
+                }}
+              >
                 {/* Inner Core */}
                 <div className="relative rounded-[calc(2.5rem-0.625rem)] overflow-hidden aspect-[4/5] bg-cream">
                   <img
@@ -120,8 +148,13 @@ export default function LandingPage() {
                     className="w-full h-full object-cover hover:scale-105 transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)]"
                   />
 
-                  {/* Floating Glass Tag Badge */}
-                  <div className="absolute bottom-6 left-6 right-6 p-4 rounded-2xl bg-white/80 backdrop-blur-xl border border-white/60 shadow-lg shadow-black/5 flex items-center justify-between">
+                  {/* Parallax Layer 3: Floating Glass Tag Badge */}
+                  <div
+                    className="absolute bottom-6 left-6 right-6 p-4 rounded-2xl bg-white/85 backdrop-blur-xl border border-white/70 shadow-lg shadow-black/5 flex items-center justify-between transition-transform duration-300 ease-out"
+                    style={{
+                      transform: `translate3d(${mousePos.x * 35}px, ${mousePos.y * 25}px, 15px)`,
+                    }}
+                  >
                     <div>
                       <p className="text-xs font-semibold uppercase tracking-wider text-primary-dark">
                         Bán chạy nhất
@@ -170,9 +203,7 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {featuredProducts.map((product) => (
               <Link key={product.id} to={`/product/${product.id}`} className="group block h-full">
-                {/* Outer Shell Card */}
                 <Card className="p-2 rounded-[2rem] bg-cream border border-border hover:border-primary shadow-sm hover:shadow-xl hover:shadow-primary/20 transition-all duration-500 h-full flex flex-col justify-between">
-                  {/* Inner Image Container */}
                   <div className="relative aspect-[3/4] rounded-[calc(2rem-0.5rem)] overflow-hidden bg-white mb-4">
                     {product.isBestSeller && (
                       <div className="absolute top-4 left-4 z-10 bg-white/90 backdrop-blur-md px-3.5 py-1 rounded-full text-xs font-semibold uppercase tracking-wider text-foreground shadow-sm border border-white/50">
@@ -191,7 +222,6 @@ export default function LandingPage() {
                     />
                   </div>
 
-                  {/* Card Content */}
                   <CardContent className="px-3 pb-3 space-y-2">
                     <div className="flex justify-between items-start">
                       <h3 className="text-lg font-serif font-bold text-foreground group-hover:text-primary-dark transition-colors">
@@ -226,6 +256,12 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      {/* NEW FEATURE 1: Interactive Bouquet Builder Customizer */}
+      <BouquetBuilder />
+
+      {/* NEW FEATURE 2: Dynamic Occasion Showcase & Live Reviews */}
+      <OccasionShowcase />
 
       {/* Philosophy Section */}
       <section className="py-24 relative overflow-hidden">
