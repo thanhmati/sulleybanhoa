@@ -29,16 +29,7 @@ const data = {
       url: '/admin/dashboard',
       icon: ChartBarIcon,
     },
-    {
-      title: 'Sản phẩm',
-      url: '/admin/products',
-      icon: Flower2,
-    },
-    {
-      title: 'Cửa hàng',
-      url: '/admin/store-config',
-      icon: Store,
-    },
+
     {
       title: 'Đơn hàng',
       url: '/admin/orders',
@@ -48,6 +39,16 @@ const data = {
       title: 'Thu chi',
       url: '/admin/finance-transaction',
       icon: DollarSign,
+    },
+    {
+      title: 'Sản phẩm',
+      url: '/admin/products',
+      icon: Flower2,
+    },
+    {
+      title: 'Cửa hàng',
+      url: '/admin/store-config',
+      icon: Store,
     },
     {
       title: 'Tài khoản',
