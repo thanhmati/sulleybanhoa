@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import ProductFilters from '@/components/shop/ProductFilters';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet';
-import { Filter, Star, ArrowUpRight, Sparkles } from 'lucide-react';
+import { Filter, Star, ArrowUpRight } from 'lucide-react';
 import { SEO } from '@/components/shared/SEO';
 
 const CATEGORIES = [
@@ -60,11 +60,9 @@ export default function ShopPage() {
       <div className="container mx-auto px-4 max-w-6xl py-12">
         {/* Header Hero Banner */}
         <div className="text-center mb-12 space-y-4">
-          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#eecbcb]/25 text-[#be8e8e] text-xs font-semibold uppercase tracking-wider">
-            <Sparkles size={12} /> BỘ SƯU TẬP HOA TƯƠI 2026
-          </div>
-          <h1 className="text-4xl md:text-5xl font-serif text-[#4A4A4A]">Cửa Hàng Hoa</h1>
-          <p className="text-[#4A4A4A]/70 max-w-xl mx-auto text-base">
+          <div className="eyebrow-tag">BỘ SƯU TẬP HOA TƯƠI 2026</div>
+          <h1 className="text-4xl md:text-5xl font-serif text-foreground">Cửa Hàng Hoa</h1>
+          <p className="text-foreground/70 max-w-xl mx-auto text-base">
             Khám phá những thiết kế hoa tươi tinh tế được chăm chút tỉ mỉ cho từng sự kiện đặc biệt
             của bạn.
           </p>
@@ -78,8 +76,8 @@ export default function ShopPage() {
               onClick={() => setActiveCategory(cat.id)}
               className={`rounded-full px-5 h-10 text-sm transition-all duration-300 ${
                 activeCategory === cat.id
-                  ? 'bg-[#eecbcb] text-white font-semibold shadow-lg shadow-[#eecbcb]/40 hover:bg-[#e6bwb9]'
-                  : 'bg-white/80 text-[#4A4A4A] border border-[#eecbcb]/30 hover:border-[#eecbcb] hover:bg-white'
+                  ? 'bg-primary text-white font-semibold shadow-lg shadow-primary/40 hover:bg-primary-dark'
+                  : 'bg-white/80 text-foreground border border-border hover:border-primary hover:bg-white'
               }`}
             >
               {cat.label}
@@ -92,12 +90,12 @@ export default function ShopPage() {
           <div className="lg:hidden mb-4">
             <Sheet>
               <SheetTrigger asChild>
-                <Button className="w-full rounded-full bg-white border border-[#eecbcb]/40 text-[#4A4A4A] shadow-sm">
-                  <Filter className="mr-2 h-4 w-4 text-[#be8e8e]" /> Bộ lọc sản phẩm
+                <Button className="w-full rounded-full bg-white border border-border text-foreground shadow-sm">
+                  <Filter className="mr-2 h-4 w-4 text-primary-dark" /> Bộ lọc sản phẩm
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="overflow-y-auto p-4 bg-[#FDFBF7]">
-                <SheetTitle className="font-serif text-xl mb-4 text-[#4A4A4A]">Bộ Lọc</SheetTitle>
+              <SheetContent side="left" className="overflow-y-auto p-4 bg-cream">
+                <SheetTitle className="font-serif text-xl mb-4 text-foreground">Bộ Lọc</SheetTitle>
                 <ProductFilters filters={filters} setFilters={setFilters} maxPrice={5000000} />
               </SheetContent>
             </Sheet>
@@ -114,8 +112,9 @@ export default function ShopPage() {
           <div className="lg:col-span-3">
             <div className="mb-6 flex items-center justify-between px-1">
               <span className="text-sm font-medium text-gray-500">
-                Hiển thị <span className="text-[#4A4A4A] font-bold">{filteredProducts.length}</span>{' '}
-                sản phẩm
+                Hiển thị{' '}
+                <span className="text-foreground font-bold">{filteredProducts.length}</span> sản
+                phẩm
               </span>
             </div>
 
@@ -124,16 +123,16 @@ export default function ShopPage() {
               {filteredProducts.map((product) => (
                 <Link key={product.id} to={`/product/${product.id}`} className="group block h-full">
                   {/* Outer Shell */}
-                  <Card className="p-2 rounded-[2rem] bg-white border border-[#eecbcb]/40 hover:border-[#eecbcb] shadow-sm hover:shadow-xl hover:shadow-[#eecbcb]/20 transition-all duration-500 h-full flex flex-col justify-between">
+                  <Card className="p-2 rounded-[2rem] bg-white border border-border hover:border-primary shadow-sm hover:shadow-xl hover:shadow-primary/20 transition-all duration-500 h-full flex flex-col justify-between">
                     {/* Inner Image Container */}
-                    <div className="relative aspect-[3/4] rounded-[calc(2rem-0.5rem)] overflow-hidden bg-[#FDFBF7] mb-3">
+                    <div className="relative aspect-[3/4] rounded-[calc(2rem-0.5rem)] overflow-hidden bg-cream mb-3">
                       {product.isBestSeller && (
-                        <div className="absolute top-3 left-3 z-10 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider text-[#4A4A4A] shadow-sm border border-white/50">
+                        <div className="absolute top-3 left-3 z-10 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider text-foreground shadow-sm border border-white/50">
                           Bán chạy
                         </div>
                       )}
                       {product.isNew && (
-                        <div className="absolute top-3 left-3 z-10 bg-[#eecbcb] px-3 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider text-white shadow-sm">
+                        <div className="absolute top-3 left-3 z-10 bg-primary px-3 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider text-white shadow-sm">
                           Mới
                         </div>
                       )}
@@ -147,10 +146,10 @@ export default function ShopPage() {
                     {/* Content */}
                     <CardContent className="px-3 pb-3 space-y-2">
                       <div className="flex justify-between items-start">
-                        <h3 className="text-base font-serif font-bold text-[#4A4A4A] group-hover:text-[#be8e8e] transition-colors">
+                        <h3 className="text-base font-serif font-bold text-foreground group-hover:text-primary-dark transition-colors">
                           {product.name}
                         </h3>
-                        <span className="font-semibold text-xs text-[#4A4A4A] bg-[#eecbcb]/25 px-2.5 py-1 rounded-full shrink-0">
+                        <span className="font-semibold text-xs text-foreground bg-primary/25 px-2.5 py-1 rounded-full shrink-0">
                           {new Intl.NumberFormat('vi-VN', {
                             style: 'currency',
                             currency: 'VND',
@@ -163,12 +162,12 @@ export default function ShopPage() {
                       </p>
 
                       <div className="flex justify-between items-center pt-2 border-t border-gray-100">
-                        <div className="flex gap-0.5 text-[#eecbcb]">
+                        <div className="flex gap-0.5 text-primary">
                           {[...Array(5)].map((_, i) => (
                             <Star key={i} size={12} fill="currentColor" strokeWidth={0} />
                           ))}
                         </div>
-                        <span className="text-xs font-medium text-[#be8e8e] group-hover:translate-x-0.5 transition-transform flex items-center gap-0.5">
+                        <span className="text-xs font-medium text-primary-dark group-hover:translate-x-0.5 transition-transform flex items-center gap-0.5">
                           Chi tiết <ArrowUpRight size={12} />
                         </span>
                       </div>
@@ -178,13 +177,13 @@ export default function ShopPage() {
               ))}
 
               {filteredProducts.length === 0 && (
-                <div className="col-span-full p-2 rounded-[2.5rem] bg-white border border-[#eecbcb]/30 text-center py-16 space-y-4">
+                <div className="col-span-full p-2 rounded-[2.5rem] bg-white border border-border text-center py-16 space-y-4">
                   <p className="text-base text-gray-500 font-serif">
                     Không tìm thấy sản phẩm nào phù hợp với bộ lọc.
                   </p>
                   <Button
                     variant="outline"
-                    className="rounded-full border-[#4A4A4A]/20 text-[#4A4A4A]"
+                    className="rounded-full border-foreground/20 text-foreground"
                     onClick={() => {
                       setActiveCategory('all');
                       setFilters({ priceRange: [0, 5000000], flowerType: [], occasion: [] });

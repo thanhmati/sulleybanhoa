@@ -63,21 +63,21 @@ export default function ProductFilters({ filters, setFilters, maxPrice }: Produc
   };
 
   return (
-    <div className="p-1 rounded-[2.2rem] bg-white border border-[#eecbcb]/40 shadow-xl shadow-black/5">
-      <div className="p-5 rounded-[calc(2.2rem-0.25rem)] bg-[#FDFBF7] space-y-6">
+    <div className="p-1 rounded-[2.2rem] bg-white border border-border shadow-xl shadow-black/5">
+      <div className="p-5 rounded-[calc(2.2rem-0.25rem)] bg-cream space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-[#eecbcb]/30 pb-4">
+        <div className="flex items-center justify-between border-b border-border pb-4">
           <div className="flex items-center gap-2">
-            <span className="w-8 h-8 rounded-full bg-[#eecbcb]/30 flex items-center justify-center text-[#be8e8e]">
+            <span className="w-8 h-8 rounded-full bg-primary/30 flex items-center justify-center text-primary-dark">
               <Filter size={16} />
             </span>
-            <h3 className="font-serif text-lg font-bold tracking-tight text-[#4A4A4A]">Bộ Lọc</h3>
+            <h3 className="font-serif text-lg font-bold tracking-tight text-foreground">Bộ Lọc</h3>
           </div>
           <Button
             variant="ghost"
             size="sm"
             onClick={resetFilters}
-            className="text-xs text-[#be8e8e] hover:text-[#4A4A4A] hover:bg-[#eecbcb]/20 gap-1 h-8 px-3 rounded-full font-medium transition-all"
+            className="text-xs text-primary-dark hover:text-foreground hover:bg-primary/20 gap-1 h-8 px-3 rounded-full font-medium transition-all"
           >
             <RotateCcw size={12} />
             Đặt lại
@@ -92,9 +92,9 @@ export default function ProductFilters({ filters, setFilters, maxPrice }: Produc
           {/* Price Range */}
           <AccordionItem
             value="price"
-            className="border border-[#eecbcb]/20 bg-white/80 rounded-2xl px-4"
+            className="border border-border/80 bg-white/80 rounded-2xl px-4"
           >
-            <AccordionTrigger className="hover:no-underline py-3.5 text-sm font-semibold text-[#4A4A4A]">
+            <AccordionTrigger className="hover:no-underline py-3.5 text-sm font-semibold text-foreground">
               Mức Giá
             </AccordionTrigger>
             <AccordionContent className="pt-0 pb-5 space-y-4">
@@ -106,7 +106,7 @@ export default function ProductFilters({ filters, setFilters, maxPrice }: Produc
                 onValueChange={handlePriceChange}
                 className="py-3"
               />
-              <div className="flex items-center justify-between text-xs font-semibold text-[#4A4A4A] bg-[#FDFBF7] p-2.5 rounded-xl border border-gray-100">
+              <div className="flex items-center justify-between text-xs font-semibold text-foreground bg-cream p-2.5 rounded-xl border border-gray-100">
                 <span>
                   {new Intl.NumberFormat('vi-VN', {
                     style: 'currency',
@@ -129,9 +129,9 @@ export default function ProductFilters({ filters, setFilters, maxPrice }: Produc
           {/* Flower Type */}
           <AccordionItem
             value="type"
-            className="border border-[#eecbcb]/20 bg-white/80 rounded-2xl px-4"
+            className="border border-border/80 bg-white/80 rounded-2xl px-4"
           >
-            <AccordionTrigger className="hover:no-underline py-3.5 text-sm font-semibold text-[#4A4A4A]">
+            <AccordionTrigger className="hover:no-underline py-3.5 text-sm font-semibold text-foreground">
               Loại Hoa
             </AccordionTrigger>
             <AccordionContent className="pt-0 pb-5">
@@ -142,11 +142,11 @@ export default function ProductFilters({ filters, setFilters, maxPrice }: Produc
                       id={`type-${type}`}
                       checked={filters.flowerType.includes(type)}
                       onCheckedChange={() => handleFlowerTypeChange(type)}
-                      className="data-[state=checked]:bg-[#eecbcb] data-[state=checked]:border-[#eecbcb] border-gray-300 rounded-md h-4 w-4 transition-all"
+                      className="data-[state=checked]:bg-primary data-[state=checked]:border-primary border-gray-300 rounded-md h-4 w-4 transition-all"
                     />
                     <Label
                       htmlFor={`type-${type}`}
-                      className="text-xs font-medium cursor-pointer text-gray-600 group-hover:text-[#4A4A4A] transition-colors"
+                      className="text-xs font-medium cursor-pointer text-gray-600 group-hover:text-foreground transition-colors"
                     >
                       {type}
                     </Label>
@@ -159,9 +159,9 @@ export default function ProductFilters({ filters, setFilters, maxPrice }: Produc
           {/* Occasion */}
           <AccordionItem
             value="occasion"
-            className="border border-[#eecbcb]/20 bg-white/80 rounded-2xl px-4"
+            className="border border-border/80 bg-white/80 rounded-2xl px-4"
           >
-            <AccordionTrigger className="hover:no-underline py-3.5 text-sm font-semibold text-[#4A4A4A]">
+            <AccordionTrigger className="hover:no-underline py-3.5 text-sm font-semibold text-foreground">
               Dịp Tặng
             </AccordionTrigger>
             <AccordionContent className="pt-0 pb-5">
@@ -172,11 +172,11 @@ export default function ProductFilters({ filters, setFilters, maxPrice }: Produc
                       id={`occ-${occ}`}
                       checked={filters.occasion.includes(occ)}
                       onCheckedChange={() => handleOccasionChange(occ)}
-                      className="data-[state=checked]:bg-[#eecbcb] data-[state=checked]:border-[#eecbcb] border-gray-300 rounded-md h-4 w-4 transition-all"
+                      className="data-[state=checked]:bg-primary data-[state=checked]:border-primary border-gray-300 rounded-md h-4 w-4 transition-all"
                     />
                     <Label
                       htmlFor={`occ-${occ}`}
-                      className="text-xs font-medium cursor-pointer text-gray-600 group-hover:text-[#4A4A4A] transition-colors"
+                      className="text-xs font-medium cursor-pointer text-gray-600 group-hover:text-foreground transition-colors"
                     >
                       {occ}
                     </Label>

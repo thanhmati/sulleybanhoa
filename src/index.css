@@ -8,6 +8,7 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -15,8 +16,11 @@
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
+  --color-primary-dark: var(--primary-dark);
+  --color-[#be8e8e]: var(--primary-dark);
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
+  --color-secondary-dark: var(--secondary-dark);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
@@ -26,89 +30,128 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Semantic Brand Design System Colors */
+  --color-peach: var(--peach);
+  --color-peach-dark: var(--peach-dark);
+  --color-cream: var(--cream);
+  --color-sage: var(--sage);
+  --color-sage-dark: var(--sage-dark);
+  --color-charcoal: var(--charcoal);
+  --color-brand-dark: var(--brand-dark);
 }
 
 :root {
-  --radius: 0.65rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+
+  /* Brand System Colors */
+  --primary: #eecbcb;
+  --primary-dark: #be8e8e;
+  --primary-foreground: #4a4a4a;
+
+  --secondary: #dae5d0;
+  --secondary-dark: #67825d;
+  --secondary-foreground: #4a4a4a;
+
+  --peach: #eecbcb;
+  --peach-dark: #be8e8e;
+  --cream: #fdfbf7;
+  --sage: #dae5d0;
+  --sage-dark: #67825d;
+  --charcoal: #34302d;
+  --brand-dark: #4a4a4a;
+
+  --background: #fdfbf7;
+  --foreground: #4a4a4a;
+  --card: #ffffff;
+  --card-foreground: #4a4a4a;
+  --popover: #ffffff;
+  --popover-foreground: #4a4a4a;
+  --muted: #dae5d0;
+  --muted-foreground: #67825d;
+  --accent: #eecbcb;
+  --accent-foreground: #4a4a4a;
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: rgba(238, 203, 203, 0.4);
+  --input: rgba(238, 203, 203, 0.4);
+  --ring: #be8e8e;
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --background: #252220;
+  --foreground: #fdfbf7;
+  --card: #34302d;
+  --card-foreground: #fdfbf7;
+  --popover: #34302d;
+  --popover-foreground: #fdfbf7;
+  --primary: #eecbcb;
+  --primary-dark: #be8e8e;
+  --primary-foreground: #34302d;
+  --secondary: #34302d;
+  --secondary-foreground: #fdfbf7;
+  --muted: #34302d;
+  --muted-foreground: #be8e8e;
+  --accent: #34302d;
+  --accent-foreground: #fdfbf7;
+  --border: rgba(255, 255, 255, 0.1);
+  --input: rgba(255, 255, 255, 0.15);
+  --ring: #eecbcb;
+}
+
+/* Sulley Floral Studio Reusable Component Classes */
+@layer components {
+  /* Eyebrow Tags driven by semantic tokens */
+  .eyebrow-tag {
+    display: inline-block;
+    padding: 0.375rem 1rem;
+    border-radius: 9999px;
+    background-color: rgba(238, 203, 203, 0.25);
+    border: 1px solid rgba(238, 203, 203, 0.5);
+    color: var(--primary-dark);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+  }
+
+  .eyebrow-tag-sage {
+    display: inline-block;
+    padding: 0.375rem 1rem;
+    border-radius: 9999px;
+    background-color: rgba(218, 229, 208, 0.3);
+    color: var(--secondary-dark);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+  }
+
+  /* Doppelrand Outer Shell & Inner Core */
+  .doppelrand-shell {
+    padding: 0.625rem;
+    border-radius: 2.5rem;
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 1px solid var(--border);
+    box-shadow: 0 20px 25px -5px rgba(238, 203, 203, 0.15);
+  }
+
+  .doppelrand-core {
+    border-radius: calc(2.5rem - 0.625rem);
+    overflow: hidden;
+    background-color: var(--cream);
+  }
+
+  .doppelrand-card {
+    padding: 0.5rem;
+    border-radius: 2rem;
+    background-color: var(--card);
+    border: 1px solid var(--border);
+    transition: all 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+  }
+  .doppelrand-card:hover {
+    border-color: var(--primary);
+    box-shadow: 0 20px 25px -5px rgba(238, 203, 203, 0.25);
+  }
 }
 
 @layer base {
@@ -116,6 +159,6 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
   }
 }
