@@ -1,8 +1,8 @@
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { Slider } from '../ui/slider'; // Use relative path as previously fixed
-import { RotateCcw } from 'lucide-react';
+import { Slider } from '../ui/slider';
+import { RotateCcw, Filter } from 'lucide-react';
 import {
   Accordion,
   AccordionContent,
@@ -35,7 +35,6 @@ const FLOWER_TYPES = [
 const OCCASIONS = ['Birthday', 'Love', 'Anniversary', 'Opening', 'Graduation', 'Decoration'];
 
 export default function ProductFilters({ filters, setFilters, maxPrice }: ProductFiltersProps) {
-  // Handlers
   const handleFlowerTypeChange = (type: string) => {
     const next = filters.flowerType.includes(type)
       ? filters.flowerType.filter((t) => t !== type)
@@ -64,112 +63,130 @@ export default function ProductFilters({ filters, setFilters, maxPrice }: Produc
   };
 
   return (
-    <div className="space-y-2">
-      <div className="flex items-center justify-between mb-4 px-1">
-        <h3 className="font-serif text-xl font-bold tracking-tight">Bộ lọc</h3>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={resetFilters}
-          className="text-gray-400 hover:text-black hover:bg-transparent gap-1 h-auto p-0 font-normal transition-colors"
+    <div className="p-1 rounded-[2.2rem] bg-white border border-[#eecbcb]/40 shadow-xl shadow-black/5">
+      <div className="p-5 rounded-[calc(2.2rem-0.25rem)] bg-[#FDFBF7] space-y-6">
+        {/* Header */}
+        <div className="flex items-center justify-between border-b border-[#eecbcb]/30 pb-4">
+          <div className="flex items-center gap-2">
+            <span className="w-8 h-8 rounded-full bg-[#eecbcb]/30 flex items-center justify-center text-[#be8e8e]">
+              <Filter size={16} />
+            </span>
+            <h3 className="font-serif text-lg font-bold tracking-tight text-[#4A4A4A]">Bộ Lọc</h3>
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={resetFilters}
+            className="text-xs text-[#be8e8e] hover:text-[#4A4A4A] hover:bg-[#eecbcb]/20 gap-1 h-8 px-3 rounded-full font-medium transition-all"
+          >
+            <RotateCcw size={12} />
+            Đặt lại
+          </Button>
+        </div>
+
+        <Accordion
+          type="multiple"
+          defaultValue={['price', 'type', 'occasion']}
+          className="w-full space-y-3"
         >
-          <RotateCcw size={14} />
-          Đặt lại
-        </Button>
+          {/* Price Range */}
+          <AccordionItem
+            value="price"
+            className="border border-[#eecbcb]/20 bg-white/80 rounded-2xl px-4"
+          >
+            <AccordionTrigger className="hover:no-underline py-3.5 text-sm font-semibold text-[#4A4A4A]">
+              Mức Giá
+            </AccordionTrigger>
+            <AccordionContent className="pt-0 pb-5 space-y-4">
+              <Slider
+                defaultValue={[0, maxPrice]}
+                value={[filters.priceRange[0], filters.priceRange[1]]}
+                max={maxPrice}
+                step={50000}
+                onValueChange={handlePriceChange}
+                className="py-3"
+              />
+              <div className="flex items-center justify-between text-xs font-semibold text-[#4A4A4A] bg-[#FDFBF7] p-2.5 rounded-xl border border-gray-100">
+                <span>
+                  {new Intl.NumberFormat('vi-VN', {
+                    style: 'currency',
+                    currency: 'VND',
+                    maximumFractionDigits: 0,
+                  }).format(filters.priceRange[0])}
+                </span>
+                <span className="text-gray-300">-</span>
+                <span>
+                  {new Intl.NumberFormat('vi-VN', {
+                    style: 'currency',
+                    currency: 'VND',
+                    maximumFractionDigits: 0,
+                  }).format(filters.priceRange[1])}
+                </span>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+
+          {/* Flower Type */}
+          <AccordionItem
+            value="type"
+            className="border border-[#eecbcb]/20 bg-white/80 rounded-2xl px-4"
+          >
+            <AccordionTrigger className="hover:no-underline py-3.5 text-sm font-semibold text-[#4A4A4A]">
+              Loại Hoa
+            </AccordionTrigger>
+            <AccordionContent className="pt-0 pb-5">
+              <div className="grid grid-cols-1 gap-2.5">
+                {FLOWER_TYPES.map((type) => (
+                  <div key={type} className="flex items-center space-x-3 group">
+                    <Checkbox
+                      id={`type-${type}`}
+                      checked={filters.flowerType.includes(type)}
+                      onCheckedChange={() => handleFlowerTypeChange(type)}
+                      className="data-[state=checked]:bg-[#eecbcb] data-[state=checked]:border-[#eecbcb] border-gray-300 rounded-md h-4 w-4 transition-all"
+                    />
+                    <Label
+                      htmlFor={`type-${type}`}
+                      className="text-xs font-medium cursor-pointer text-gray-600 group-hover:text-[#4A4A4A] transition-colors"
+                    >
+                      {type}
+                    </Label>
+                  </div>
+                ))}
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+
+          {/* Occasion */}
+          <AccordionItem
+            value="occasion"
+            className="border border-[#eecbcb]/20 bg-white/80 rounded-2xl px-4"
+          >
+            <AccordionTrigger className="hover:no-underline py-3.5 text-sm font-semibold text-[#4A4A4A]">
+              Dịp Tặng
+            </AccordionTrigger>
+            <AccordionContent className="pt-0 pb-5">
+              <div className="grid grid-cols-1 gap-2.5">
+                {OCCASIONS.map((occ) => (
+                  <div key={occ} className="flex items-center space-x-3 group">
+                    <Checkbox
+                      id={`occ-${occ}`}
+                      checked={filters.occasion.includes(occ)}
+                      onCheckedChange={() => handleOccasionChange(occ)}
+                      className="data-[state=checked]:bg-[#eecbcb] data-[state=checked]:border-[#eecbcb] border-gray-300 rounded-md h-4 w-4 transition-all"
+                    />
+                    <Label
+                      htmlFor={`occ-${occ}`}
+                      className="text-xs font-medium cursor-pointer text-gray-600 group-hover:text-[#4A4A4A] transition-colors"
+                    >
+                      {occ}
+                    </Label>
+                  </div>
+                ))}
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
       </div>
-
-      <Accordion
-        type="multiple"
-        defaultValue={['price', 'type', 'occasion']}
-        className="w-full space-y-4"
-      >
-        {/* Price Range */}
-        <AccordionItem value="price" className="border-none bg-gray-50/50 rounded-xl px-4">
-          <AccordionTrigger className="hover:no-underline py-4 text-base font-semibold text-gray-900 group">
-            Mức giá
-          </AccordionTrigger>
-          <AccordionContent className="pt-0 pb-6">
-            <Slider
-              defaultValue={[0, maxPrice]}
-              value={[filters.priceRange[0], filters.priceRange[1]]}
-              max={maxPrice}
-              step={50000}
-              onValueChange={handlePriceChange}
-              className="py-4"
-            />
-            <div className="flex items-center justify-between text-sm font-medium text-gray-900 mt-2">
-              <span>
-                {new Intl.NumberFormat('vi-VN', {
-                  style: 'currency',
-                  currency: 'VND',
-                  maximumFractionDigits: 0,
-                }).format(filters.priceRange[0])}
-              </span>
-              <span>
-                {new Intl.NumberFormat('vi-VN', {
-                  style: 'currency',
-                  currency: 'VND',
-                  maximumFractionDigits: 0,
-                }).format(filters.priceRange[1])}
-              </span>
-            </div>
-          </AccordionContent>
-        </AccordionItem>
-
-        {/* Flower Type */}
-        <AccordionItem value="type" className="border-none bg-gray-50/50 rounded-xl px-4">
-          <AccordionTrigger className="hover:no-underline py-4 text-base font-semibold text-gray-900">
-            Loại hoa
-          </AccordionTrigger>
-          <AccordionContent className="pt-0 pb-6">
-            <div className="grid grid-cols-1 gap-3">
-              {FLOWER_TYPES.map((type) => (
-                <div key={type} className="flex items-center space-x-3 group">
-                  <Checkbox
-                    id={`type-${type}`}
-                    checked={filters.flowerType.includes(type)}
-                    onCheckedChange={() => handleFlowerTypeChange(type)}
-                    className="data-[state=checked]:bg-black data-[state=checked]:border-black border-gray-300 rounded-md h-5 w-5 transition-all duration-200"
-                  />
-                  <Label
-                    htmlFor={`type-${type}`}
-                    className="text-[15px] font-normal cursor-pointer text-gray-600 group-hover:text-black transition-colors"
-                  >
-                    {type}
-                  </Label>
-                </div>
-              ))}
-            </div>
-          </AccordionContent>
-        </AccordionItem>
-
-        {/* Occasion */}
-        <AccordionItem value="occasion" className="border-none bg-gray-50/50 rounded-xl px-4">
-          <AccordionTrigger className="hover:no-underline py-4 text-base font-semibold text-gray-900">
-            Dịp
-          </AccordionTrigger>
-          <AccordionContent className="pt-0 pb-6">
-            <div className="grid grid-cols-1 gap-3">
-              {OCCASIONS.map((occ) => (
-                <div key={occ} className="flex items-center space-x-3 group">
-                  <Checkbox
-                    id={`occ-${occ}`}
-                    checked={filters.occasion.includes(occ)}
-                    onCheckedChange={() => handleOccasionChange(occ)}
-                    className="data-[state=checked]:bg-black data-[state=checked]:border-black border-gray-300 rounded-md h-5 w-5 transition-all duration-200"
-                  />
-                  <Label
-                    htmlFor={`occ-${occ}`}
-                    className="text-[15px] font-normal cursor-pointer text-gray-600 group-hover:text-black transition-colors"
-                  >
-                    {occ}
-                  </Label>
-                </div>
-              ))}
-            </div>
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
     </div>
   );
 }

@@ -12,12 +12,12 @@ interface SEOProps {
 export const SEO = ({
   title,
   description,
-  name = 'Sulleybanhoa',
+  name = 'Sulley Floral Studio',
   type = 'website',
   image,
   url,
 }: SEOProps) => {
-  const siteTitle = `${title} | Sulleybanhoa - Tiệm hoa trên mây`;
+  const siteTitle = `${title} | Sulley Floral Studio - Tiệm hoa trên mây`;
   const defaultDescription =
     'Tiệm hoa trên mây - Cung cấp hoa tươi, quà tặng và thiết kế hoa nghệ thuật.';
   const metaDescription = description || defaultDescription;
