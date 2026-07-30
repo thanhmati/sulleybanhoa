@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useStoreSettingsQuery } from '@/hooks/useStoreSettings';
 import { Button } from '@/components/ui/button';
 import {
   MessageCircle,
@@ -132,6 +133,8 @@ const ACCENT_FLORA_OPTIONS: AccentFloraOption[] = [
 
 export function BouquetBuilder() {
   const [activeStep, setActiveStep] = useState<number>(1);
+  const { data: settings } = useStoreSettingsQuery();
+  const bouquetConfig = settings?.landing_bouquet_builder;
 
   // User selections
   const [selectedStyle, setSelectedStyle] = useState<StyleOption>(STYLE_OPTIONS[0]);
@@ -177,13 +180,16 @@ export function BouquetBuilder() {
       <div className="container mx-auto px-4 max-w-6xl">
         {/* Header Title */}
         <div className="text-center max-w-2xl mx-auto mb-12 space-y-3">
-          <div className="eyebrow-tag">XƯỞNG CẮM HOA THU NHỎ</div>
+          <div className="eyebrow-tag">{bouquetConfig?.eyebrow ?? 'XƯỞNG CẦM HOA THU NHỎ'}</div>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif text-foreground leading-tight">
-            Tự Tay Phối Hoa <span className="italic text-primary-dark">& Tạo Thiệp 3D</span>
+            {bouquetConfig?.titleMain ?? 'Tự Tay Phối Hoa'}{' '}
+            <span className="italic text-primary-dark">
+              {bouquetConfig?.titleItalic ?? '& Tạo Thiệp 3D'}
+            </span>
           </h2>
           <p className="text-base text-gray-500 max-w-lg mx-auto">
-            Trải nghiệm tự thiết kế bó hoa cá nhân hóa theo phong cách Hàn Quốc chỉ qua 4 bước đơn
-            giản.
+            {bouquetConfig?.subtitle ??
+              'Trải nghiệm tự thiết kế bó hoa cá nhân hóa theo phong cách Hàn Quốc chỉ qua 4 bước đơn giản.'}
           </p>
         </div>
 

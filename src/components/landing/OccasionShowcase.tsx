@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useProductsQuery } from '@/hooks/useProducts';
+import { useStoreSettingsQuery } from '@/hooks/useStoreSettings';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Star, ArrowUpRight, Heart, Gift, Sparkles, Quote, CheckCircle2 } from 'lucide-react';
@@ -89,6 +90,9 @@ const MOCK_REVIEWS: ReviewItem[] = [
 export function OccasionShowcase() {
   const [activeTab, setActiveTab] = useState<string>('Love');
   const { data: products = [] } = useProductsQuery();
+  const { data: settings } = useStoreSettingsQuery();
+  const occasionConfig = settings?.landing_occasion;
+  const reviewsConfig = settings?.landing_reviews;
 
   // Filter products by active occasion tab
   const occasionProducts = products
@@ -104,9 +108,14 @@ export function OccasionShowcase() {
         <div className="space-y-12">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 text-left">
             <div className="space-y-3">
-              <div className="eyebrow-tag">KHÁM PHÁ THEO DỊP TẶNG</div>
+              <div className="eyebrow-tag">
+                {occasionConfig?.eyebrow ?? 'KHÁM PHÁ THEO DỊP TẶNG'}
+              </div>
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif text-foreground leading-tight">
-                Hoa Tươi Cho <span className="italic text-primary">Từng Cột Mốc</span>
+                {occasionConfig?.titleMain ?? 'Hoa Tươi Cho'}{' '}
+                <span className="italic text-primary">
+                  {occasionConfig?.titleItalic ?? 'Từng Cột Mốc'}
+                </span>
               </h2>
               <p className="text-base text-gray-500 max-w-md">
                 {activeOccasionInfo?.desc || 'Tuyển chọn những mẫu hoa tinh tế phù hợp nhất.'}
@@ -183,12 +192,13 @@ export function OccasionShowcase() {
         {/* Section 2: Real Customer Reviews */}
         <div className="space-y-12 pt-8 border-t border-border">
           <div className="text-center max-w-xl mx-auto space-y-3">
-            <div className="eyebrow-tag-sage">ĐÁNH GIÁ THỰC TẾ</div>
+            <div className="eyebrow-tag-sage">{reviewsConfig?.eyebrow ?? 'ĐÁNH GIÁ THỰC TẾ'}</div>
             <h2 className="text-3xl sm:text-4xl font-serif text-foreground">
-              Khách Hàng Nói Gì Về Sulley?
+              {reviewsConfig?.title ?? 'Khách Hàng Nói Gì Về Sulley?'}
             </h2>
             <p className="text-sm text-gray-500">
-              Niềm tin & sự hài lòng của hơn 2.000+ khách hàng tại TP.HCM
+              {reviewsConfig?.subtitle ??
+                'Niềm tin & sự hài lòng của hơn 2.000+ khách hàng tại TP.HCM'}
             </p>
           </div>
 

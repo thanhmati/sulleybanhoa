@@ -35,6 +35,49 @@ export interface FAQItem {
   answer: string;
 }
 
+export interface LandingFeaturedConfig {
+  eyebrow: string;
+  title: string;
+}
+
+export interface LandingPhilosophyConfig {
+  eyebrow: string;
+  titleMain: string;
+  titleItalic: string;
+  paragraph1: string;
+  paragraph2: string;
+}
+
+export interface LandingPillarItem {
+  title: string;
+  desc: string;
+}
+
+export interface LandingPillarsConfig {
+  sectionTitle: string;
+  sectionSubtitle: string;
+  pillars: LandingPillarItem[];
+}
+
+export interface LandingBouquetBuilderConfig {
+  eyebrow: string;
+  titleMain: string;
+  titleItalic: string;
+  subtitle: string;
+}
+
+export interface LandingOccasionConfig {
+  eyebrow: string;
+  titleMain: string;
+  titleItalic: string;
+}
+
+export interface LandingReviewsConfig {
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+}
+
 export interface StoreSettingItem<T = any> {
   key: string;
   value: T;

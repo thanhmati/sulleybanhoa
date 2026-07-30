@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ArrowUpRight, Star, Heart, Truck, Clock, Flower2, ShieldCheck } from 'lucide-react';
@@ -10,11 +10,15 @@ import { SEO } from '@/components/shared/SEO';
 import { BouquetBuilder } from '@/components/landing/BouquetBuilder';
 import { OccasionShowcase } from '@/components/landing/OccasionShowcase';
 import { renderHeroTitle } from '@/lib/utils/renderTitle';
+import type { LandingPillarItem } from '@/types/store-setting';
 
 export default function LandingPage() {
   const { data: products = [] } = useProductsQuery();
   const { data: settings } = useStoreSettingsQuery();
   const hero = settings?.landing_hero;
+  const featured = settings?.landing_featured;
+  const philosophy = settings?.landing_philosophy;
+  const pillars = settings?.landing_pillars;
 
   // Mouse position state for interactive parallax depth
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -33,28 +37,33 @@ export default function LandingPage() {
     .filter((p) => p.isBestSeller || ['1', '2', '7'].includes(p.id))
     .slice(0, 3);
 
-  const valuePillars = [
-    {
-      icon: Flower2,
-      title: 'Hoa Tươi Nhập Mới',
-      desc: 'Tuyển chọn từng cành hoa nhập khẩu mỗi sáng, đảm bảo độ tươi từ 3-5 ngày.',
-    },
-    {
-      icon: Heart,
-      title: 'Nghệ Thuật Hàn Quốc',
-      desc: 'Thiết kế chú trọng sự tĩnh tại, khoảng trống nghệ thuật và đường nét tinh tế.',
-    },
-    {
-      icon: Truck,
-      title: 'Giao Hàng Tận Nơi',
-      desc: 'Vận chuyển chuyên nghiệp giữ phom dáng hoa hoàn hảo đến tay người nhận.',
-    },
-    {
-      icon: Clock,
-      title: 'Thiết Kế Độc Bản',
-      desc: 'Tùy chỉnh tone màu, loại hoa và thiệp viết tay theo câu chuyện riêng của bạn.',
-    },
-  ];
+  const PILLAR_ICONS = [Flower2, Heart, Truck, Clock];
+
+  const valuePillars = (
+    pillars?.pillars ??
+    ([
+      {
+        title: 'Hoa Tươi Nhập Mới',
+        desc: 'Tuyển chọn từng cành hoa nhập khẩu mỗi sáng, đảm bảo độ tươi từ 3-5 ngày.',
+      },
+      {
+        title: 'Nghệ Thuật Hàn Quốc',
+        desc: 'Thiết kế chú trọng sự tĩnh tại, khoảng trống nghệ thuật và đường nét tinh tế.',
+      },
+      {
+        title: 'Giao Hàng Tận Nơi',
+        desc: 'Vận chuyển chuyên nghiệp giữ phom dáng hoa hoàn hảo đến tay người nhận.',
+      },
+      {
+        title: 'Thiết Kế Độc Bản',
+        desc: 'Tùy chỉnh tone màu, loại hoa và thiệp viết tay theo câu chuyện riêng của bạn.',
+      },
+    ] as LandingPillarItem[])
+  ).map((item: LandingPillarItem, i: number) => ({
+    icon: PILLAR_ICONS[i] ?? Flower2,
+    title: item.title,
+    desc: item.desc,
+  }));
 
   return (
     <>
@@ -175,9 +184,9 @@ export default function LandingPage() {
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
             <div className="text-left space-y-2">
-              <div className="eyebrow-tag">HOA NỔI BẬT</div>
+              <div className="eyebrow-tag">{featured?.eyebrow ?? 'HOA NỔI BẬT'}</div>
               <h2 className="text-3xl sm:text-4xl font-serif text-foreground">
-                Thiết Kế Được Yêu Thích
+                {featured?.title ?? 'Thiết Kế Được Yêu Thích'}
               </h2>
             </div>
             <Link to="/shop">
@@ -265,20 +274,21 @@ export default function LandingPage() {
 
           {/* Right Editorial Story */}
           <div className="md:col-span-6 space-y-6 text-left">
-            <div className="eyebrow-tag">TRIẾT LÝ NGHỆ THUẬT</div>
+            <div className="eyebrow-tag">{philosophy?.eyebrow ?? 'TRIẾT LÝ NGHỆ THUẬT'}</div>
             <h2 className="text-3xl sm:text-4xl font-serif text-foreground leading-tight">
-              Triết lý của <br />
-              <span className="italic text-secondary-dark">sự tối giản & tinh tế</span>
+              {philosophy?.titleMain ?? 'Triết lý của'} <br />
+              <span className="italic text-secondary-dark">
+                {philosophy?.titleItalic ?? 'sự tối giản & tinh tế'}
+              </span>
             </h2>
             <div className="w-16 h-1 bg-primary rounded-full" />
             <p className="text-base text-gray-600 leading-relaxed">
-              Chúng tôi tin rằng hoa không chỉ là vật trang trí, mà là cuộc trò chuyện giữa thiên
-              nhiên và không gian sống của bạn. Mỗi thiết kế đều tuân theo nguyên tắc của nghệ thuật
-              cắm hoa Hàn Quốc - chú trọng vào đường nét, khoảng trống và sự hài hòa.
+              {philosophy?.paragraph1 ??
+                'Chúng tôi tin rằng hoa không chỉ là vật trang trí, mà là cuộc trò chuyện giữa thiên nhiên và không gian sống của bạn. Mỗi thiết kế đều tuân theo nguyên tắc của nghệ thuật cắm hoa Hàn Quốc - chú trọng vào đường nét, khoảng trống và sự hài hòa.'}
             </p>
             <p className="text-base text-gray-600 leading-relaxed">
-              Từng nhành hoa được đặt để có chủ đích, tạo nên sự tĩnh tại và thanh lịch, nâng niu
-              từng khoảnh khắc đời thường.
+              {philosophy?.paragraph2 ??
+                'Từng nhành hoa được đặt để có chủ đích, tạo nên sự tĩnh tại và thanh lịch, nâng niu từng khoảnh khắc đời thường.'}
             </p>
             <div className="pt-2">
               <Link to="/about">
@@ -296,30 +306,34 @@ export default function LandingPage() {
       <section className="py-20 bg-secondary/15 border-t border-secondary/30 bg-grid-pattern relative">
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="text-center max-w-2xl mx-auto mb-16 space-y-3">
-            <h2 className="text-3xl font-serif text-foreground">Cam Kết Từ Sulley</h2>
+            <h2 className="text-3xl font-serif text-foreground">
+              {pillars?.sectionTitle ?? 'Cam Kết Từ Sulley'}
+            </h2>
             <p className="text-gray-500 text-sm">
-              Trải nghiệm mua hoa an tâm & chất lượng hàng đầu
+              {pillars?.sectionSubtitle ?? 'Trải nghiệm mua hoa an tâm & chất lượng hàng đầu'}
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {valuePillars.map((item, idx) => {
-              const IconComp = item.icon;
-              return (
-                <div
-                  key={idx}
-                  className="p-1.5 rounded-[2rem] bg-white border border-secondary/40 shadow-sm hover:shadow-lg transition-all duration-300"
-                >
-                  <div className="p-6 rounded-[calc(2rem-0.375rem)] bg-cream h-full text-left space-y-4">
-                    <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center text-primary-dark">
-                      <IconComp size={22} />
+            {valuePillars.map(
+              (item: { icon: React.ElementType; title: string; desc: string }, idx: number) => {
+                const IconComp = item.icon;
+                return (
+                  <div
+                    key={idx}
+                    className="p-1.5 rounded-[2rem] bg-white border border-secondary/40 shadow-sm hover:shadow-lg transition-all duration-300"
+                  >
+                    <div className="p-6 rounded-[calc(2rem-0.375rem)] bg-cream h-full text-left space-y-4">
+                      <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center text-primary-dark">
+                        <IconComp size={22} />
+                      </div>
+                      <h3 className="text-lg font-serif font-bold text-foreground">{item.title}</h3>
+                      <p className="text-xs text-gray-500 leading-relaxed">{item.desc}</p>
                     </div>
-                    <h3 className="text-lg font-serif font-bold text-foreground">{item.title}</h3>
-                    <p className="text-xs text-gray-500 leading-relaxed">{item.desc}</p>
                   </div>
-                </div>
-              );
-            })}
+                );
+              },
+            )}
           </div>
         </div>
       </section>

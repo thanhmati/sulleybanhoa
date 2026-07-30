@@ -1,6 +1,12 @@
 import { supabase } from '@/lib/supabase';
 import type {
   LandingHeroConfig,
+  LandingFeaturedConfig,
+  LandingPhilosophyConfig,
+  LandingPillarsConfig,
+  LandingBouquetBuilderConfig,
+  LandingOccasionConfig,
+  LandingReviewsConfig,
   ShopHeaderConfig,
   AboutPageConfig,
   StoreContactConfig,
@@ -43,6 +49,44 @@ const DEFAULT_CONTACT: StoreContactConfig = {
   openHours: '08:00 - 21:00 hàng ngày',
 };
 
+const DEFAULT_LANDING_FEATURED: LandingFeaturedConfig = {
+  eyebrow: 'HOA NỔI BẬT',
+  title: 'Thiết Kế Được Yêu Thích',
+};
+
+const DEFAULT_LANDING_PHILOSOPHY: LandingPhilosophyConfig = {
+  eyebrow: 'TRIẾT LÝ NGHỆ THUẬT',
+  titleMain: 'Triết lý của',
+  titleItalic: 'sự tối giản & tinh tế',
+  paragraph1:
+    'Chúng tôi tin rằng hoa không chỉ là vật trang trí, mà là cuộc trò chuyện giữa thiên nhiên và không gian sống của bạn. Mỗi thiết kế đều tuân theo nguyên tắc của nghệ thuật cắm hoa Hàn Quốc - chú trọng vào đường nét, khoảng trống và sự hài hòa.',
+  paragraph2:
+    'Từng nhành hoa được đặt để có chủ đích, tạo nên sự tĩnh tại và thanh lịch, nâng niu từng khoảnh khắc đời thường.',
+};
+
+const DEFAULT_LANDING_PILLARS: LandingPillarsConfig = {
+  sectionTitle: 'Cam Kết Từ Sulley',
+  sectionSubtitle: 'Trải nghiệm mua hoa an tâm & chất lượng hàng đầu',
+  pillars: [
+    {
+      title: 'Hoa Tươi Nhập Mới',
+      desc: 'Tuyển chọn từng cành hoa nhập khẩu mỗi sáng, đảm bảo độ tươi từ 3-5 ngày.',
+    },
+    {
+      title: 'Nghệ Thuật Hàn Quốc',
+      desc: 'Thiết kế chú trọng sự tĩnh tại, khoảng trống nghệ thuật và đường nét tinh tế.',
+    },
+    {
+      title: 'Giao Hàng Tận Nơi',
+      desc: 'Vận chuyển chuyên nghiệp giữ phom dáng hoa hoàn hảo đến tay người nhận.',
+    },
+    {
+      title: 'Thiết Kế Độc Bản',
+      desc: 'Tùy chỉnh tone màu, loại hoa và thiệp viết tay theo câu chuyện riêng của bạn.',
+    },
+  ],
+};
+
 const DEFAULT_FAQS: FAQItem[] = [
   {
     question: 'Hoa có đúng mẫu như trên hình không?',
@@ -61,6 +105,26 @@ const DEFAULT_FAQS: FAQItem[] = [
   },
 ];
 
+const DEFAULT_LANDING_BOUQUET_BUILDER: LandingBouquetBuilderConfig = {
+  eyebrow: 'XƯỜNG CẦM HOA THU NHỏ',
+  titleMain: 'Tự Tay Phối Hoa',
+  titleItalic: '& Tạo Thiệp 3D',
+  subtitle:
+    'Trải nghiệm tự thiết kế bó hoa cá nhân hóa theo phong cách Hàn Quốc chỉ qua 4 bước đơn giản.',
+};
+
+const DEFAULT_LANDING_OCCASION: LandingOccasionConfig = {
+  eyebrow: 'KHÁM PHÁ THEO DỊP TẶNG',
+  titleMain: 'Hoa Tươi Cho',
+  titleItalic: 'Từng Cột Mốc',
+};
+
+const DEFAULT_LANDING_REVIEWS: LandingReviewsConfig = {
+  eyebrow: 'ĐÁNH GIÁ THỰC TẾT',
+  title: 'Khách Hàng Nói Gì Về Sulley?',
+  subtitle: 'Niềm tin & sự hài lòng của hơn 2.000+ khách hàng tại TP.HCM',
+};
+
 export const storeSettingService = {
   async getSettings(): Promise<Record<string, any>> {
     try {
@@ -68,6 +132,12 @@ export const storeSettingService = {
 
       const result: Record<string, any> = {
         landing_hero: DEFAULT_LANDING_HERO,
+        landing_featured: DEFAULT_LANDING_FEATURED,
+        landing_philosophy: DEFAULT_LANDING_PHILOSOPHY,
+        landing_pillars: DEFAULT_LANDING_PILLARS,
+        landing_bouquet_builder: DEFAULT_LANDING_BOUQUET_BUILDER,
+        landing_occasion: DEFAULT_LANDING_OCCASION,
+        landing_reviews: DEFAULT_LANDING_REVIEWS,
         shop_hero: DEFAULT_SHOP_HERO,
         about_page: DEFAULT_ABOUT_PAGE,
         store_contact: DEFAULT_CONTACT,
@@ -95,6 +165,12 @@ export const storeSettingService = {
     } catch {
       return {
         landing_hero: DEFAULT_LANDING_HERO,
+        landing_featured: DEFAULT_LANDING_FEATURED,
+        landing_philosophy: DEFAULT_LANDING_PHILOSOPHY,
+        landing_pillars: DEFAULT_LANDING_PILLARS,
+        landing_bouquet_builder: DEFAULT_LANDING_BOUQUET_BUILDER,
+        landing_occasion: DEFAULT_LANDING_OCCASION,
+        landing_reviews: DEFAULT_LANDING_REVIEWS,
         shop_hero: DEFAULT_SHOP_HERO,
         about_page: DEFAULT_ABOUT_PAGE,
         store_contact: DEFAULT_CONTACT,

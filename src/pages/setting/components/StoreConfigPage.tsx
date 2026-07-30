@@ -8,12 +8,30 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useStoreSettingsQuery, useUpdateStoreSettingMutation } from '@/hooks/useStoreSettings';
 import type {
   LandingHeroConfig,
+  LandingFeaturedConfig,
+  LandingPhilosophyConfig,
+  LandingPillarsConfig,
+  LandingBouquetBuilderConfig,
+  LandingOccasionConfig,
+  LandingReviewsConfig,
   ShopHeaderConfig,
   AboutPageConfig,
   StoreContactConfig,
 } from '@/types/store-setting';
 import { renderHeroTitle } from '@/lib/utils/renderTitle';
-import { Loader2, Save, Store, Sparkles, ShoppingBag, Info, Eye } from 'lucide-react';
+import {
+  Loader2,
+  Save,
+  Store,
+  Sparkles,
+  ShoppingBag,
+  Info,
+  Eye,
+  Star,
+  Heart,
+  Layers,
+} from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
 
 export default function StoreConfigPage() {
   const { data: settings, isLoading } = useStoreSettingsQuery();
@@ -62,6 +80,76 @@ export default function StoreConfigPage() {
     },
   });
 
+  const featuredForm = useForm<LandingFeaturedConfig>({
+    defaultValues: {
+      eyebrow: 'HOA NỔI BẬT',
+      title: 'Thiết Kế Được Yêu Thích',
+    },
+  });
+
+  const philosophyForm = useForm<LandingPhilosophyConfig>({
+    defaultValues: {
+      eyebrow: 'TRIẾT LÝ NGHỆ THUẬT',
+      titleMain: 'Triết lý của',
+      titleItalic: 'sự tối giản & tinh tế',
+      paragraph1:
+        'Chúng tôi tin rằng hoa không chỉ là vật trang trí, mà là cuộc trò chuyện giữa thiên nhiên và không gian sống của bạn. Mỗi thiết kế đều tuân theo nguyên tắc của nghệ thuật cắm hoa Hàn Quốc - chú trọng vào đường nét, khoảng trống và sự hài hòa.',
+      paragraph2:
+        'Từng nhành hoa được đặt để có chủ đích, tạo nên sự tĩnh tại và thanh lịch, nâng niu từng khoảnh khắc đời thường.',
+    },
+  });
+
+  const pillarsForm = useForm<LandingPillarsConfig>({
+    defaultValues: {
+      sectionTitle: 'Cam Kết Từ Sulley',
+      sectionSubtitle: 'Trải nghiệm mua hoa an tâm & chất lượng hàng đầu',
+      pillars: [
+        {
+          title: 'Hoa Tươi Nhập Mới',
+          desc: 'Tuyển chọn từng cành hoa nhập khẩu mỗi sáng, đảm bảo độ tươi từ 3-5 ngày.',
+        },
+        {
+          title: 'Nghệ Thuật Hàn Quốc',
+          desc: 'Thiết kế chú trọng sự tĩnh tại, khoảng trống nghệ thuật và đường nét tinh tế.',
+        },
+        {
+          title: 'Giao Hàng Tận Nơi',
+          desc: 'Vận chuyển chuyên nghiệp giữ phom dáng hoa hoàn hảo đến tay người nhận.',
+        },
+        {
+          title: 'Thiết Kế Độc Bản',
+          desc: 'Tùy chỉnh tone màu, loại hoa và thiệp viết tay theo câu chuyện riêng của bạn.',
+        },
+      ],
+    },
+  });
+
+  const bouquetBuilderForm = useForm<LandingBouquetBuilderConfig>({
+    defaultValues: {
+      eyebrow: 'XƯỜNG CẦM HOA THU NHỏ',
+      titleMain: 'Tự Tay Phối Hoa',
+      titleItalic: '& Tạo Thiệp 3D',
+      subtitle:
+        'Trải nghiệm tự thiết kế bó hoa cá nhân hóa theo phong cách Hàn Quốc chỉ qua 4 bước đơn giản.',
+    },
+  });
+
+  const occasionForm = useForm<LandingOccasionConfig>({
+    defaultValues: {
+      eyebrow: 'KHÁM PHÁ THEO DỊP TẶNG',
+      titleMain: 'Hoa Tươi Cho',
+      titleItalic: 'Từng Cột Mốc',
+    },
+  });
+
+  const reviewsForm = useForm<LandingReviewsConfig>({
+    defaultValues: {
+      eyebrow: 'ĐÁNH GIÁ THỰC TẾT',
+      title: 'Khách Hàng Nói Gì Về Sulley?',
+      subtitle: 'Niềm tin & sự hài lòng của hơn 2.000+ khách hàng tại TP.HCM',
+    },
+  });
+
   useEffect(() => {
     if (settings?.landing_hero) {
       const heroData = settings.landing_hero;
@@ -88,7 +176,26 @@ export default function StoreConfigPage() {
     if (settings?.shop_hero) shopForm.reset(settings.shop_hero);
     if (settings?.about_page) aboutForm.reset(settings.about_page);
     if (settings?.store_contact) contactForm.reset(settings.store_contact);
-  }, [settings, heroForm, shopForm, aboutForm, contactForm]);
+    if (settings?.landing_featured) featuredForm.reset(settings.landing_featured);
+    if (settings?.landing_philosophy) philosophyForm.reset(settings.landing_philosophy);
+    if (settings?.landing_pillars) pillarsForm.reset(settings.landing_pillars);
+    if (settings?.landing_bouquet_builder)
+      bouquetBuilderForm.reset(settings.landing_bouquet_builder);
+    if (settings?.landing_occasion) occasionForm.reset(settings.landing_occasion);
+    if (settings?.landing_reviews) reviewsForm.reset(settings.landing_reviews);
+  }, [
+    settings,
+    heroForm,
+    shopForm,
+    aboutForm,
+    contactForm,
+    featuredForm,
+    philosophyForm,
+    pillarsForm,
+    bouquetBuilderForm,
+    occasionForm,
+    reviewsForm,
+  ]);
 
   const handleSaveHero = async (data: LandingHeroConfig) => {
     // Generate combined title string for backwards compatibility
@@ -111,6 +218,30 @@ export default function StoreConfigPage() {
 
   const handleSaveContact = async (data: StoreContactConfig) => {
     await updateMutation.mutateAsync({ key: 'store_contact', value: data });
+  };
+
+  const handleSaveFeatured = async (data: LandingFeaturedConfig) => {
+    await updateMutation.mutateAsync({ key: 'landing_featured', value: data });
+  };
+
+  const handleSavePhilosophy = async (data: LandingPhilosophyConfig) => {
+    await updateMutation.mutateAsync({ key: 'landing_philosophy', value: data });
+  };
+
+  const handleSavePillars = async (data: LandingPillarsConfig) => {
+    await updateMutation.mutateAsync({ key: 'landing_pillars', value: data });
+  };
+
+  const handleSaveBouquetBuilder = async (data: LandingBouquetBuilderConfig) => {
+    await updateMutation.mutateAsync({ key: 'landing_bouquet_builder', value: data });
+  };
+
+  const handleSaveOccasion = async (data: LandingOccasionConfig) => {
+    await updateMutation.mutateAsync({ key: 'landing_occasion', value: data });
+  };
+
+  const handleSaveReviews = async (data: LandingReviewsConfig) => {
+    await updateMutation.mutateAsync({ key: 'landing_reviews', value: data });
   };
 
   const currentHeroValues = heroForm.watch();
@@ -260,6 +391,371 @@ export default function StoreConfigPage() {
                       <Save size={14} className="mr-2" />
                     )}
                     Lưu cấu hình Trang chủ
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+
+          {/* Card 2: BouquetBuilder Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Sparkles size={16} className="text-primary" /> Section Xưởng Cắm Hoa Thu Nhỏ
+              </CardTitle>
+              <CardDescription>
+                Tùy chỉnh eyebrow, tiêu đề và mô tả của section workshop thiết kế hoa tương tác.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form
+                onSubmit={bouquetBuilderForm.handleSubmit(handleSaveBouquetBuilder)}
+                className="space-y-4"
+              >
+                <div className="space-y-2">
+                  <Label htmlFor="bbEyebrow">Eyebrow Tag</Label>
+                  <Input
+                    id="bbEyebrow"
+                    {...bouquetBuilderForm.register('eyebrow')}
+                    placeholder="XƯỞNG CẮM HOA THU NHỎ"
+                  />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="bbTitleMain">Phần tiêu đề 1 (chữ thường)</Label>
+                    <Input
+                      id="bbTitleMain"
+                      {...bouquetBuilderForm.register('titleMain')}
+                      placeholder="Tự Tay Phối Hoa"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="bbTitleItalic" className="text-primary-dark">
+                      Phần tiêu đề 2 (chữ nghiêng màu)
+                    </Label>
+                    <Input
+                      id="bbTitleItalic"
+                      {...bouquetBuilderForm.register('titleItalic')}
+                      placeholder="& Tạo Thiệp 3D"
+                      className="border-primary/50 focus:border-primary"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="bbSubtitle">Mô tả ngắn</Label>
+                  <Textarea id="bbSubtitle" {...bouquetBuilderForm.register('subtitle')} rows={2} />
+                </div>
+                <div className="flex justify-end pt-2">
+                  <Button type="submit" disabled={updateMutation.isPending}>
+                    {updateMutation.isPending ? (
+                      <Loader2 className="animate-spin mr-2" size={14} />
+                    ) : (
+                      <Save size={14} className="mr-2" />
+                    )}
+                    Lưu section Xưởng cắm hoa
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+
+          {/* Card 3: Occasion Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Heart size={16} className="text-primary" /> Section Khám Phá Theo Dịp Tặng
+              </CardTitle>
+              <CardDescription>
+                Tùy chỉnh eyebrow và tiêu đề của section danh mục hoa theo dịp.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={occasionForm.handleSubmit(handleSaveOccasion)} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="occasionEyebrow">Eyebrow Tag</Label>
+                  <Input
+                    id="occasionEyebrow"
+                    {...occasionForm.register('eyebrow')}
+                    placeholder="KHÁM PHÁ THEO DỊP TẶNG"
+                  />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="occasionTitleMain">Phần tiêu đề 1 (chữ thường)</Label>
+                    <Input
+                      id="occasionTitleMain"
+                      {...occasionForm.register('titleMain')}
+                      placeholder="Hoa Tươi Cho"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="occasionTitleItalic" className="text-primary">
+                      Phần tiêu đề 2 (chữ nghiêng màu hồng)
+                    </Label>
+                    <Input
+                      id="occasionTitleItalic"
+                      {...occasionForm.register('titleItalic')}
+                      placeholder="Từng Cột Mốc"
+                      className="border-primary/50 focus:border-primary"
+                    />
+                  </div>
+                </div>
+                <div className="flex justify-end pt-2">
+                  <Button type="submit" disabled={updateMutation.isPending}>
+                    {updateMutation.isPending ? (
+                      <Loader2 className="animate-spin mr-2" size={14} />
+                    ) : (
+                      <Save size={14} className="mr-2" />
+                    )}
+                    Lưu section Khám phá dịp tặng
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+
+          {/* Card 4: Reviews Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Star size={16} className="text-primary" /> Section Đánh Giá Thực Tế
+              </CardTitle>
+              <CardDescription>
+                Tùy chỉnh eyebrow, tiêu đề và dòng thống kê (số khách hàng) của section review.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={reviewsForm.handleSubmit(handleSaveReviews)} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="reviewsEyebrow">Eyebrow Tag</Label>
+                  <Input
+                    id="reviewsEyebrow"
+                    {...reviewsForm.register('eyebrow')}
+                    placeholder="ĐÁNH GIÁ THỰC TẾ"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="reviewsTitle">Tiêu đề chính</Label>
+                  <Input
+                    id="reviewsTitle"
+                    {...reviewsForm.register('title')}
+                    placeholder="Khách Hàng Nói Gì Về Sulley?"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="reviewsSubtitle">Dòng mô tả / thống kê</Label>
+                  <Input
+                    id="reviewsSubtitle"
+                    {...reviewsForm.register('subtitle')}
+                    placeholder="Niềm tin & sự hài lòng của hơn 2.000+ khách hàng..."
+                  />
+                </div>
+                <div className="flex justify-end pt-2">
+                  <Button type="submit" disabled={updateMutation.isPending}>
+                    {updateMutation.isPending ? (
+                      <Loader2 className="animate-spin mr-2" size={14} />
+                    ) : (
+                      <Save size={14} className="mr-2" />
+                    )}
+                    Lưu section Đánh giá
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+
+          {/* Card 5: Featured Products Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Star size={16} className="text-primary" /> Section Sản Phẩm Nổi Bật
+              </CardTitle>
+              <CardDescription>
+                Tùy chỉnh eyebrow tag và tiêu đề của section "Thiết kế được yêu thích" trên trang
+                chủ.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={featuredForm.handleSubmit(handleSaveFeatured)} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="featuredEyebrow">Eyebrow Tag</Label>
+                  <Input
+                    id="featuredEyebrow"
+                    {...featuredForm.register('eyebrow')}
+                    placeholder="HOA NỔI BẬT"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="featuredTitle">Tiêu đề section</Label>
+                  <Input
+                    id="featuredTitle"
+                    {...featuredForm.register('title')}
+                    placeholder="Thiết Kế Được Yêu Thích"
+                  />
+                </div>
+                <div className="flex justify-end pt-2">
+                  <Button type="submit" disabled={updateMutation.isPending}>
+                    {updateMutation.isPending ? (
+                      <Loader2 className="animate-spin mr-2" size={14} />
+                    ) : (
+                      <Save size={14} className="mr-2" />
+                    )}
+                    Lưu section Sản phẩm nổi bật
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+
+          {/* Card 6: Philosophy Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Heart size={16} className="text-secondary-dark" /> Section Triết Lý Nghệ Thuật
+              </CardTitle>
+              <CardDescription>
+                Tùy chỉnh nội dung section triết lý: eyebrow, tiêu đề 2 phần và 2 đoạn mô tả.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form
+                onSubmit={philosophyForm.handleSubmit(handleSavePhilosophy)}
+                className="space-y-4"
+              >
+                <div className="space-y-2">
+                  <Label htmlFor="philoEyebrow">Eyebrow Tag</Label>
+                  <Input
+                    id="philoEyebrow"
+                    {...philosophyForm.register('eyebrow')}
+                    placeholder="TRIẾT LÝ NGHỆ THUẬT"
+                  />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="philoTitleMain">Phần tiêu đề 1 (chữ thường)</Label>
+                    <Input
+                      id="philoTitleMain"
+                      {...philosophyForm.register('titleMain')}
+                      placeholder="Triết lý của"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="philoTitleItalic" className="text-secondary-dark">
+                      Phần tiêu đề 2 (chữ nghiêng màu)
+                    </Label>
+                    <Input
+                      id="philoTitleItalic"
+                      {...philosophyForm.register('titleItalic')}
+                      placeholder="sự tối giản & tinh tế"
+                      className="border-secondary/50 focus:border-secondary"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="philoParagraph1">Đoạn văn 1</Label>
+                  <Textarea
+                    id="philoParagraph1"
+                    {...philosophyForm.register('paragraph1')}
+                    rows={3}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="philoParagraph2">Đoạn văn 2</Label>
+                  <Textarea
+                    id="philoParagraph2"
+                    {...philosophyForm.register('paragraph2')}
+                    rows={3}
+                  />
+                </div>
+                <div className="flex justify-end pt-2">
+                  <Button type="submit" disabled={updateMutation.isPending}>
+                    {updateMutation.isPending ? (
+                      <Loader2 className="animate-spin mr-2" size={14} />
+                    ) : (
+                      <Save size={14} className="mr-2" />
+                    )}
+                    Lưu section Triết lý
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+
+          {/* Card 7: Value Pillars Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Layers size={16} className="text-foreground" /> Section Cam Kết Từ Sulley (4
+                Pillars)
+              </CardTitle>
+              <CardDescription>
+                Tùy chỉnh tiêu đề section và nội dung 4 cam kết dịch vụ hiển thị cuối trang chủ.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={pillarsForm.handleSubmit(handleSavePillars)} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="pillarsSectionTitle">Tiêu đề section</Label>
+                    <Input
+                      id="pillarsSectionTitle"
+                      {...pillarsForm.register('sectionTitle')}
+                      placeholder="Cam Kết Từ Sulley"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="pillarsSectionSubtitle">Mô tả phụ</Label>
+                    <Input
+                      id="pillarsSectionSubtitle"
+                      {...pillarsForm.register('sectionSubtitle')}
+                      placeholder="Trải nghiệm mua hoa an tâm & chất lượng hàng đầu"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-3 p-4 rounded-xl bg-muted/40 border border-border">
+                  <Label className="text-sm font-semibold text-foreground">4 Cam Kết Dịch Vụ</Label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {([0, 1, 2, 3] as const).map((i) => (
+                      <div
+                        key={i}
+                        className="space-y-3 p-3 rounded-lg bg-background border border-border"
+                      >
+                        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                          Pillar {i + 1}
+                        </p>
+                        <div className="space-y-2">
+                          <Label htmlFor={`pillar-title-${i}`} className="text-xs">
+                            Tiêu đề
+                          </Label>
+                          <Input
+                            id={`pillar-title-${i}`}
+                            {...pillarsForm.register(`pillars.${i}.title`)}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor={`pillar-desc-${i}`} className="text-xs">
+                            Mô tả
+                          </Label>
+                          <Textarea
+                            id={`pillar-desc-${i}`}
+                            {...pillarsForm.register(`pillars.${i}.desc`)}
+                            rows={2}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex justify-end pt-2">
+                  <Button type="submit" disabled={updateMutation.isPending}>
+                    {updateMutation.isPending ? (
+                      <Loader2 className="animate-spin mr-2" size={14} />
+                    ) : (
+                      <Save size={14} className="mr-2" />
+                    )}
+                    Lưu section Cam kết
                   </Button>
                 </div>
               </form>
