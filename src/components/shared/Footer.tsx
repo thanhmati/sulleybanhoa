@@ -19,7 +19,7 @@ export function Footer() {
             </p>
             <div className="flex gap-3 pt-2">
               <a
-                href="https://instagram.com"
+                href="https://www.instagram.com/sulleybanhoa/"
                 target="_blank"
                 rel="noreferrer"
                 className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/70 hover:bg-primary hover:text-white hover:border-primary transition-all"
@@ -27,7 +27,7 @@ export function Footer() {
                 <Instagram size={18} />
               </a>
               <a
-                href="https://facebook.com"
+                href="https://www.facebook.com/profile.php?id=100071601660594"
                 target="_blank"
                 rel="noreferrer"
                 className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/70 hover:bg-primary hover:text-white hover:border-primary transition-all"
