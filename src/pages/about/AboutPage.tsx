@@ -59,9 +59,11 @@ export default function AboutPage() {
       <section className="py-20 bg-white/70 border-y border-border bg-grid-pattern relative">
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="text-center max-w-xl mx-auto mb-16 space-y-3">
-            <h2 className="text-3xl font-serif text-foreground">Giá Trị Cốt Lõi</h2>
+            <h2 className="text-3xl font-serif text-foreground">
+              {aboutConfig?.valuesTitle || 'Giá Trị Cốt Lõi'}
+            </h2>
             <p className="text-sm text-[#4A4A4A]/60">
-              Những chuẩn mực tạo nên điều khác biệt tại Sulley
+              {aboutConfig?.valuesSubtitle || 'Những chuẩn mực tạo nên điều khác biệt tại Sulley'}
             </p>
           </div>
 
@@ -71,10 +73,12 @@ export default function AboutPage() {
                 <div className="w-12 h-12 rounded-full bg-primary/30 flex items-center justify-center text-primary-dark">
                   <Flower2 size={22} />
                 </div>
-                <h3 className="text-lg font-serif font-bold text-foreground">Tươi Mới Mỗi Ngày</h3>
+                <h3 className="text-lg font-serif font-bold text-foreground">
+                  {aboutConfig?.value1Title || 'Tươi Mới Mỗi Ngày'}
+                </h3>
                 <p className="text-xs text-[#4A4A4A]/70 leading-relaxed">
-                  Hoa được tuyển chọn mới mỗi sáng, đảm bảo độ tươi từ 3-5 ngày khi đến tay người
-                  nhận.
+                  {aboutConfig?.value1Desc ||
+                    'Hoa được tuyển chọn mới mỗi sáng, đảm bảo độ tươi từ 3-5 ngày khi đến tay người nhận.'}
                 </p>
               </div>
             </div>
@@ -85,11 +89,11 @@ export default function AboutPage() {
                   <Heart size={22} />
                 </div>
                 <h3 className="text-lg font-serif font-bold text-foreground">
-                  Nghệ Thuật Tối Giản
+                  {aboutConfig?.value2Title || 'Nghệ Thuật Tối Giản'}
                 </h3>
                 <p className="text-xs text-[#4A4A4A]/70 leading-relaxed">
-                  Phong cách cắm hoa Hàn Quốc hiện đại, không cầu kỳ rườm rà nhưng luôn đầy cuốn
-                  hút.
+                  {aboutConfig?.value2Desc ||
+                    'Phong cách cắm hoa Hàn Quốc hiện đại, không cầu kỳ rườm rà nhưng luôn đầy cuốn hút.'}
                 </p>
               </div>
             </div>
@@ -99,10 +103,12 @@ export default function AboutPage() {
                 <div className="w-12 h-12 rounded-full bg-primary/30 flex items-center justify-center text-primary-dark">
                   <ShieldCheck size={22} />
                 </div>
-                <h3 className="text-lg font-serif font-bold text-foreground">Tận Tâm Phục Vụ</h3>
+                <h3 className="text-lg font-serif font-bold text-foreground">
+                  {aboutConfig?.value3Title || 'Tận Tâm Phục Vụ'}
+                </h3>
                 <p className="text-xs text-[#4A4A4A]/70 leading-relaxed">
-                  Tư vấn kỹ lưỡng, giao hàng chu đáo. Niềm vui của quý khách là động lực lớn nhất
-                  của chúng tôi.
+                  {aboutConfig?.value3Desc ||
+                    'Tư vấn kỹ lưỡng, giao hàng chu đáo. Niềm vui của quý khách là động lực lớn nhất của chúng tôi.'}
                 </p>
               </div>
             </div>
@@ -128,12 +134,14 @@ export default function AboutPage() {
 
             <div className="md:col-span-7 space-y-6 text-left">
               <h2 className="text-3xl md:text-4xl font-serif text-foreground leading-tight">
-                Đội ngũ <span className="text-primary-dark italic">nghệ nhân cắm hoa</span>
+                {aboutConfig?.teamTitleMain || 'Đội ngũ'}{' '}
+                <span className="text-primary-dark italic">
+                  {aboutConfig?.teamTitleItalic || 'nghệ nhân cắm hoa'}
+                </span>
               </h2>
               <p className="text-base text-[#4A4A4A]/70 leading-relaxed">
-                Tại Sulley, mỗi florist không chỉ là người thợ cắm hoa, mà là những người yêu cái
-                đẹp thực thụ. Với đôi bàn tay khéo léo và tâm hồn nhạy cảm, chúng tôi biến những
-                cành hoa thành các tác phẩm nghệ thuật đong đầy cảm xúc.
+                {aboutConfig?.teamParagraph ||
+                  'Tại Sulley, mỗi florist không chỉ là người thợ cắm hoa, mà là những người yêu cái đẹp thực thụ. Với đôi bàn tay khéo léo và tâm hồn nhạy cảm, chúng tôi biến những cành hoa thành các tác phẩm nghệ thuật đong đầy cảm xúc.'}
               </p>
               <div className="pt-2">
                 <Link to="/contact">

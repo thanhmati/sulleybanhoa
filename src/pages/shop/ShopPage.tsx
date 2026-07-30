@@ -13,7 +13,7 @@ import {
 import { Filter, Search, X, Truck, ShieldCheck, Flower2, SlidersHorizontal } from 'lucide-react';
 import { useProductsQuery } from '@/hooks/useProducts';
 import { useStoreSettingsQuery } from '@/hooks/useStoreSettings';
-import type { LandingHeroConfig } from '@/types/store-setting';
+import type { ShopHeaderConfig } from '@/types/store-setting';
 import ProductFilters from '@/components/shop/ProductFilters';
 import { ProductCard } from '@/components/shop/ProductCard';
 import { ProductQuickViewModal } from '@/components/shop/ProductQuickViewModal';
@@ -34,11 +34,10 @@ export default function ShopPage() {
   const { data: rawProducts = [] } = useProductsQuery();
   const { data: settings } = useStoreSettingsQuery();
 
-  const hero: LandingHeroConfig = settings?.landing_hero || {
+  const shopHero: ShopHeaderConfig = settings?.shop_hero || {
     eyebrow: 'FLORAL BOUTIQUE COLLECTION 2026',
-    title: 'Cửa Hàng Hoa Tươi',
-    subtitle:
-      'Những thiết kế hoa tươi phong cách Hàn Quốc tinh tế, lưu giữ từng cảm xúc chân thành trong từng cành hoa.',
+    title: 'Bộ Sưu Tập Hoa Tươi',
+    subtitle: 'Khám phá các thiết kế hoa bó, giỏ hoa và hộp hoa tinh tế phong cách Hàn Quốc.',
     badge1: 'Hoa nhập tươi trong ngày',
     badge2: 'Giao hoa 2H nội thành',
     badge3: 'Đảm bảo hài lòng 100%',
@@ -130,7 +129,7 @@ export default function ShopPage() {
 
   return (
     <>
-      <SEO title={hero.title || 'Cửa Hàng Hoa Tươi'} description={hero.subtitle || ''} />
+      <SEO title={shopHero.title || 'Cửa Hàng Hoa Tươi'} description={shopHero.subtitle || ''} />
       <div className="relative overflow-hidden bg-dot-pattern min-h-screen pb-20">
         {/* Background Ambient Glows */}
         <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-gradient-to-tr from-primary/20 via-peach/30 to-secondary/20 rounded-full blur-[140px] -z-10 pointer-events-none" />
@@ -138,25 +137,31 @@ export default function ShopPage() {
         <div className="container mx-auto px-4 max-w-7xl pt-10">
           {/* Header Hero Section */}
           <div className="text-center mb-10 space-y-4">
-            <div className="eyebrow-tag shadow-xs">{hero.eyebrow}</div>
+            {shopHero.eyebrow && <div className="eyebrow-tag shadow-xs">{shopHero.eyebrow}</div>}
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-foreground tracking-tight font-bold">
-              {hero.title}
+              {shopHero.title}
             </h1>
             <p className="text-foreground/75 max-w-2xl mx-auto text-sm md:text-base leading-relaxed">
-              {hero.subtitle}
+              {shopHero.subtitle}
             </p>
 
             {/* Store Highlights Badge Bar */}
             <div className="pt-3 flex flex-wrap justify-center items-center gap-4 text-xs font-semibold text-charcoal">
-              <div className="flex items-center gap-1.5 bg-white/80 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-border/80 shadow-xs">
-                <Flower2 size={14} className="text-primary-dark" /> {hero.badge1}
-              </div>
-              <div className="flex items-center gap-1.5 bg-white/80 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-border/80 shadow-xs">
-                <Truck size={14} className="text-secondary-dark" /> {hero.badge2}
-              </div>
-              <div className="flex items-center gap-1.5 bg-white/80 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-border/80 shadow-xs">
-                <ShieldCheck size={14} className="text-primary-dark" /> {hero.badge3}
-              </div>
+              {shopHero.badge1 && (
+                <div className="flex items-center gap-1.5 bg-white/80 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-border/80 shadow-xs">
+                  <Flower2 size={14} className="text-primary-dark" /> {shopHero.badge1}
+                </div>
+              )}
+              {shopHero.badge2 && (
+                <div className="flex items-center gap-1.5 bg-white/80 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-border/80 shadow-xs">
+                  <Truck size={14} className="text-secondary-dark" /> {shopHero.badge2}
+                </div>
+              )}
+              {shopHero.badge3 && (
+                <div className="flex items-center gap-1.5 bg-white/80 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-border/80 shadow-xs">
+                  <ShieldCheck size={14} className="text-primary-dark" /> {shopHero.badge3}
+                </div>
+              )}
             </div>
           </div>
 

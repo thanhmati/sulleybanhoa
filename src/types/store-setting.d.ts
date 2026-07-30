@@ -11,8 +11,12 @@ export interface LandingHeroConfig {
 }
 
 export interface ShopHeaderConfig {
+  eyebrow?: string;
   title: string;
   subtitle: string;
+  badge1?: string;
+  badge2?: string;
+  badge3?: string;
 }
 
 export interface AboutPageConfig {
@@ -20,6 +24,19 @@ export interface AboutPageConfig {
   storyTitle: string;
   storyParagraph1: string;
   storyParagraph2: string;
+
+  valuesTitle?: string;
+  valuesSubtitle?: string;
+  value1Title?: string;
+  value1Desc?: string;
+  value2Title?: string;
+  value2Desc?: string;
+  value3Title?: string;
+  value3Desc?: string;
+
+  teamTitleMain?: string;
+  teamTitleItalic?: string;
+  teamParagraph?: string;
 }
 
 export interface StoreContactConfig {
@@ -28,6 +45,12 @@ export interface StoreContactConfig {
   address: string;
   zaloUrl: string;
   openHours: string;
+  eyebrow?: string;
+  title?: string;
+  subtitle?: string;
+  mapIframeUrl?: string;
+  formTitle?: string;
+  formSubtitle?: string;
 }
 
 export interface FAQItem {

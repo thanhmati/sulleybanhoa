@@ -54,8 +54,12 @@ export default function StoreConfigPage() {
 
   const shopForm = useForm<ShopHeaderConfig>({
     defaultValues: {
+      eyebrow: 'FLORAL BOUTIQUE COLLECTION 2026',
       title: 'Bộ Sưu Tập Hoa Tươi',
       subtitle: 'Khám phá các thiết kế hoa bó, giỏ hoa và hộp hoa tinh tế phong cách Hàn Quốc.',
+      badge1: 'Hoa nhập tươi trong ngày',
+      badge2: 'Giao hoa 2H nội thành',
+      badge3: 'Đảm bảo hài lòng 100%',
     },
   });
 
@@ -67,16 +71,42 @@ export default function StoreConfigPage() {
         'Sulley được thành lập với niềm tin rằng hoa không chỉ là món đồ trang trí vô tri, mà là phương tiện để truyền tải cảm xúc, kết nối con người và mang thiên nhiên vào không gian sống.',
       storyParagraph2:
         'Mỗi thiết kế của chúng tôi đều mang đậm phong cách tối giản Hàn Quốc, tôn vinh vẻ đẹp tự nhiên của từng nhành hoa, chiếc lá với góc nhìn tinh tế và giàu cảm xúc.',
+
+      valuesTitle: 'Giá Trị Cốt Lõi',
+      valuesSubtitle: 'Những chuẩn mực tạo nên điều khác biệt tại Sulley',
+      value1Title: 'Tươi Mới Mỗi Ngày',
+      value1Desc:
+        'Hoa được tuyển chọn mới mỗi sáng, đảm bảo độ tươi từ 3-5 ngày khi đến tay người nhận.',
+      value2Title: 'Nghệ Thuật Tối Giản',
+      value2Desc:
+        'Phong cách cắm hoa Hàn Quốc hiện đại, không cầu kỳ rườm rà nhưng luôn đầy cuốn hút.',
+      value3Title: 'Tận Tâm Phục Vụ',
+      value3Desc:
+        'Tư vấn kỹ lưỡng, giao hàng chu đáo. Niềm vui của quý khách là động lực lớn nhất của chúng tôi.',
+
+      teamTitleMain: 'Đội ngũ',
+      teamTitleItalic: 'nghệ nhân cắm hoa',
+      teamParagraph:
+        'Tại Sulley, mỗi florist không chỉ là người thợ cắm hoa, mà là những người yêu cái đẹp thực thụ. Với đôi bàn tay khéo léo và tâm hồn nhạy cảm, chúng tôi biến những cành hoa thành các tác phẩm nghệ thuật đong đầy cảm xúc.',
     },
   });
 
   const contactForm = useForm<StoreContactConfig>({
     defaultValues: {
+      eyebrow: 'HỖ TRỢ VÀ TƯ VẤN 24/7',
+      title: 'Liên Hệ VỚI SULLEY',
+      subtitle:
+        'Chúng tôi luôn sẵn sàng lắng nghe & tư vấn để mang đến những thiết kế hoa ưng ý nhất cho bạn.',
       phone: '034 908 1629',
       email: 'sulleybanhoa@gmail.com',
-      address: 'Quận 1, Thành phố Hồ Chí Minh',
+      address: '62/291 Lý Chính Thắng, P. Võ Thị Sáu, Q.3, TP.HCM',
       zaloUrl: 'https://zalo.me',
-      openHours: '08:00 - 21:00 hàng ngày',
+      openHours: 'Thứ 2 - CN: 8:00 - 21:00',
+      mapIframeUrl:
+        'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.2761115412436!2d106.68282667551551!3d10.790151989359448!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752900722c2fcf%3A0xfcb1af35d99770ae!2zVGnhu4dtIEhvYSBUcsOqbiBNw6J5!5e0!3m2!1svi!2s!4v1766046454452!5m2!1svi!2s',
+      formTitle: 'Gửi tin nhắn cho chúng tôi',
+      formSubtitle:
+        'Vui lòng điền thông tin bên dưới, florist của Sulley sẽ liên hệ lại với bạn ngay.',
     },
   });
 
@@ -272,14 +302,14 @@ export default function StoreConfigPage() {
           <TabsTrigger value="landing" className="gap-2 text-xs">
             <Sparkles size={14} /> Trang chủ (Landing)
           </TabsTrigger>
-          <TabsTrigger value="contact" className="gap-2 text-xs">
-            <Store size={14} /> Thông tin liên hệ
-          </TabsTrigger>
           <TabsTrigger value="shop" className="gap-2 text-xs">
             <ShoppingBag size={14} /> Trang Cửa hàng
           </TabsTrigger>
           <TabsTrigger value="about" className="gap-2 text-xs">
             <Info size={14} /> Trang Giới thiệu
+          </TabsTrigger>
+          <TabsTrigger value="contact" className="gap-2 text-xs">
+            <Store size={14} /> Thông tin liên hệ
           </TabsTrigger>
         </TabsList>
 
@@ -764,17 +794,62 @@ export default function StoreConfigPage() {
         </TabsContent>
 
         {/* 2. Contact Tab */}
-        <TabsContent value="contact" className="pt-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Thông Tin Tiệm Hoa & Liên Hệ</CardTitle>
-              <CardDescription>
-                Cập nhật hotline, email, địa chỉ, Zalo và giờ mở cửa hiển thị trên Footer và trang
-                Contact.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={contactForm.handleSubmit(handleSaveContact)} className="space-y-4">
+        <TabsContent value="contact" className="pt-4 space-y-6">
+          <form onSubmit={contactForm.handleSubmit(handleSaveContact)} className="space-y-6">
+            {/* Card 1: Header Banner Trang Liên Hệ */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Store size={16} className="text-primary" /> Header Banner Trang Liên Hệ
+                </CardTitle>
+                <CardDescription>
+                  Tùy chỉnh dòng eyebrow, tiêu đề chính và mô tả ngắn ở đầu trang Liên hệ.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="contactEyebrow">Eyebrow Tag</Label>
+                  <Input
+                    id="contactEyebrow"
+                    {...contactForm.register('eyebrow')}
+                    placeholder="HỖ TRỢ VÀ TƯ VẤN 24/7"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="contactTitle">Tiêu đề chính trang Liên Hệ</Label>
+                  <Input
+                    id="contactTitle"
+                    {...contactForm.register('title')}
+                    placeholder="Liên Hệ VỚI SULLEY"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="contactSubtitle">Mô tả ngắn</Label>
+                  <Textarea
+                    id="contactSubtitle"
+                    {...contactForm.register('subtitle')}
+                    rows={2}
+                    placeholder="Chúng tôi luôn sẵn sàng lắng nghe & tư vấn..."
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Card 2: Thông Tin Liên Hệ & Bản Đồ Google Maps */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Info size={16} className="text-primary" /> Thông Tin Tiệm Hoa & Bản Đồ Google
+                  Maps
+                </CardTitle>
+                <CardDescription>
+                  Cập nhật hotline, email, địa chỉ, Zalo, giờ mở cửa và link nhúng Google Maps
+                  iframe.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="phone">Hotline / Số điện thoại</Label>
@@ -804,19 +879,64 @@ export default function StoreConfigPage() {
                   </div>
                 </div>
 
-                <div className="flex justify-end pt-2">
-                  <Button type="submit" disabled={updateMutation.isPending}>
-                    {updateMutation.isPending ? (
-                      <Loader2 className="animate-spin mr-2" size={14} />
-                    ) : (
-                      <Save size={14} className="mr-2" />
-                    )}
-                    Lưu thông tin liên hệ
-                  </Button>
+                <div className="space-y-2">
+                  <Label htmlFor="mapIframeUrl">
+                    Link nhúng Google Maps (URL trong thẻ iframe src)
+                  </Label>
+                  <Textarea
+                    id="mapIframeUrl"
+                    {...contactForm.register('mapIframeUrl')}
+                    rows={3}
+                    placeholder="https://www.google.com/maps/embed?pb=..."
+                  />
                 </div>
-              </form>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+
+            {/* Card 3: Tiêu Đề Form Liên Hệ */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Sparkles size={16} className="text-primary" /> Khung Form Khách Hàng Gửi Tin Nhắn
+                </CardTitle>
+                <CardDescription>
+                  Tùy chỉnh tiêu đề và lời nhắn trên khung điền thông tin gửi tin nhắn của khách
+                  hàng.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="formTitle">Tiêu đề Form</Label>
+                  <Input
+                    id="formTitle"
+                    {...contactForm.register('formTitle')}
+                    placeholder="Gửi tin nhắn cho chúng tôi"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="formSubtitle">Mô tả / Lời nhắc dưới tiêu đề Form</Label>
+                  <Textarea
+                    id="formSubtitle"
+                    {...contactForm.register('formSubtitle')}
+                    rows={2}
+                    placeholder="Vui lòng điền thông tin bên dưới, florist của Sulley sẽ liên hệ lại..."
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            <div className="flex justify-end pt-2">
+              <Button type="submit" disabled={updateMutation.isPending} size="lg">
+                {updateMutation.isPending ? (
+                  <Loader2 className="animate-spin mr-2" size={16} />
+                ) : (
+                  <Save size={16} className="mr-2" />
+                )}
+                Lưu toàn bộ thông tin trang Liên hệ
+              </Button>
+            </div>
+          </form>
         </TabsContent>
 
         {/* 3. Shop Page Tab */}
@@ -831,13 +951,69 @@ export default function StoreConfigPage() {
             <CardContent>
               <form onSubmit={shopForm.handleSubmit(handleSaveShop)} className="space-y-4">
                 <div className="space-y-2">
+                  <Label htmlFor="shopEyebrow">Eyebrow Tag</Label>
+                  <Input
+                    id="shopEyebrow"
+                    {...shopForm.register('eyebrow')}
+                    placeholder="FLORAL BOUTIQUE COLLECTION 2026"
+                  />
+                </div>
+
+                <div className="space-y-2">
                   <Label htmlFor="shopTitle">Tiêu đề trang Cửa Hàng</Label>
-                  <Input id="shopTitle" {...shopForm.register('title')} />
+                  <Input
+                    id="shopTitle"
+                    {...shopForm.register('title')}
+                    placeholder="Bộ Sưu Tập Hoa Tươi"
+                  />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="shopSubtitle">Mô tả ngắn trang Cửa Hàng</Label>
-                  <Input id="shopSubtitle" {...shopForm.register('subtitle')} />
+                  <Textarea
+                    id="shopSubtitle"
+                    {...shopForm.register('subtitle')}
+                    rows={2}
+                    placeholder="Khám phá các thiết kế hoa bó, giỏ hoa và hộp hoa tinh tế phong cách Hàn Quốc."
+                  />
+                </div>
+
+                <div className="space-y-3 p-4 rounded-xl bg-muted/40 border border-border">
+                  <Label className="text-sm font-semibold text-foreground">
+                    3 Badge Nổi Bật (Highlights Bar)
+                  </Label>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="shopBadge1" className="text-xs">
+                        Badge 1
+                      </Label>
+                      <Input
+                        id="shopBadge1"
+                        {...shopForm.register('badge1')}
+                        placeholder="Hoa nhập tươi trong ngày"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="shopBadge2" className="text-xs">
+                        Badge 2
+                      </Label>
+                      <Input
+                        id="shopBadge2"
+                        {...shopForm.register('badge2')}
+                        placeholder="Giao hoa 2H nội thành"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="shopBadge3" className="text-xs">
+                        Badge 3
+                      </Label>
+                      <Input
+                        id="shopBadge3"
+                        {...shopForm.register('badge3')}
+                        placeholder="Đảm bảo hài lòng 100%"
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 <div className="flex justify-end pt-2">
@@ -856,49 +1032,184 @@ export default function StoreConfigPage() {
         </TabsContent>
 
         {/* 4. About Page Tab */}
-        <TabsContent value="about" className="pt-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Nội Dung Trang Giới Thiệu (About Page)</CardTitle>
-              <CardDescription>
-                Cập nhật câu chuyện thương hiệu và thông điệp giới thiệu tiệm hoa.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={aboutForm.handleSubmit(handleSaveAbout)} className="space-y-4">
+        <TabsContent value="about" className="pt-4 space-y-6">
+          <form onSubmit={aboutForm.handleSubmit(handleSaveAbout)} className="space-y-6">
+            {/* Card 1: Câu chuyện thương hiệu */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Info size={16} className="text-primary" /> Câu Chuyện Thương Hiệu (Story Header)
+                </CardTitle>
+                <CardDescription>
+                  Cập nhật câu chuyện thương hiệu và thông điệp đầu trang Giới thiệu.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="storyEyebrow">Eyebrow Tag (Dòng phụ trên)</Label>
                   <Input id="storyEyebrow" {...aboutForm.register('storyEyebrow')} />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="storyTitle">Tiêu đề câu chuyện (Story Title)</Label>
+                  <Label htmlFor="storyTitle">
+                    Tiêu đề câu chuyện (hỗ trợ &#123;từ_khóa&#125; để đổi màu)
+                  </Label>
                   <Input id="storyTitle" {...aboutForm.register('storyTitle')} />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="storyParagraph1">Đoạn văn 1</Label>
-                  <Input id="storyParagraph1" {...aboutForm.register('storyParagraph1')} />
+                  <Textarea
+                    id="storyParagraph1"
+                    {...aboutForm.register('storyParagraph1')}
+                    rows={3}
+                  />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="storyParagraph2">Đoạn văn 2</Label>
-                  <Input id="storyParagraph2" {...aboutForm.register('storyParagraph2')} />
+                  <Textarea
+                    id="storyParagraph2"
+                    {...aboutForm.register('storyParagraph2')}
+                    rows={3}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Card 2: Giá trị cốt lõi */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Heart size={16} className="text-primary" /> Giá Trị Cốt Lõi (Core Values)
+                </CardTitle>
+                <CardDescription>
+                  Cập nhật tiêu đề section và 3 giá trị cam kết dịch vụ/nghệ thuật.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="valuesTitle">Tiêu đề section</Label>
+                    <Input
+                      id="valuesTitle"
+                      {...aboutForm.register('valuesTitle')}
+                      placeholder="Giá Trị Cốt Lõi"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="valuesSubtitle">Mô tả phụ</Label>
+                    <Input
+                      id="valuesSubtitle"
+                      {...aboutForm.register('valuesSubtitle')}
+                      placeholder="Những chuẩn mực tạo nên..."
+                    />
+                  </div>
                 </div>
 
-                <div className="flex justify-end pt-2">
-                  <Button type="submit" disabled={updateMutation.isPending}>
-                    {updateMutation.isPending ? (
-                      <Loader2 className="animate-spin mr-2" size={14} />
-                    ) : (
-                      <Save size={14} className="mr-2" />
-                    )}
-                    Lưu cấu hình Trang Giới thiệu
-                  </Button>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 rounded-xl bg-muted/40 border border-border">
+                  <div className="space-y-3 p-3 bg-background rounded-lg border border-border">
+                    <p className="text-xs font-bold text-primary-dark">Giá trị 1</p>
+                    <div className="space-y-2">
+                      <Label htmlFor="value1Title" className="text-xs">
+                        Tiêu đề
+                      </Label>
+                      <Input id="value1Title" {...aboutForm.register('value1Title')} />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="value1Desc" className="text-xs">
+                        Mô tả
+                      </Label>
+                      <Textarea id="value1Desc" {...aboutForm.register('value1Desc')} rows={2} />
+                    </div>
+                  </div>
+
+                  <div className="space-y-3 p-3 bg-background rounded-lg border border-border">
+                    <p className="text-xs font-bold text-primary-dark">Giá trị 2</p>
+                    <div className="space-y-2">
+                      <Label htmlFor="value2Title" className="text-xs">
+                        Tiêu đề
+                      </Label>
+                      <Input id="value2Title" {...aboutForm.register('value2Title')} />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="value2Desc" className="text-xs">
+                        Mô tả
+                      </Label>
+                      <Textarea id="value2Desc" {...aboutForm.register('value2Desc')} rows={2} />
+                    </div>
+                  </div>
+
+                  <div className="space-y-3 p-3 bg-background rounded-lg border border-border">
+                    <p className="text-xs font-bold text-primary-dark">Giá trị 3</p>
+                    <div className="space-y-2">
+                      <Label htmlFor="value3Title" className="text-xs">
+                        Tiêu đề
+                      </Label>
+                      <Input id="value3Title" {...aboutForm.register('value3Title')} />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="value3Desc" className="text-xs">
+                        Mô tả
+                      </Label>
+                      <Textarea id="value3Desc" {...aboutForm.register('value3Desc')} rows={2} />
+                    </div>
+                  </div>
                 </div>
-              </form>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+
+            {/* Card 3: Đội ngũ nghệ nhân */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Sparkles size={16} className="text-primary" /> Đội Ngũ Nghệ Nhân (Florists
+                  Section)
+                </CardTitle>
+                <CardDescription>
+                  Cập nhật tiêu đề và mô tả giới thiệu đội ngũ florist cắm hoa.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="teamTitleMain">Tiêu đề 1 (chữ thường)</Label>
+                    <Input
+                      id="teamTitleMain"
+                      {...aboutForm.register('teamTitleMain')}
+                      placeholder="Đội ngũ"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="teamTitleItalic" className="text-primary-dark">
+                      Tiêu đề 2 (chữ nghiêng màu)
+                    </Label>
+                    <Input
+                      id="teamTitleItalic"
+                      {...aboutForm.register('teamTitleItalic')}
+                      placeholder="nghệ nhân cắm hoa"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="teamParagraph">Mô tả đội ngũ florist</Label>
+                  <Textarea id="teamParagraph" {...aboutForm.register('teamParagraph')} rows={3} />
+                </div>
+              </CardContent>
+            </Card>
+
+            <div className="flex justify-end pt-2">
+              <Button type="submit" disabled={updateMutation.isPending} size="lg">
+                {updateMutation.isPending ? (
+                  <Loader2 className="animate-spin mr-2" size={16} />
+                ) : (
+                  <Save size={16} className="mr-2" />
+                )}
+                Lưu toàn bộ cấu hình Trang Giới thiệu
+              </Button>
+            </div>
+          </form>
         </TabsContent>
       </Tabs>
     </div>

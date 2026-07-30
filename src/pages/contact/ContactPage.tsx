@@ -31,11 +31,13 @@ export default function ContactPage() {
 
         {/* Header Banner */}
         <div className="py-16 text-center space-y-4">
-          <div className="eyebrow-tag">HỖ TRỢ VÀ TƯ VẤN 24/7</div>
-          <h1 className="text-4xl md:text-5xl font-serif text-foreground">Liên Hệ VỚI SULLEY</h1>
+          <div className="eyebrow-tag">{contact.eyebrow || 'HỖ TRỢ VÀ TƯ VẤN 24/7'}</div>
+          <h1 className="text-4xl md:text-5xl font-serif text-foreground">
+            {contact.title || 'Liên Hệ VỚI SULLEY'}
+          </h1>
           <p className="text-gray-500 max-w-xl mx-auto text-base">
-            Chúng tôi luôn sẵn sàng lắng nghe & tư vấn để mang đến những thiết kế hoa ưng ý nhất cho
-            bạn.
+            {contact.subtitle ||
+              'Chúng tôi luôn sẵn sàng lắng nghe & tư vấn để mang đến những thiết kế hoa ưng ý nhất cho bạn.'}
           </p>
         </div>
 
@@ -48,52 +50,54 @@ export default function ContactPage() {
               </h2>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="p-1 rounded-[2rem] bg-white border border-border shadow-sm">
-                  <div className="p-4 rounded-[calc(2rem-0.25rem)] bg-cream flex gap-3 items-start text-left">
+                <div className="p-1 rounded-[2rem] bg-white border border-border shadow-sm h-full flex flex-col">
+                  <div className="p-4 rounded-[calc(2rem-0.25rem)] bg-cream flex gap-3 items-start text-left h-full flex-1">
                     <div className="w-9 h-9 rounded-full bg-primary/30 flex items-center justify-center text-primary-dark shrink-0 mt-0.5">
                       <MapPin size={18} />
                     </div>
-                    <div>
+                    <div className="min-w-0">
                       <h3 className="font-semibold text-sm text-foreground">Địa chỉ</h3>
-                      <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">
+                      <p className="text-xs text-gray-500 mt-0.5 leading-relaxed break-words">
                         {contact.address}
                       </p>
                     </div>
                   </div>
                 </div>
 
-                <div className="p-1 rounded-[2rem] bg-white border border-border shadow-sm">
-                  <div className="p-4 rounded-[calc(2rem-0.25rem)] bg-cream flex gap-3 items-start text-left">
+                <div className="p-1 rounded-[2rem] bg-white border border-border shadow-sm h-full flex flex-col">
+                  <div className="p-4 rounded-[calc(2rem-0.25rem)] bg-cream flex gap-3 items-start text-left h-full flex-1">
                     <div className="w-9 h-9 rounded-full bg-primary/30 flex items-center justify-center text-primary-dark shrink-0 mt-0.5">
                       <Phone size={18} />
                     </div>
-                    <div>
+                    <div className="min-w-0">
                       <h3 className="font-semibold text-sm text-foreground">Điện thoại</h3>
-                      <p className="text-xs text-gray-500 mt-0.5">{contact.phone}</p>
+                      <p className="text-xs text-gray-500 mt-0.5 break-all">{contact.phone}</p>
                     </div>
                   </div>
                 </div>
 
-                <div className="p-1 rounded-[2rem] bg-white border border-border shadow-sm">
-                  <div className="p-4 rounded-[calc(2rem-0.25rem)] bg-cream flex gap-3 items-start text-left">
+                <div className="p-1 rounded-[2rem] bg-white border border-border shadow-sm h-full flex flex-col">
+                  <div className="p-4 rounded-[calc(2rem-0.25rem)] bg-cream flex gap-3 items-start text-left h-full flex-1">
                     <div className="w-9 h-9 rounded-full bg-primary/30 flex items-center justify-center text-primary-dark shrink-0 mt-0.5">
                       <Mail size={18} />
                     </div>
-                    <div>
+                    <div className="min-w-0">
                       <h3 className="font-semibold text-sm text-foreground">Email</h3>
-                      <p className="text-xs text-gray-500 mt-0.5">{contact.email}</p>
+                      <p className="text-xs text-gray-500 mt-0.5 break-all">{contact.email}</p>
                     </div>
                   </div>
                 </div>
 
-                <div className="p-1 rounded-[2rem] bg-white border border-border shadow-sm">
-                  <div className="p-4 rounded-[calc(2rem-0.25rem)] bg-cream flex gap-3 items-start text-left">
+                <div className="p-1 rounded-[2rem] bg-white border border-border shadow-sm h-full flex flex-col">
+                  <div className="p-4 rounded-[calc(2rem-0.25rem)] bg-cream flex gap-3 items-start text-left h-full flex-1">
                     <div className="w-9 h-9 rounded-full bg-primary/30 flex items-center justify-center text-primary-dark shrink-0 mt-0.5">
                       <Clock size={18} />
                     </div>
-                    <div>
+                    <div className="min-w-0">
                       <h3 className="font-semibold text-sm text-foreground">Giờ mở cửa</h3>
-                      <p className="text-xs text-gray-500 mt-0.5">{contact.openHours}</p>
+                      <p className="text-xs text-gray-500 mt-0.5 break-words">
+                        {contact.openHours}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -103,7 +107,10 @@ export default function ContactPage() {
               <div className="p-2 rounded-[2.2rem] bg-white border border-border shadow-md">
                 <div className="w-full h-64 rounded-[calc(2.2rem-0.5rem)] overflow-hidden">
                   <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.2761115412436!2d106.68282667551551!3d10.790151989359448!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752900722c2fcf%3A0xfcb1af35d99770ae!2zVGnhu4dtIEhvYSBUcsOqbiBNw6J5!5e0!3m2!1svi!2s!4v1766046454452!5m2!1svi!2s"
+                    src={
+                      contact.mapIframeUrl ||
+                      'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.2761115412436!2d106.68282667551551!3d10.790151989359448!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752900722c2fcf%3A0xfcb1af35d99770ae!2zVGnhu4dtIEhvYSBUcsOqbiBNw6J5!5e0!3m2!1svi!2s!4v1766046454452!5m2!1svi!2s'
+                    }
                     width="100%"
                     height="100%"
                     style={{ border: 0 }}
@@ -122,11 +129,11 @@ export default function ContactPage() {
                 <CardContent className="p-6 md:p-8 rounded-[calc(2.5rem-0.625rem)] bg-cream space-y-6 text-left">
                   <div className="space-y-2">
                     <h3 className="text-2xl font-serif font-bold text-foreground">
-                      Gửi tin nhắn cho chúng tôi
+                      {contact.formTitle || 'Gửi tin nhắn cho chúng tôi'}
                     </h3>
                     <p className="text-gray-500 text-xs">
-                      Vui lòng điền thông tin bên dưới, florist của Sulley sẽ liên hệ lại với bạn
-                      ngay.
+                      {contact.formSubtitle ||
+                        'Vui lòng điền thông tin bên dưới, florist của Sulley sẽ liên hệ lại với bạn ngay.'}
                     </p>
                   </div>
 

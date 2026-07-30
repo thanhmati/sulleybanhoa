@@ -28,8 +28,12 @@ const DEFAULT_LANDING_HERO: LandingHeroConfig = {
 };
 
 const DEFAULT_SHOP_HERO: ShopHeaderConfig = {
+  eyebrow: 'FLORAL BOUTIQUE COLLECTION 2026',
   title: 'Bộ Sưu Tập Hoa Tươi',
   subtitle: 'Khám phá các thiết kế hoa bó, giỏ hoa và hộp hoa tinh tế phong cách Hàn Quốc.',
+  badge1: 'Hoa nhập tươi trong ngày',
+  badge2: 'Giao hoa 2H nội thành',
+  badge3: 'Đảm bảo hài lòng 100%',
 };
 
 const DEFAULT_ABOUT_PAGE: AboutPageConfig = {
@@ -39,14 +43,38 @@ const DEFAULT_ABOUT_PAGE: AboutPageConfig = {
     'Sulley được thành lập với niềm tin rằng hoa không chỉ là món đồ trang trí vô tri, mà là phương tiện để truyền tải cảm xúc, kết nối con người và mang thiên nhiên vào không gian sống.',
   storyParagraph2:
     'Mỗi thiết kế của chúng tôi đều mang đậm phong cách tối giản Hàn Quốc, tôn vinh vẻ đẹp tự nhiên của từng nhành hoa, chiếc lá với góc nhìn tinh tế và giàu cảm xúc.',
+
+  valuesTitle: 'Giá Trị Cốt Lõi',
+  valuesSubtitle: 'Những chuẩn mực tạo nên điều khác biệt tại Sulley',
+  value1Title: 'Tươi Mới Mỗi Ngày',
+  value1Desc:
+    'Hoa được tuyển chọn mới mỗi sáng, đảm bảo độ tươi từ 3-5 ngày khi đến tay người nhận.',
+  value2Title: 'Nghệ Thuật Tối Giản',
+  value2Desc: 'Phong cách cắm hoa Hàn Quốc hiện đại, không cầu kỳ rườm rà nhưng luôn đầy cuốn hút.',
+  value3Title: 'Tận Tâm Phục Vụ',
+  value3Desc:
+    'Tư vấn kỹ lưỡng, giao hàng chu đáo. Niềm vui của quý khách là động lực lớn nhất của chúng tôi.',
+
+  teamTitleMain: 'Đội ngũ',
+  teamTitleItalic: 'nghệ nhân cắm hoa',
+  teamParagraph:
+    'Tại Sulley, mỗi florist không chỉ là người thợ cắm hoa, mà là những người yêu cái đẹp thực thụ. Với đôi bàn tay khéo léo và tâm hồn nhạy cảm, chúng tôi biến những cành hoa thành các tác phẩm nghệ thuật đong đầy cảm xúc.',
 };
 
 const DEFAULT_CONTACT: StoreContactConfig = {
+  eyebrow: 'HỖ TRỢ VÀ TƯ VẤN 24/7',
+  title: 'Liên Hệ VỚI SULLEY',
+  subtitle:
+    'Chúng tôi luôn sẵn sàng lắng nghe & tư vấn để mang đến những thiết kế hoa ưng ý nhất cho bạn.',
   phone: '034 908 1629',
   email: 'sulleybanhoa@gmail.com',
-  address: 'Quận 1, Thành phố Hồ Chí Minh',
+  address: '62/291 Lý Chính Thắng, P. Võ Thị Sáu, Q.3, TP.HCM',
   zaloUrl: 'https://zalo.me',
-  openHours: '08:00 - 21:00 hàng ngày',
+  openHours: 'Thứ 2 - CN: 8:00 - 21:00',
+  mapIframeUrl:
+    'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.2761115412436!2d106.68282667551551!3d10.790151989359448!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752900722c2fcf%3A0xfcb1af35d99770ae!2zVGnhu4dtIEhvYSBUcsOqbiBNw6J5!5e0!3m2!1svi!2s!4v1766046454452!5m2!1svi!2s',
+  formTitle: 'Gửi tin nhắn cho chúng tôi',
+  formSubtitle: 'Vui lòng điền thông tin bên dưới, florist của Sulley sẽ liên hệ lại với bạn ngay.',
 };
 
 const DEFAULT_LANDING_FEATURED: LandingFeaturedConfig = {
