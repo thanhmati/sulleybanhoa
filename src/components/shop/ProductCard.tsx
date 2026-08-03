@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Star, Eye, ArrowUpRight, Sparkles } from 'lucide-react';
+import { Eye, ArrowUpRight, Sparkles } from 'lucide-react';
 import { Product } from '@/types/product';
 import { formatCurrency } from '@/lib/utils/formatters';
 import { useFlowerTypesQuery } from '@/hooks/useFlowerTypes';
@@ -127,16 +127,7 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
         </div>
 
         {/* Card Footer */}
-        <div className="flex justify-between items-center pt-2.5 border-t border-gray-100">
-          <div className="flex items-center gap-1 text-primary-dark">
-            <div className="flex gap-0.5">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} size={11} fill="currentColor" strokeWidth={0} />
-              ))}
-            </div>
-            <span className="text-[11px] text-gray-400 font-medium ml-1">5.0</span>
-          </div>
-
+        <div className="flex justify-end items-center pt-2.5 border-t border-gray-100">
           <Link
             to={`/product/${product.id}`}
             className="text-xs font-semibold text-primary-dark group-hover:translate-x-0.5 transition-transform flex items-center gap-0.5"

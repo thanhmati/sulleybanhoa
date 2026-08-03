@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Star, ShoppingBag, ArrowRight, CheckCircle2, Sparkles } from 'lucide-react';
+import { ShoppingBag, ArrowRight, CheckCircle2, Sparkles } from 'lucide-react';
 import { Product } from '@/types/product';
 import { formatCurrency } from '@/lib/utils/formatters';
 import { useFlowerTypesQuery } from '@/hooks/useFlowerTypes';
@@ -93,9 +93,6 @@ export function ProductQuickViewModal({ product, isOpen, onClose }: ProductQuick
               <DialogHeader className="p-0 text-left space-y-2">
                 <div className="flex items-center gap-2">
                   <span className="eyebrow-tag text-[10px] px-2.5 py-0.5">Hàn Quốc Premium</span>
-                  <div className="flex items-center gap-1 text-primary-dark text-xs font-semibold">
-                    <Star size={12} fill="currentColor" /> 5.0 (Đánh giá cao)
-                  </div>
                 </div>
                 <DialogTitle className="font-serif text-2xl md:text-3xl text-foreground font-bold">
                   {product.name}

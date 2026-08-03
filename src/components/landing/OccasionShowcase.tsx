@@ -3,7 +3,7 @@ import { useProductsQuery } from '@/hooks/useProducts';
 import { useStoreSettingsQuery } from '@/hooks/useStoreSettings';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Star, ArrowUpRight, Heart, Gift, Sparkles, Quote, CheckCircle2 } from 'lucide-react';
+import { ArrowUpRight, Heart, Gift, Sparkles, Quote, CheckCircle2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface OccasionTab {
@@ -211,11 +211,9 @@ export function OccasionShowcase() {
                 <div className="p-6 rounded-[calc(2.2rem-0.25rem)] bg-cream space-y-4 h-full flex flex-col justify-between">
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
-                      <div className="flex gap-1 text-primary">
-                        {[...Array(review.rating)].map((_, i) => (
-                          <Star key={i} size={14} fill="currentColor" strokeWidth={0} />
-                        ))}
-                      </div>
+                      <span className="text-[11px] font-semibold text-primary-dark uppercase tracking-wider">
+                        Phản hồi thực tế
+                      </span>
                       <Quote size={20} className="text-primary-dark/30" />
                     </div>
 

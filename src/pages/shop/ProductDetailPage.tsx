@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { useProductDetailQuery, useProductsQuery } from '@/hooks/useProducts';
 import {
   ArrowLeft,
-  Star,
   Truck,
   ShieldCheck,
   Phone,
@@ -140,15 +139,6 @@ export default function ProductDetailPage() {
                     product.price,
                   )}
                 </span>
-
-                <div className="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-full border border-gray-100 shadow-sm">
-                  <div className="flex gap-0.5 text-primary">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} size={14} fill="currentColor" strokeWidth={0} />
-                    ))}
-                  </div>
-                  <span className="text-xs font-semibold text-gray-500">(50 đánh giá)</span>
-                </div>
               </div>
 
               <p className="text-gray-600 text-base leading-relaxed pt-2">{product.description}</p>
