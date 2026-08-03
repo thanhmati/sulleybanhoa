@@ -1,44 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useProductsQuery } from '@/hooks/useProducts';
+import { useOccasionsQuery } from '@/hooks/useOccasions';
 import { useStoreSettingsQuery } from '@/hooks/useStoreSettings';
 import { Button } from '@/components/ui/button';
-import { ArrowUpRight, Heart, Gift, Sparkles, Quote, CheckCircle2 } from 'lucide-react';
+import { ArrowUpRight, Quote, CheckCircle2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ProductCard } from '@/components/shop/ProductCard';
-
-interface OccasionTab {
-  id: string;
-  label: string;
-  icon: any;
-  desc: string;
-}
-
-const OCCASION_TABS: OccasionTab[] = [
-  {
-    id: 'Love',
-    label: 'Tình Yêu & Valentine',
-    icon: Heart,
-    desc: 'Những bó hoa hồng ngọt ngào thay lời muốn nói.',
-  },
-  {
-    id: 'Birthday',
-    label: 'Sinh Nhật Tinh Tế',
-    icon: Gift,
-    desc: 'Sắc màu tươi tắn mang lại niềm vui bất ngờ.',
-  },
-  {
-    id: 'Anniversary',
-    label: 'Kỷ Niệm Ngày Cùng Nhau',
-    icon: Sparkles,
-    desc: 'Thiết kế sang trọng nâng niu từng khoảnh khắc đáng nhớ.',
-  },
-  {
-    id: 'Opening',
-    label: 'Khai Trương Hồng Phát',
-    icon: ArrowUpRight,
-    desc: 'Kệ hoa & bình hoa mang thông điệp thịnh vượng.',
-  },
-];
 
 interface ReviewItem {
   id: string;
@@ -88,18 +55,67 @@ const MOCK_REVIEWS: ReviewItem[] = [
 ];
 
 export function OccasionShowcase() {
-  const [activeTab, setActiveTab] = useState<string>('Love');
+  const [activeOccasionId, setActiveOccasionId] = useState<string>('');
+  const tabsRef = useRef<HTMLDivElement>(null);
   const { data: products = [] } = useProductsQuery();
+  const { data: dbOccasions = [] } = useOccasionsQuery();
   const { data: settings } = useStoreSettingsQuery();
+
   const occasionConfig = settings?.landing_occasion;
   const reviewsConfig = settings?.landing_reviews;
 
-  // Filter products by active occasion tab
-  const occasionProducts = products
-    .filter((p) => p.occasion && p.occasion.includes(activeTab))
-    .slice(0, 3);
+  // Filter and sort occasions by product count descending (highest product count first)
+  const sortedOccasionList = useMemo(() => {
+    const listWithDesc = dbOccasions.filter(
+      (occ) => occ.description && occ.description.trim().length > 0,
+    );
+    const baseList = listWithDesc.length > 0 ? listWithDesc : dbOccasions;
 
-  const activeOccasionInfo = OCCASION_TABS.find((t) => t.id === activeTab);
+    return [...baseList].sort((a, b) => {
+      const countA = products.filter((p) => {
+        if (!p.occasion || p.occasion.length === 0) return false;
+        return p.occasion.includes(a.id) || p.occasion.includes(a.name);
+      }).length;
+
+      const countB = products.filter((p) => {
+        if (!p.occasion || p.occasion.length === 0) return false;
+        return p.occasion.includes(b.id) || p.occasion.includes(b.name);
+      }).length;
+
+      return countB - countA; // Sort highest count first
+    });
+  }, [dbOccasions, products]);
+
+  // Scroll tabs container horizontally
+  const scrollTabs = (direction: 'left' | 'right') => {
+    if (tabsRef.current) {
+      const scrollAmount = direction === 'left' ? -240 : 240;
+      tabsRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+  };
+
+  // Set default active tab to highest count occasion when loaded
+  useEffect(() => {
+    if (sortedOccasionList.length > 0 && !activeOccasionId) {
+      setActiveOccasionId(sortedOccasionList[0].id);
+    }
+  }, [sortedOccasionList, activeOccasionId]);
+
+  const currentOccasion =
+    sortedOccasionList.find((o) => o.id === activeOccasionId) || sortedOccasionList[0];
+
+  // Filter products matching selected occasion (by UUID or Name)
+  const occasionProducts = products
+    .filter((p) => {
+      if (!p.occasion || p.occasion.length === 0) return false;
+      if (!currentOccasion) return true;
+      return (
+        p.occasion.includes(currentOccasion.id) ||
+        p.occasion.includes(currentOccasion.name) ||
+        (activeOccasionId && p.occasion.includes(activeOccasionId))
+      );
+    })
+    .slice(0, 3);
 
   return (
     <section className="py-24 bg-cream relative overflow-hidden bg-grid-pattern">
@@ -118,7 +134,9 @@ export function OccasionShowcase() {
                 </span>
               </h2>
               <p className="text-base text-gray-500 max-w-md">
-                {activeOccasionInfo?.desc || 'Tuyển chọn những mẫu hoa tinh tế phù hợp nhất.'}
+                {currentOccasion?.name
+                  ? `Bộ sưu tập: ${currentOccasion.name}`
+                  : 'Tuyển chọn những mẫu hoa tinh tế phù hợp nhất cho từng dịp đặc biệt.'}
               </p>
             </div>
 
@@ -133,34 +151,86 @@ export function OccasionShowcase() {
             </Link>
           </div>
 
-          {/* Occasion Tabs Switcher */}
-          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-none">
-            {OCCASION_TABS.map((tab) => {
-              const IconComponent = tab.icon;
-              const isActive = activeTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`px-6 py-3.5 rounded-full text-sm font-semibold flex items-center gap-2.5 shrink-0 transition-all duration-300 ${
-                    isActive
-                      ? 'bg-primary text-white shadow-lg shadow-primary/30 scale-[1.02]'
-                      : 'bg-white text-foreground border border-border hover:bg-cream'
-                  }`}
-                >
-                  <IconComponent size={16} />
-                  <span>{tab.label}</span>
-                </button>
-              );
-            })}
+          {/* Occasion Dynamic Tabs Switcher with Left/Right Scroll Controls */}
+          <div className="relative flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => scrollTabs('left')}
+              className="w-8 h-8 rounded-full bg-white border border-border/80 text-foreground hover:bg-primary/20 hover:border-primary shadow-xs flex items-center justify-center shrink-0 transition-all cursor-pointer"
+              title="Cuộn sang trái"
+            >
+              <ChevronLeft size={16} />
+            </button>
+
+            <div
+              ref={tabsRef}
+              className="flex gap-2.5 overflow-x-auto pb-1 scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden scroll-smooth flex-1"
+            >
+              {sortedOccasionList.map((occ) => {
+                const isActive = activeOccasionId === occ.id;
+                const tabLabel = occ.description?.trim() || occ.name;
+
+                // Calculate product count matching this occasion
+                const count = products.filter((p) => {
+                  if (!p.occasion || p.occasion.length === 0) return false;
+                  return p.occasion.includes(occ.id) || p.occasion.includes(occ.name);
+                }).length;
+
+                return (
+                  <button
+                    key={occ.id}
+                    type="button"
+                    onClick={() => setActiveOccasionId(occ.id)}
+                    className={`px-4 py-2.5 rounded-full text-xs font-semibold flex items-center gap-2 shrink-0 transition-all duration-300 cursor-pointer ${
+                      isActive
+                        ? 'bg-primary/30 border-2 border-primary text-primary-dark font-bold shadow-md shadow-primary/15 scale-[1.02]'
+                        : 'bg-white text-gray-700 border border-border/80 hover:bg-cream hover:text-foreground hover:border-primary/40'
+                    }`}
+                  >
+                    <span>{tabLabel}</span>
+                    <span
+                      className={`text-[10px] px-2 py-0.5 rounded-full font-mono font-bold ${
+                        isActive
+                          ? 'bg-primary text-primary-foreground shadow-xs'
+                          : 'bg-cream text-muted-foreground border border-border/60'
+                      }`}
+                    >
+                      {count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => scrollTabs('right')}
+              className="w-8 h-8 rounded-full bg-white border border-border/80 text-foreground hover:bg-primary/20 hover:border-primary shadow-xs flex items-center justify-center shrink-0 transition-all cursor-pointer"
+              title="Cuộn sang phải"
+            >
+              <ChevronRight size={16} />
+            </button>
           </div>
 
           {/* Occasion Filtered Product Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {occasionProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
+          {occasionProducts.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {occasionProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12 bg-white/60 rounded-3xl border border-border/80">
+              <p className="text-sm text-gray-500 font-serif">
+                Chưa có sản phẩm nào cho dịp "{currentOccasion?.name || 'này'}".
+              </p>
+              <Link to="/shop" className="inline-block mt-3">
+                <Button variant="link" className="text-primary-dark font-semibold text-xs">
+                  Khám phá toàn bộ cửa hàng &rarr;
+                </Button>
+              </Link>
+            </div>
+          )}
         </div>
 
         {/* Section 2: Real Customer Reviews */}
