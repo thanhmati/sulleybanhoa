@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useProductDetailQuery, useProductsQuery } from '@/hooks/useProducts';
+import { useCategoriesQuery } from '@/hooks/useCategories';
+import { useFlowerTypesQuery } from '@/hooks/useFlowerTypes';
+import { useOccasionsQuery } from '@/hooks/useOccasions';
 import {
   ArrowLeft,
   Truck,
@@ -10,14 +13,20 @@ import {
   MessageCircle,
   ArrowUpRight,
   Loader2,
+  Tag,
+  Sparkles,
+  Heart,
 } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
 import { SEO } from '@/components/shared/SEO';
+import { ProductCard } from '@/components/shop/ProductCard';
 
 export default function ProductDetailPage() {
   const { id = '' } = useParams<{ id: string }>();
   const { data: product, isLoading } = useProductDetailQuery(id);
   const { data: allProducts = [] } = useProductsQuery();
+  const { data: categories = [] } = useCategoriesQuery();
+  const { data: dbFlowerTypes = [] } = useFlowerTypesQuery();
+  const { data: dbOccasions = [] } = useOccasionsQuery();
   const [activeImage, setActiveImage] = useState<string>('');
 
   useEffect(() => {
@@ -50,6 +59,25 @@ export default function ProductDetailPage() {
       </div>
     );
   }
+
+  // Map category name
+  const categoryObj = categories.find(
+    (c) =>
+      c.key === product.category ||
+      c.id === product.category ||
+      c.id === (product as any).categoryId,
+  );
+  const categoryName = categoryObj?.name || product.category || 'Hoa tươi';
+
+  // Map flowerType UUIDs or names
+  const flowerTypeNames = (product.flowerType || [])
+    .map((val) => dbFlowerTypes.find((ft) => ft.id === val || ft.name === val)?.name || val)
+    .filter(Boolean);
+
+  // Map occasion UUIDs or names
+  const occasionNames = (product.occasion || [])
+    .map((val) => dbOccasions.find((occ) => occ.id === val || occ.name === val)?.name || val)
+    .filter(Boolean);
 
   // Get related products
   const relatedProducts = allProducts
@@ -141,6 +169,57 @@ export default function ProductDetailPage() {
                 </span>
               </div>
 
+              {/* Product Category & Attributes Info Box */}
+              <div className="p-4 rounded-2xl bg-white border border-border/80 shadow-xs space-y-3">
+                {/* Category */}
+                <div className="flex items-center gap-2 text-xs">
+                  <span className="font-semibold text-muted-foreground w-32 shrink-0 flex items-center gap-1.5">
+                    <Tag size={13} className="text-primary-dark" /> Danh mục sản phẩm:
+                  </span>
+                  <span className="font-bold text-foreground bg-primary/20 px-3 py-1 rounded-full text-xs">
+                    {categoryName}
+                  </span>
+                </div>
+
+                {/* Flower Types */}
+                {flowerTypeNames.length > 0 && (
+                  <div className="flex items-start gap-2 text-xs pt-2 border-t border-border/60">
+                    <span className="font-semibold text-muted-foreground w-32 shrink-0 flex items-center gap-1.5 pt-0.5">
+                      <Sparkles size={13} className="text-primary-dark" /> Thành phần hoa:
+                    </span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {flowerTypeNames.map((name, i) => (
+                        <span
+                          key={i}
+                          className="bg-cream border border-border/80 text-foreground px-2.5 py-0.5 rounded-full text-xs font-medium"
+                        >
+                          {name}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Occasions */}
+                {occasionNames.length > 0 && (
+                  <div className="flex items-start gap-2 text-xs pt-2 border-t border-border/60">
+                    <span className="font-semibold text-muted-foreground w-32 shrink-0 flex items-center gap-1.5 pt-0.5">
+                      <Heart size={13} className="text-secondary-dark" /> Dịp tặng phù hợp:
+                    </span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {occasionNames.map((name, i) => (
+                        <span
+                          key={i}
+                          className="bg-secondary/20 border border-secondary/40 text-secondary-dark px-2.5 py-0.5 rounded-full text-xs font-medium"
+                        >
+                          {name}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
               <p className="text-gray-600 text-base leading-relaxed pt-2">{product.description}</p>
             </div>
 
@@ -217,30 +296,7 @@ export default function ProductDetailPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {relatedProducts.map((p) => (
-                <Link key={p.id} to={`/product/${p.id}`} className="group block">
-                  <Card className="p-2 rounded-[2rem] bg-white border border-border hover:border-primary shadow-sm hover:shadow-xl hover:shadow-primary/20 transition-all duration-500 h-full flex flex-col justify-between">
-                    <div className="relative aspect-[3/4] rounded-[calc(2rem-0.5rem)] overflow-hidden bg-cream mb-3">
-                      <img
-                        src={p.imageUrl}
-                        alt={p.name}
-                        className="w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-108"
-                      />
-                    </div>
-                    <CardContent className="px-3 pb-3 space-y-1">
-                      <div className="flex justify-between items-start">
-                        <h3 className="text-base font-serif font-bold text-foreground group-hover:text-primary-dark transition-colors">
-                          {p.name}
-                        </h3>
-                        <span className="font-semibold text-xs text-foreground bg-primary/20 px-2 py-0.5 rounded-full">
-                          {new Intl.NumberFormat('vi-VN', {
-                            style: 'currency',
-                            currency: 'VND',
-                          }).format(p.price)}
-                        </span>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
+                <ProductCard key={p.id} product={p} />
               ))}
             </div>
           </div>

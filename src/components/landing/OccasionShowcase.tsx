@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useProductsQuery } from '@/hooks/useProducts';
 import { useStoreSettingsQuery } from '@/hooks/useStoreSettings';
-import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowUpRight, Heart, Gift, Sparkles, Quote, CheckCircle2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { ProductCard } from '@/components/shop/ProductCard';
 
 interface OccasionTab {
   id: string;
@@ -158,33 +158,7 @@ export function OccasionShowcase() {
           {/* Occasion Filtered Product Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {occasionProducts.map((product) => (
-              <Link key={product.id} to={`/product/${product.id}`} className="group block h-full">
-                <Card className="p-2 rounded-[2rem] bg-white border border-border hover:border-primary shadow-sm hover:shadow-xl hover:shadow-primary/20 transition-all duration-500 h-full flex flex-col justify-between">
-                  <div className="relative aspect-[3/4] rounded-[calc(2rem-0.5rem)] overflow-hidden bg-cream mb-4">
-                    <img
-                      src={product.imageUrl}
-                      alt={product.name}
-                      className="w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-108"
-                    />
-                  </div>
-                  <CardContent className="px-3 pb-3 space-y-2 text-left">
-                    <div className="flex justify-between items-start">
-                      <h3 className="text-lg font-serif font-bold text-foreground group-hover:text-primary-dark transition-colors">
-                        {product.name}
-                      </h3>
-                      <span className="font-semibold text-sm text-foreground bg-primary/20 px-2.5 py-1 rounded-full">
-                        {new Intl.NumberFormat('vi-VN', {
-                          style: 'currency',
-                          currency: 'VND',
-                        }).format(product.price)}
-                      </span>
-                    </div>
-                    <p className="text-xs text-gray-500 line-clamp-2 leading-relaxed">
-                      {product.description}
-                    </p>
-                  </CardContent>
-                </Card>
-              </Link>
+              <ProductCard key={product.id} product={product} />
             ))}
           </div>
         </div>

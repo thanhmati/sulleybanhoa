@@ -1,14 +1,13 @@
 import React, { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { ArrowUpRight, Star, Heart, Truck, Clock, Flower2, ShieldCheck } from 'lucide-react';
+import { ArrowUpRight, Heart, Truck, Clock, Flower2, ShieldCheck } from 'lucide-react';
 import heroBg from '@/assets/hero-bg.png';
 import { useProductsQuery } from '@/hooks/useProducts';
 import { useStoreSettingsQuery } from '@/hooks/useStoreSettings';
 import { Link } from 'react-router-dom';
 import { SEO } from '@/components/shared/SEO';
-import { BouquetBuilder } from '@/components/landing/BouquetBuilder';
 import { OccasionShowcase } from '@/components/landing/OccasionShowcase';
+import { ProductCard } from '@/components/shop/ProductCard';
 import { renderHeroTitle } from '@/lib/utils/renderTitle';
 import type { LandingPillarItem } from '@/types/store-setting';
 
@@ -173,9 +172,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Interactive Bouquet Builder Showcase */}
-      <BouquetBuilder />
-
       {/* Occasion Showcase (Sinh Nhật, Kỷ Niệm, Khai Trương...) */}
       <OccasionShowcase />
 
@@ -201,48 +197,7 @@ export default function LandingPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {featuredProducts.map((product) => (
-              <Card
-                key={product.id}
-                className="group p-2.5 rounded-[2.2rem] bg-white border border-border shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-500 overflow-hidden flex flex-col justify-between"
-              >
-                <div>
-                  <div className="relative aspect-[4/5] rounded-[calc(2.2rem-0.625rem)] overflow-hidden bg-cream mb-4">
-                    <img
-                      src={product.imageUrl}
-                      alt={product.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                    />
-                    {product.isBestSeller && (
-                      <span className="absolute top-3 left-3 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-xs font-medium text-charcoal border border-white/50">
-                        Bán chạy
-                      </span>
-                    )}
-                  </div>
-                  <CardContent className="p-4 pt-0 text-left space-y-2">
-                    <div className="flex items-center gap-1 text-xs text-primary-dark font-medium">
-                      <Star size={12} fill="currentColor" /> 5.0
-                    </div>
-                    <h3 className="text-xl font-serif font-bold text-foreground group-hover:text-primary-dark transition-colors">
-                      {product.name}
-                    </h3>
-                    <p className="text-xs text-gray-500 line-clamp-2">{product.description}</p>
-                  </CardContent>
-                </div>
-
-                <div className="p-4 pt-0 flex items-center justify-between border-t border-gray-100 mt-2">
-                  <span className="text-lg font-bold text-primary-dark font-serif tracking-tight">
-                    {product.price.toLocaleString('vi-VN')} đ
-                  </span>
-                  <Link to={`/product/${product.id}`}>
-                    <Button
-                      size="sm"
-                      className="rounded-full bg-cream hover:bg-primary text-charcoal hover:text-white text-xs font-semibold px-4 transition-colors"
-                    >
-                      Chi tiết
-                    </Button>
-                  </Link>
-                </div>
-              </Card>
+              <ProductCard key={product.id} product={product} />
             ))}
           </div>
         </div>

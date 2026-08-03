@@ -11,7 +11,6 @@ import type {
   LandingFeaturedConfig,
   LandingPhilosophyConfig,
   LandingPillarsConfig,
-  LandingBouquetBuilderConfig,
   LandingOccasionConfig,
   LandingReviewsConfig,
   ShopHeaderConfig,
@@ -154,16 +153,6 @@ export default function StoreConfigPage() {
     },
   });
 
-  const bouquetBuilderForm = useForm<LandingBouquetBuilderConfig>({
-    defaultValues: {
-      eyebrow: 'XƯỜNG CẦM HOA THU NHỏ',
-      titleMain: 'Tự Tay Phối Hoa',
-      titleItalic: '& Tạo Thiệp 3D',
-      subtitle:
-        'Trải nghiệm tự thiết kế bó hoa cá nhân hóa theo phong cách Hàn Quốc chỉ qua 4 bước đơn giản.',
-    },
-  });
-
   const occasionForm = useForm<LandingOccasionConfig>({
     defaultValues: {
       eyebrow: 'KHÁM PHÁ THEO DỊP TẶNG',
@@ -209,8 +198,6 @@ export default function StoreConfigPage() {
     if (settings?.landing_featured) featuredForm.reset(settings.landing_featured);
     if (settings?.landing_philosophy) philosophyForm.reset(settings.landing_philosophy);
     if (settings?.landing_pillars) pillarsForm.reset(settings.landing_pillars);
-    if (settings?.landing_bouquet_builder)
-      bouquetBuilderForm.reset(settings.landing_bouquet_builder);
     if (settings?.landing_occasion) occasionForm.reset(settings.landing_occasion);
     if (settings?.landing_reviews) reviewsForm.reset(settings.landing_reviews);
   }, [
@@ -222,7 +209,6 @@ export default function StoreConfigPage() {
     featuredForm,
     philosophyForm,
     pillarsForm,
-    bouquetBuilderForm,
     occasionForm,
     reviewsForm,
   ]);
@@ -260,10 +246,6 @@ export default function StoreConfigPage() {
 
   const handleSavePillars = async (data: LandingPillarsConfig) => {
     await updateMutation.mutateAsync({ key: 'landing_pillars', value: data });
-  };
-
-  const handleSaveBouquetBuilder = async (data: LandingBouquetBuilderConfig) => {
-    await updateMutation.mutateAsync({ key: 'landing_bouquet_builder', value: data });
   };
 
   const handleSaveOccasion = async (data: LandingOccasionConfig) => {
@@ -427,69 +409,7 @@ export default function StoreConfigPage() {
             </CardContent>
           </Card>
 
-          {/* Card 2: BouquetBuilder Section */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Sparkles size={16} className="text-primary" /> Section Xưởng Cắm Hoa Thu Nhỏ
-              </CardTitle>
-              <CardDescription>
-                Tùy chỉnh eyebrow, tiêu đề và mô tả của section workshop thiết kế hoa tương tác.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form
-                onSubmit={bouquetBuilderForm.handleSubmit(handleSaveBouquetBuilder)}
-                className="space-y-4"
-              >
-                <div className="space-y-2">
-                  <Label htmlFor="bbEyebrow">Eyebrow Tag</Label>
-                  <Input
-                    id="bbEyebrow"
-                    {...bouquetBuilderForm.register('eyebrow')}
-                    placeholder="XƯỞNG CẮM HOA THU NHỎ"
-                  />
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="bbTitleMain">Phần tiêu đề 1 (chữ thường)</Label>
-                    <Input
-                      id="bbTitleMain"
-                      {...bouquetBuilderForm.register('titleMain')}
-                      placeholder="Tự Tay Phối Hoa"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="bbTitleItalic" className="text-primary-dark">
-                      Phần tiêu đề 2 (chữ nghiêng màu)
-                    </Label>
-                    <Input
-                      id="bbTitleItalic"
-                      {...bouquetBuilderForm.register('titleItalic')}
-                      placeholder="& Tạo Thiệp 3D"
-                      className="border-primary/50 focus:border-primary"
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="bbSubtitle">Mô tả ngắn</Label>
-                  <Textarea id="bbSubtitle" {...bouquetBuilderForm.register('subtitle')} rows={2} />
-                </div>
-                <div className="flex justify-end pt-2">
-                  <Button type="submit" disabled={updateMutation.isPending}>
-                    {updateMutation.isPending ? (
-                      <Loader2 className="animate-spin mr-2" size={14} />
-                    ) : (
-                      <Save size={14} className="mr-2" />
-                    )}
-                    Lưu section Xưởng cắm hoa
-                  </Button>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
-
-          {/* Card 3: Occasion Section */}
+          {/* Card 2: Occasion Section */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
