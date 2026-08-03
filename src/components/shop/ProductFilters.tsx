@@ -8,6 +8,8 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { formatCurrency } from '@/lib/utils/formatters';
+import { useFlowerTypesQuery } from '@/hooks/useFlowerTypes';
+import { useOccasionsQuery } from '@/hooks/useOccasions';
 
 interface ProductFiltersProps {
   filters: {
@@ -19,20 +21,6 @@ interface ProductFiltersProps {
   maxPrice: number;
 }
 
-const FLOWER_TYPES = [
-  'Rose',
-  'Tulip',
-  'Baby Breath',
-  'Sunflower',
-  'Peony',
-  'Orchid',
-  'Carnation',
-  'Daisy',
-  'Dried Flower',
-];
-
-const OCCASIONS = ['Birthday', 'Love', 'Anniversary', 'Opening', 'Graduation', 'Decoration'];
-
 const PRICE_PRESETS: { label: string; range: [number, number] }[] = [
   { label: '< 500k', range: [0, 500000] },
   { label: '500k - 1.5M', range: [500000, 1500000] },
@@ -41,17 +29,20 @@ const PRICE_PRESETS: { label: string; range: [number, number] }[] = [
 ];
 
 export default function ProductFilters({ filters, setFilters, maxPrice }: ProductFiltersProps) {
-  const handleFlowerTypeToggle = (type: string) => {
-    const next = filters.flowerType.includes(type)
-      ? filters.flowerType.filter((t) => t !== type)
-      : [...filters.flowerType, type];
+  const { data: dbFlowerTypes = [] } = useFlowerTypesQuery();
+  const { data: dbOccasions = [] } = useOccasionsQuery();
+
+  const handleFlowerTypeToggle = (id: string) => {
+    const next = filters.flowerType.includes(id)
+      ? filters.flowerType.filter((t) => t !== id)
+      : [...filters.flowerType, id];
     setFilters({ ...filters, flowerType: next });
   };
 
-  const handleOccasionToggle = (occ: string) => {
-    const next = filters.occasion.includes(occ)
-      ? filters.occasion.filter((o) => o !== occ)
-      : [...filters.occasion, occ];
+  const handleOccasionToggle = (id: string) => {
+    const next = filters.occasion.includes(id)
+      ? filters.occasion.filter((o) => o !== id)
+      : [...filters.occasion, id];
     setFilters({ ...filters, occasion: next });
   };
 
@@ -170,7 +161,7 @@ export default function ProductFilters({ filters, setFilters, maxPrice }: Produc
             </AccordionContent>
           </AccordionItem>
 
-          {/* Flower Type Chips */}
+          {/* Flower Type Chips (Dynamic DB UUIDs) */}
           <AccordionItem
             value="type"
             className="border border-border/80 bg-white/90 rounded-2xl px-4 overflow-hidden"
@@ -180,13 +171,14 @@ export default function ProductFilters({ filters, setFilters, maxPrice }: Produc
             </AccordionTrigger>
             <AccordionContent className="pt-0 pb-5">
               <div className="flex flex-wrap gap-1.5">
-                {FLOWER_TYPES.map((type) => {
-                  const isSelected = filters.flowerType.includes(type);
+                {dbFlowerTypes.map((ft) => {
+                  const isSelected =
+                    filters.flowerType.includes(ft.id) || filters.flowerType.includes(ft.name);
                   return (
                     <button
-                      key={type}
+                      key={ft.id}
                       type="button"
-                      onClick={() => handleFlowerTypeToggle(type)}
+                      onClick={() => handleFlowerTypeToggle(ft.id)}
                       className={`text-xs px-3 py-1.5 rounded-full border transition-all flex items-center gap-1 cursor-pointer font-medium ${
                         isSelected
                           ? 'bg-primary text-charcoal border-primary-dark font-bold shadow-xs'
@@ -194,7 +186,7 @@ export default function ProductFilters({ filters, setFilters, maxPrice }: Produc
                       }`}
                     >
                       {isSelected && <Check size={11} />}
-                      {type}
+                      {ft.name}
                     </button>
                   );
                 })}
@@ -202,7 +194,7 @@ export default function ProductFilters({ filters, setFilters, maxPrice }: Produc
             </AccordionContent>
           </AccordionItem>
 
-          {/* Occasions Chips */}
+          {/* Occasions Chips (Dynamic DB UUIDs) */}
           <AccordionItem
             value="occasion"
             className="border border-border/80 bg-white/90 rounded-2xl px-4 overflow-hidden"
@@ -212,13 +204,14 @@ export default function ProductFilters({ filters, setFilters, maxPrice }: Produc
             </AccordionTrigger>
             <AccordionContent className="pt-0 pb-5">
               <div className="flex flex-wrap gap-1.5">
-                {OCCASIONS.map((occ) => {
-                  const isSelected = filters.occasion.includes(occ);
+                {dbOccasions.map((occ) => {
+                  const isSelected =
+                    filters.occasion.includes(occ.id) || filters.occasion.includes(occ.name);
                   return (
                     <button
-                      key={occ}
+                      key={occ.id}
                       type="button"
-                      onClick={() => handleOccasionToggle(occ)}
+                      onClick={() => handleOccasionToggle(occ.id)}
                       className={`text-xs px-3 py-1.5 rounded-full border transition-all flex items-center gap-1 cursor-pointer font-medium ${
                         isSelected
                           ? 'bg-secondary text-charcoal border-secondary-dark font-bold shadow-xs'
@@ -230,7 +223,7 @@ export default function ProductFilters({ filters, setFilters, maxPrice }: Produc
                       ) : (
                         <Tag size={10} className="text-gray-400" />
                       )}
-                      {occ}
+                      {occ.name}
                     </button>
                   );
                 })}

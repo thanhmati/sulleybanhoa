@@ -7,6 +7,7 @@ import {
   Users,
   DollarSign,
   Flower2,
+  Tags,
   Store,
 } from 'lucide-react';
 import { NavMain } from '@/components/nav-main';
@@ -44,6 +45,11 @@ const data = {
       title: 'Sản phẩm',
       url: '/admin/products',
       icon: Flower2,
+    },
+    {
+      title: 'Phân loại',
+      url: '/admin/categories',
+      icon: Tags,
     },
     {
       title: 'Cửa hàng',

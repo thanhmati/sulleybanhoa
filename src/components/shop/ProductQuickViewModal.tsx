@@ -6,6 +6,8 @@ import { Badge } from '@/components/ui/badge';
 import { Star, ShoppingBag, ArrowRight, CheckCircle2, Sparkles } from 'lucide-react';
 import { Product } from '@/types/product';
 import { formatCurrency } from '@/lib/utils/formatters';
+import { useFlowerTypesQuery } from '@/hooks/useFlowerTypes';
+import { useOccasionsQuery } from '@/hooks/useOccasions';
 
 interface ProductQuickViewModalProps {
   product: Product | null;
@@ -15,6 +17,8 @@ interface ProductQuickViewModalProps {
 
 export function ProductQuickViewModal({ product, isOpen, onClose }: ProductQuickViewModalProps) {
   const [selectedImage, setSelectedImage] = useState<string>('');
+  const { data: dbFlowerTypes = [] } = useFlowerTypesQuery();
+  const { data: dbOccasions = [] } = useOccasionsQuery();
 
   useEffect(() => {
     if (product) {
@@ -28,6 +32,16 @@ export function ProductQuickViewModal({ product, isOpen, onClose }: ProductQuick
 
   const images = product.images && product.images.length > 0 ? product.images : [product.imageUrl];
   const activeImage = selectedImage || product.imageUrl;
+
+  // Map flowerType UUIDs or Names to human readable names
+  const flowerTypeNames = (product.flowerType || []).map(
+    (val) => dbFlowerTypes.find((ft) => ft.id === val || ft.name === val)?.name || val,
+  );
+
+  // Map occasion UUIDs or Names to human readable names
+  const occasionNames = (product.occasion || []).map(
+    (val) => dbOccasions.find((occ) => occ.id === val || occ.name === val)?.name || val,
+  );
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -103,13 +117,15 @@ export function ProductQuickViewModal({ product, isOpen, onClose }: ProductQuick
 
               {/* Flower Attributes */}
               <div className="mt-5 space-y-3 pt-4 border-t border-gray-100">
-                {product.flowerType && product.flowerType.length > 0 && (
+                {flowerTypeNames.length > 0 && (
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-medium text-gray-400 w-20">Loại hoa:</span>
+                    <span className="text-xs font-medium text-gray-400 w-24 shrink-0">
+                      Loại hoa:
+                    </span>
                     <div className="flex flex-wrap gap-1.5">
-                      {product.flowerType.map((t) => (
+                      {flowerTypeNames.map((t, idx) => (
                         <Badge
-                          key={t}
+                          key={idx}
                           variant="secondary"
                           className="rounded-full bg-cream text-charcoal font-medium text-[11px] border border-border"
                         >
@@ -120,13 +136,15 @@ export function ProductQuickViewModal({ product, isOpen, onClose }: ProductQuick
                   </div>
                 )}
 
-                {product.occasion && product.occasion.length > 0 && (
+                {occasionNames.length > 0 && (
                   <div className="flex items-center gap-2">
-                    <span className="text-xs font-medium text-gray-400 w-20">Dịp thích hợp:</span>
+                    <span className="text-xs font-medium text-gray-400 w-24 shrink-0">
+                      Dịp thích hợp:
+                    </span>
                     <div className="flex flex-wrap gap-1.5">
-                      {product.occasion.map((o) => (
+                      {occasionNames.map((o, idx) => (
                         <Badge
-                          key={o}
+                          key={idx}
                           variant="outline"
                           className="rounded-full border-primary/40 text-primary-dark font-medium text-[11px]"
                         >

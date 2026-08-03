@@ -1,4 +1,4 @@
-export type ProductCategory = 'bouquet' | 'basket' | 'box' | 'plant' | 'stand';
+export type ProductCategory = 'bouquet' | 'basket' | 'box' | 'plant' | 'stand' | string;
 
 export interface Product {
   id: string;
@@ -8,6 +8,7 @@ export interface Product {
   imageUrl: string;
   images?: string[];
   category: ProductCategory;
+  categoryId?: string;
   flowerType?: string[];
   occasion?: string[];
   isBestSeller?: boolean;
@@ -23,6 +24,7 @@ export interface ICreateProductRequest {
   imageUrl: string;
   images?: string[];
   category: ProductCategory;
+  categoryId?: string;
   flowerType?: string[];
   occasion?: string[];
   isBestSeller?: boolean;

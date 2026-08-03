@@ -121,7 +121,7 @@ export function OrderReceipt({ order }: OrderReceiptProps) {
       {/* Footer Thank You */}
       <div className="text-center pt-1.5 space-y-0.5">
         <p className="text-[9px] font-medium italic">
-          Cảm ơn quý khách đã tin tưởng và lựa chọn SULLEY FLORAL STUDIO! 🌸
+          Cảm ơn quý khách đã tin tưởng và lựa chọn SULLEY FLORAL STUDIO!
         </p>
       </div>
     </>

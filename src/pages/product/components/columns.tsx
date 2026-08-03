@@ -1,5 +1,6 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { Product } from '@/types/product';
+import { ICategory, IFlowerType } from '@/types/catalog-metadata';
 import { formatCurrency } from '@/lib/utils/formatters';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -7,6 +8,8 @@ import { Edit2, Trash2 } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 
 interface ProductColumnsProps {
+  dbCategories?: ICategory[];
+  dbFlowerTypes?: IFlowerType[];
   onEdit: (product: Product) => void;
   onDelete: (product: Product) => void;
   onToggleBestSeller: (product: Product, value: boolean) => void;
@@ -22,6 +25,8 @@ const CATEGORY_LABELS: Record<string, string> = {
 };
 
 export const getProductColumns = ({
+  dbCategories = [],
+  dbFlowerTypes = [],
   onEdit,
   onDelete,
   onToggleBestSeller,
@@ -43,16 +48,22 @@ export const getProductColumns = ({
   {
     accessorKey: 'name',
     header: 'Tên sản phẩm',
-    cell: ({ row }) => (
-      <div>
-        <div className="font-medium text-foreground text-sm">{row.original.name}</div>
-        {row.original.flowerType && row.original.flowerType.length > 0 && (
-          <div className="text-xs text-muted-foreground mt-0.5">
-            {row.original.flowerType.join(', ')}
-          </div>
-        )}
-      </div>
-    ),
+    cell: ({ row }) => {
+      const flowerTypeNames = (row.original.flowerType || [])
+        .map((val) => dbFlowerTypes.find((ft) => ft.id === val || ft.name === val)?.name || val)
+        .filter(Boolean);
+
+      return (
+        <div>
+          <div className="font-semibold text-foreground text-sm">{row.original.name}</div>
+          {flowerTypeNames.length > 0 && (
+            <div className="text-xs text-muted-foreground mt-0.5 font-sans">
+              {flowerTypeNames.join(', ')}
+            </div>
+          )}
+        </div>
+      );
+    },
   },
   {
     accessorKey: 'price',
@@ -66,11 +77,19 @@ export const getProductColumns = ({
   {
     accessorKey: 'category',
     header: 'Danh mục',
-    cell: ({ row }) => (
-      <Badge variant="secondary" className="text-xs">
-        {CATEGORY_LABELS[row.original.category] || row.original.category}
-      </Badge>
-    ),
+    cell: ({ row }) => {
+      const catVal = row.original.category;
+      const matchedCat = dbCategories.find(
+        (c) => c.key === catVal || c.id === catVal || c.id === row.original.categoryId,
+      );
+      const catName = matchedCat?.name || CATEGORY_LABELS[catVal] || catVal;
+
+      return (
+        <Badge variant="secondary" className="text-xs">
+          {catName}
+        </Badge>
+      );
+    },
   },
   {
     accessorKey: 'isBestSeller',

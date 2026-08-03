@@ -5,6 +5,8 @@ import {
   useUpdateProductMutation,
   useDeleteProductMutation,
 } from '@/hooks/useProducts';
+import { useCategoriesQuery } from '@/hooks/useCategories';
+import { useFlowerTypesQuery } from '@/hooks/useFlowerTypes';
 import { Product } from '@/types/product';
 import { DataTable } from '@/components/ui/DataTable';
 import { DataTableToolbar } from '@/components/ui/DataTableToolbar';
@@ -20,6 +22,8 @@ export default function ProductListPage() {
   const [deletingProduct, setDeletingProduct] = useState<Product | null>(null);
 
   const { data: products = [], isLoading } = useProductsQuery();
+  const { data: dbCategories = [] } = useCategoriesQuery();
+  const { data: dbFlowerTypes = [] } = useFlowerTypesQuery();
 
   const createMutation = useCreateProductMutation();
   const updateMutation = useUpdateProductMutation();
@@ -65,6 +69,8 @@ export default function ProductListPage() {
   const columns = useMemo(
     () =>
       getProductColumns({
+        dbCategories,
+        dbFlowerTypes,
         onEdit: (product) => {
           setEditingProduct(product);
           setIsFormOpen(true);
@@ -73,7 +79,7 @@ export default function ProductListPage() {
         onToggleBestSeller: handleToggleBestSeller,
         onToggleNew: handleToggleNew,
       }),
-    [handleToggleBestSeller, handleToggleNew],
+    [dbCategories, dbFlowerTypes, handleToggleBestSeller, handleToggleNew],
   );
 
   return (

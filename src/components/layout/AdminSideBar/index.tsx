@@ -13,7 +13,7 @@ const navItems = [
 export function AdminSidebar() {
   return (
     <aside className="hidden md:flex flex-col w-64 bg-background border-r">
-      <div className="p-4 text-xl font-semibold">🌸 Sulley Back Office</div>
+      <div className="p-4 text-xl font-semibold">Sulley Back Office</div>
       <nav className="flex-1 space-y-1 px-2">
         {navItems.map((item) => {
           const Icon = item.icon;

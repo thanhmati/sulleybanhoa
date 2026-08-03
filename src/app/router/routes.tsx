@@ -22,6 +22,7 @@ const AdminLayout = lazy(() => import('../layout/AdminLayout'));
 const SettingPage = lazy(() => import('../../pages/setting/SettingPage'));
 const ProductListPage = lazy(() => import('../../pages/product/ProductListPage'));
 const StoreConfigPage = lazy(() => import('../../pages/setting/components/StoreConfigPage'));
+const CategoryManagementPage = lazy(() => import('../../pages/category/CategoryManagementPage'));
 
 export const routes: RouteObject[] = [
   // 🌐 Public routes
@@ -90,6 +91,11 @@ export const routes: RouteObject[] = [
             path: 'products',
             element: <ProductListPage />,
             handle: { breadcrumb: 'Quản lý sản phẩm' },
+          },
+          {
+            path: 'categories',
+            element: <CategoryManagementPage />,
+            handle: { breadcrumb: 'Quản lý phân loại' },
           },
           {
             path: 'orders',

@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Star, Eye, ArrowUpRight, Sparkles } from 'lucide-react';
 import { Product } from '@/types/product';
 import { formatCurrency } from '@/lib/utils/formatters';
+import { useFlowerTypesQuery } from '@/hooks/useFlowerTypes';
+import { useOccasionsQuery } from '@/hooks/useOccasions';
 
 interface ProductCardProps {
   product: Product;
@@ -13,6 +15,18 @@ interface ProductCardProps {
 
 export function ProductCard({ product, onQuickView }: ProductCardProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const { data: dbFlowerTypes = [] } = useFlowerTypesQuery();
+  const { data: dbOccasions = [] } = useOccasionsQuery();
+
+  // Map flowerType UUIDs or Names to human readable names
+  const flowerTypeNames = (product.flowerType || [])
+    .map((val) => dbFlowerTypes.find((ft) => ft.id === val || ft.name === val)?.name || val)
+    .filter(Boolean);
+
+  // Map occasion UUIDs or Names to human readable names
+  const occasionNames = (product.occasion || [])
+    .map((val) => dbOccasions.find((occ) => occ.id === val || occ.name === val)?.name || val)
+    .filter(Boolean);
 
   return (
     <Card
@@ -73,14 +87,23 @@ export function ProductCard({ product, onQuickView }: ProductCardProps) {
       </div>
 
       {/* Product Content Details */}
-      <CardContent className="px-3 pb-3 pt-1 space-y-2.5 flex-1 flex flex-col justify-between">
+      <CardContent className="px-3 pb-3 pt-1 space-y-2 flex-1 flex flex-col justify-between">
         <div>
-          {/* Flower Type Tag */}
-          {product.flowerType && product.flowerType.length > 0 && (
-            <div className="text-[11px] font-medium text-secondary-dark tracking-wide uppercase mb-1">
-              {product.flowerType.slice(0, 2).join(' • ')}
-            </div>
-          )}
+          {/* Flower Type & Occasion Tags */}
+          <div className="space-y-1 mb-2">
+            {flowerTypeNames.length > 0 && (
+              <div className="text-[11px] font-medium text-primary-dark tracking-wide flex items-center gap-1 line-clamp-1">
+                <span className="font-semibold text-gray-500">Loại hoa:</span>
+                <span>{flowerTypeNames.join(', ')}</span>
+              </div>
+            )}
+            {occasionNames.length > 0 && (
+              <div className="text-[11px] font-medium text-secondary-dark tracking-wide flex items-center gap-1 line-clamp-1">
+                <span className="font-semibold text-gray-500">Dịp thích hợp:</span>
+                <span>{occasionNames.join(', ')}</span>
+              </div>
+            )}
+          </div>
 
           {/* Product Name & Price Header */}
           <div className="flex justify-between items-start gap-2">

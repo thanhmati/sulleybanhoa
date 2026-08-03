@@ -13,6 +13,9 @@ import {
 import { Filter, Search, X, Truck, ShieldCheck, Flower2, SlidersHorizontal } from 'lucide-react';
 import { useProductsQuery } from '@/hooks/useProducts';
 import { useStoreSettingsQuery } from '@/hooks/useStoreSettings';
+import { useCategoriesQuery } from '@/hooks/useCategories';
+import { useFlowerTypesQuery } from '@/hooks/useFlowerTypes';
+import { useOccasionsQuery } from '@/hooks/useOccasions';
 import type { ShopHeaderConfig } from '@/types/store-setting';
 import ProductFilters from '@/components/shop/ProductFilters';
 import { ProductCard } from '@/components/shop/ProductCard';
@@ -21,18 +24,17 @@ import { SEO } from '@/components/shared/SEO';
 import { Product } from '@/types/product';
 import { formatCurrency } from '@/lib/utils/formatters';
 
-const CATEGORIES = [
-  { id: 'all', label: 'Tất cả' },
-  { id: 'bouquet', label: 'Hoa bó' },
-  { id: 'basket', label: 'Giỏ hoa' },
-  { id: 'box', label: 'Hộp hoa' },
-  { id: 'plant', label: 'Cây & Lan' },
-  { id: 'stand', label: 'Kệ hoa' },
-];
-
 export default function ShopPage() {
   const { data: rawProducts = [] } = useProductsQuery();
   const { data: settings } = useStoreSettingsQuery();
+  const { data: dbCategories = [] } = useCategoriesQuery();
+  const { data: dbFlowerTypes = [] } = useFlowerTypesQuery();
+  const { data: dbOccasions = [] } = useOccasionsQuery();
+
+  const categoriesList = useMemo(() => {
+    const list = dbCategories.map((c) => ({ id: c.key || c.id, label: c.name }));
+    return [{ id: 'all', label: 'Tất cả' }, ...list];
+  }, [dbCategories]);
 
   const shopHero: ShopHeaderConfig = settings?.shop_hero || {
     eyebrow: 'FLORAL BOUTIQUE COLLECTION 2026',
@@ -76,25 +78,35 @@ export default function ShopPage() {
       }
       // Flower Type
       if (filters.flowerType.length > 0) {
-        if (
-          !product.flowerType ||
-          !product.flowerType.some((t) => filters.flowerType.includes(t))
-        ) {
-          return false;
-        }
+        if (!product.flowerType || product.flowerType.length === 0) return false;
+        const hasMatch = product.flowerType.some((val) => {
+          const found = dbFlowerTypes.find((ft) => ft.id === val || ft.name === val);
+          return filters.flowerType.some(
+            (fVal) => fVal === val || (found && (fVal === found.id || fVal === found.name)),
+          );
+        });
+        if (!hasMatch) return false;
       }
       // Occasion
       if (filters.occasion.length > 0) {
-        if (!product.occasion || !product.occasion.some((o) => filters.occasion.includes(o))) {
-          return false;
-        }
+        if (!product.occasion || product.occasion.length === 0) return false;
+        const hasMatch = product.occasion.some((val) => {
+          const found = dbOccasions.find((o) => o.id === val || o.name === val);
+          return filters.occasion.some(
+            (fVal) => fVal === val || (found && (fVal === found.id || fVal === found.name)),
+          );
+        });
+        if (!hasMatch) return false;
       }
       // Search query
       if (searchQuery.trim() !== '') {
         const q = searchQuery.toLowerCase().trim();
         const matchName = product.name.toLowerCase().includes(q);
         const matchDesc = product.description?.toLowerCase().includes(q);
-        const matchFlower = product.flowerType?.some((f) => f.toLowerCase().includes(q));
+        const matchFlower = product.flowerType?.some((f) => {
+          const found = dbFlowerTypes.find((ft) => ft.id === f || ft.name === f);
+          return (found ? found.name : f).toLowerCase().includes(q);
+        });
         if (!matchName && !matchDesc && !matchFlower) {
           return false;
         }
@@ -110,7 +122,7 @@ export default function ShopPage() {
       if (sortBy === 'newest') return (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0);
       return 0; // featured
     });
-  }, [filters, activeCategory, searchQuery, sortBy, rawProducts]);
+  }, [filters, activeCategory, searchQuery, sortBy, rawProducts, dbFlowerTypes, dbOccasions]);
 
   // Active filter helper
   const hasActiveFilters =
@@ -167,7 +179,7 @@ export default function ShopPage() {
 
           {/* Category Switcher Tabs */}
           <div className="flex justify-center gap-2 mb-10 flex-wrap overflow-x-auto py-2 px-1">
-            {CATEGORIES.map((cat) => {
+            {categoriesList.map((cat) => {
               const count = categoryCounts[cat.id] || 0;
               const isActive = activeCategory === cat.id;
               return (
@@ -283,7 +295,7 @@ export default function ShopPage() {
 
               {activeCategory !== 'all' && (
                 <span className="inline-flex items-center gap-1 text-xs px-3 py-1 rounded-full bg-primary/30 border border-primary-dark text-charcoal font-medium">
-                  Danh mục: {CATEGORIES.find((c) => c.id === activeCategory)?.label}
+                  Danh mục: {categoriesList.find((c) => c.id === activeCategory)?.label}
                   <button onClick={() => setActiveCategory('all')} className="hover:text-red-500">
                     <X size={12} />
                   </button>
