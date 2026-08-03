@@ -421,7 +421,7 @@ export default function CategoryManagementPage() {
                       <TableCell className="font-mono text-xs">{index + 1}</TableCell>
                       <TableCell className="font-medium text-foreground">
                         <span className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-secondary/30 text-xs font-semibold">
-                          🎀 {item.name}
+                          {item.name}
                         </span>
                       </TableCell>
                       <TableCell className="text-muted-foreground text-sm">

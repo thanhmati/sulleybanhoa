@@ -34,6 +34,7 @@ import {
   Flame,
   Package,
   Star,
+  Search,
 } from 'lucide-react';
 import { Product, ProductCategory } from '@/types/product';
 import { productService } from '@/services/productService';
@@ -63,6 +64,180 @@ interface ProductFormDialogProps {
   isLoading?: boolean;
 }
 
+interface SearchableTagPickerProps {
+  label: string;
+  options: { id: string; name: string }[];
+  selectedIds: string[];
+  onToggle: (id: string) => void;
+  onAddCustom: (name: string) => void;
+  placeholderSearch: string;
+  badgeVariant?: 'primary' | 'secondary';
+}
+
+function SearchableTagPicker({
+  label,
+  options,
+  selectedIds,
+  onToggle,
+  onAddCustom,
+  placeholderSearch,
+  badgeVariant = 'primary',
+}: SearchableTagPickerProps) {
+  const [search, setSearch] = useState('');
+
+  const filteredOptions = options.filter((opt) =>
+    opt.name.toLowerCase().includes(search.toLowerCase().trim()),
+  );
+
+  const selectedObjects = selectedIds.map((id) => {
+    const found = options.find((opt) => opt.id === id || opt.name === id);
+    return { id, name: found ? found.name : id };
+  });
+
+  const handleAdd = () => {
+    const trimmed = search.trim();
+    if (trimmed) {
+      onAddCustom(trimmed);
+      setSearch('');
+    }
+  };
+
+  return (
+    <div className="space-y-2.5">
+      <div className="flex justify-between items-center">
+        <Label className="text-xs font-semibold">{label}</Label>
+        <div className="flex items-center gap-2">
+          <span className="text-[11px] text-muted-foreground font-medium">
+            Đã chọn: <strong className="text-foreground">{selectedIds.length}</strong>
+          </span>
+          {selectedIds.length > 0 && (
+            <button
+              type="button"
+              onClick={() => selectedIds.forEach((id) => onToggle(id))}
+              className="text-[10px] text-destructive hover:underline font-medium cursor-pointer"
+            >
+              Xóa tất cả
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Selected Items Bar */}
+      {selectedObjects.length > 0 && (
+        <div className="flex flex-wrap gap-1.5 p-2.5 rounded-xl bg-background border border-border/80 min-h-[42px] items-center">
+          {selectedObjects.map((item) => (
+            <span
+              key={item.id}
+              className={`text-xs px-2.5 py-1 rounded-full border flex items-center gap-1.5 font-medium ${
+                badgeVariant === 'primary'
+                  ? 'bg-primary/20 border-primary/40 text-primary-dark font-semibold'
+                  : 'bg-secondary/30 border-secondary/50 text-secondary-dark font-semibold'
+              }`}
+            >
+              <span>{item.name}</span>
+              <button
+                type="button"
+                onClick={() => onToggle(item.id)}
+                className="hover:text-destructive transition-colors p-0.5 cursor-pointer"
+              >
+                <X size={12} />
+              </button>
+            </span>
+          ))}
+        </div>
+      )}
+
+      {/* Search & Custom Add Bar */}
+      <div className="relative flex gap-2">
+        <div className="relative flex-1">
+          <Search
+            size={14}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
+          />
+          <Input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder={placeholderSearch}
+            className="pl-8 text-xs h-9 bg-background"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                if (filteredOptions.length === 1) {
+                  onToggle(filteredOptions[0].id);
+                  setSearch('');
+                } else if (search.trim()) {
+                  handleAdd();
+                }
+              }
+            }}
+          />
+          {search && (
+            <button
+              type="button"
+              onClick={() => setSearch('')}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            >
+              <X size={12} />
+            </button>
+          )}
+        </div>
+
+        {search.trim() &&
+          !options.some((o) => o.name.toLowerCase() === search.trim().toLowerCase()) && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleAdd}
+              className="h-9 text-xs shrink-0 rounded-lg px-3"
+            >
+              <Plus size={14} className="mr-1" /> Thêm "{search.trim()}"
+            </Button>
+          )}
+      </div>
+
+      {/* Options Scrollable Panel */}
+      <div className="max-h-36 overflow-y-auto p-2 rounded-xl bg-background border border-border space-y-1">
+        {filteredOptions.length > 0 ? (
+          <div className="flex flex-wrap gap-1.5">
+            {filteredOptions.map((opt) => {
+              const isSelected = selectedIds.includes(opt.id) || selectedIds.includes(opt.name);
+              return (
+                <button
+                  key={opt.id}
+                  type="button"
+                  onClick={() => onToggle(opt.id)}
+                  className={`text-xs px-2.5 py-1 rounded-full border transition-all flex items-center gap-1 cursor-pointer font-medium ${
+                    isSelected
+                      ? badgeVariant === 'primary'
+                        ? 'bg-primary text-primary-foreground border-primary font-semibold shadow-xs'
+                        : 'bg-secondary text-secondary-foreground border-secondary font-semibold shadow-xs'
+                      : 'bg-card text-muted-foreground hover:border-primary/50 hover:text-foreground'
+                  }`}
+                >
+                  {isSelected && <Check size={11} />}
+                  <span>{opt.name}</span>
+                </button>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="text-center py-2 text-xs text-muted-foreground">
+            {search ? (
+              <span>
+                Không tìm thấy "{search}". Bấm nút <strong>Thêm "{search}"</strong> ở trên để tạo
+                mới.
+              </span>
+            ) : (
+              <span>Chưa có danh sách tùy chọn.</span>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export function ProductFormDialog({
   product,
   isOpen,
@@ -75,8 +250,6 @@ export function ProductFormDialog({
   const [urlInput, setUrlInput] = useState<string>('');
   const [selectedFlowerTypeIds, setSelectedFlowerTypeIds] = useState<string[]>([]);
   const [selectedOccasionIds, setSelectedOccasionIds] = useState<string[]>([]);
-  const [customFlowerTypeInput, setCustomFlowerTypeInput] = useState('');
-  const [customOccasionInput, setCustomOccasionInput] = useState('');
 
   // Queries from DB
   const { data: categories = [] } = useCategoriesQuery();
@@ -164,19 +337,17 @@ export function ProductFormDialog({
     );
   };
 
-  const addCustomFlowerType = () => {
-    const trimmed = customFlowerTypeInput.trim();
+  const addCustomFlowerType = (name: string) => {
+    const trimmed = name.trim();
     if (trimmed && !selectedFlowerTypeIds.includes(trimmed)) {
       setSelectedFlowerTypeIds((prev) => [...prev, trimmed]);
-      setCustomFlowerTypeInput('');
     }
   };
 
-  const addCustomOccasion = () => {
-    const trimmed = customOccasionInput.trim();
+  const addCustomOccasion = (name: string) => {
+    const trimmed = name.trim();
     if (trimmed && !selectedOccasionIds.includes(trimmed)) {
       setSelectedOccasionIds((prev) => [...prev, trimmed]);
-      setCustomOccasionInput('');
     }
   };
 
@@ -196,7 +367,6 @@ export function ProductFormDialog({
       const updatedList = [...imageList, ...newUploadedUrls];
       setImageList(updatedList);
 
-      // Auto-set the first image as main cover image if empty
       if (!form.getValues('imageUrl') && updatedList[0]) {
         form.setValue('imageUrl', updatedList[0], { shouldValidate: true });
       }
@@ -206,7 +376,7 @@ export function ProductFormDialog({
       toast.error(err.message || 'Tải ảnh thất bại');
     } finally {
       setUploading(false);
-      e.target.value = ''; // Reset file input
+      e.target.value = '';
     }
   };
 
@@ -234,7 +404,6 @@ export function ProductFormDialog({
     const updatedList = imageList.filter((_, idx) => idx !== indexToRemove);
     setImageList(updatedList);
 
-    // If the cover image was removed, re-assign cover image to the first available image
     if (currentCoverUrl === removedUrl) {
       const newCover = updatedList[0] || '';
       form.setValue('imageUrl', newCover, { shouldValidate: true });
@@ -250,7 +419,6 @@ export function ProductFormDialog({
     const selectedCategoryObj = categories.find((c) => (c.key || c.id) === data.category);
     const coverUrl = data.imageUrl || imageList[0] || '';
 
-    // Ensure coverUrl is inside imageList
     const finalImages = [...imageList];
     if (coverUrl && !finalImages.includes(coverUrl)) {
       finalImages.unshift(coverUrl);
@@ -503,124 +671,34 @@ export function ProductFormDialog({
             </div>
           </div>
 
-          {/* Section 3: Thành phần hoa & Dịp tặng */}
+          {/* Section 3: Thành phần hoa & Dịp tặng (Searchable Tag Picker) */}
           <div className="space-y-4 p-4 rounded-2xl bg-card/50 border border-border/80">
             <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
               <Sparkles size={13} className="text-primary" /> Phân loại & Đặc tính
             </h4>
 
             {/* Thành phần hoa */}
-            <div className="space-y-2">
-              <div className="flex justify-between items-center">
-                <Label className="text-xs font-semibold">Thành phần hoa chính</Label>
-                <span className="text-[11px] text-muted-foreground font-medium">
-                  Đã chọn:{' '}
-                  <strong className="text-foreground">{selectedFlowerTypeIds.length}</strong>
-                </span>
-              </div>
-
-              <div className="flex flex-wrap gap-1.5 p-3 rounded-xl bg-background border border-border min-h-[52px]">
-                {dbFlowerTypes.map((ft) => {
-                  const isSelected =
-                    selectedFlowerTypeIds.includes(ft.id) ||
-                    selectedFlowerTypeIds.includes(ft.name);
-                  return (
-                    <button
-                      key={ft.id}
-                      type="button"
-                      onClick={() => toggleFlowerType(ft.id)}
-                      className={`text-xs px-3 py-1.5 rounded-full border transition-all flex items-center gap-1.5 cursor-pointer font-medium ${
-                        isSelected
-                          ? 'bg-primary text-primary-foreground border-primary font-semibold shadow-xs'
-                          : 'bg-card text-muted-foreground hover:border-primary/50 hover:text-foreground'
-                      }`}
-                    >
-                      {isSelected ? <Check size={12} /> : null}
-                      <span>{ft.name}</span>
-                    </button>
-                  );
-                })}
-              </div>
-
-              <div className="flex gap-2 items-center">
-                <Input
-                  placeholder="Thêm thành phần hoa khác..."
-                  value={customFlowerTypeInput}
-                  onChange={(e) => setCustomFlowerTypeInput(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      addCustomFlowerType();
-                    }
-                  }}
-                  className="text-xs h-9 bg-background"
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={addCustomFlowerType}
-                  className="h-9 text-xs shrink-0 rounded-lg px-3"
-                >
-                  <Plus size={14} className="mr-1" /> Thêm
-                </Button>
-              </div>
-            </div>
+            <SearchableTagPicker
+              label="Thành phần hoa chính"
+              options={dbFlowerTypes}
+              selectedIds={selectedFlowerTypeIds}
+              onToggle={toggleFlowerType}
+              onAddCustom={addCustomFlowerType}
+              placeholderSearch="Tìm kiếm loại hoa hoặc gõ tên mới..."
+              badgeVariant="primary"
+            />
 
             {/* Dịp tặng phù hợp */}
-            <div className="space-y-2 pt-2 border-t border-border/60">
-              <div className="flex justify-between items-center">
-                <Label className="text-xs font-semibold">Dịp tặng phù hợp</Label>
-                <span className="text-[11px] text-muted-foreground font-medium">
-                  Đã chọn: <strong className="text-foreground">{selectedOccasionIds.length}</strong>
-                </span>
-              </div>
-
-              <div className="flex flex-wrap gap-1.5 p-3 rounded-xl bg-background border border-border min-h-[52px]">
-                {dbOccasions.map((occ) => {
-                  const isSelected =
-                    selectedOccasionIds.includes(occ.id) || selectedOccasionIds.includes(occ.name);
-                  return (
-                    <button
-                      key={occ.id}
-                      type="button"
-                      onClick={() => toggleOccasion(occ.id)}
-                      className={`text-xs px-3 py-1.5 rounded-full border transition-all flex items-center gap-1.5 cursor-pointer font-medium ${
-                        isSelected
-                          ? 'bg-secondary text-secondary-foreground border-secondary font-semibold shadow-xs'
-                          : 'bg-card text-muted-foreground hover:border-secondary/50 hover:text-foreground'
-                      }`}
-                    >
-                      {isSelected ? <Check size={12} /> : null}
-                      <span>{occ.name}</span>
-                    </button>
-                  );
-                })}
-              </div>
-
-              <div className="flex gap-2 items-center">
-                <Input
-                  placeholder="Thêm dịp tặng khác..."
-                  value={customOccasionInput}
-                  onChange={(e) => setCustomOccasionInput(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      e.preventDefault();
-                      addCustomOccasion();
-                    }
-                  }}
-                  className="text-xs h-9 bg-background"
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={addCustomOccasion}
-                  className="h-9 text-xs shrink-0 rounded-lg px-3"
-                >
-                  <Plus size={14} className="mr-1" /> Thêm
-                </Button>
-              </div>
+            <div className="pt-2 border-t border-border/60">
+              <SearchableTagPicker
+                label="Dịp tặng phù hợp"
+                options={dbOccasions}
+                selectedIds={selectedOccasionIds}
+                onToggle={toggleOccasion}
+                onAddCustom={addCustomOccasion}
+                placeholderSearch="Tìm kiếm dịp tặng hoặc gõ tên mới..."
+                badgeVariant="secondary"
+              />
             </div>
           </div>
 
