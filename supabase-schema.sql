@@ -301,13 +301,13 @@ BEGIN
   FROM public.orders
   WHERE delivery_date BETWEEN v_start::DATE AND v_end::DATE;
 
-  -- 2. Order Revenue (Sum of delivered orders' prices)
-  SELECT COALESCE(SUM(price), 0.00) INTO v_order_revenue
+  -- 2. Order Revenue (Sum of delivered orders' prices + ship fees)
+  SELECT COALESCE(SUM(price + ship), 0.00) INTO v_order_revenue
   FROM public.orders
   WHERE status = 'DELIVERED' AND delivery_date BETWEEN v_start::DATE AND v_end::DATE;
 
-  -- 2b. Calculate Order total price & due amount for non-cancelled orders
-  SELECT COALESCE(SUM(price), 0.00), COALESCE(SUM(due_amount), 0.00)
+  -- 2b. Calculate Order total price (price + ship) & due amount for non-cancelled orders
+  SELECT COALESCE(SUM(price + ship), 0.00), COALESCE(SUM(due_amount), 0.00)
   INTO v_order_price_sum, v_total_due
   FROM public.orders
   WHERE status != 'CANCELLED' AND delivery_date BETWEEN v_start::DATE AND v_end::DATE;
@@ -320,20 +320,20 @@ BEGIN
   JOIN public.finance_categories c ON t.category_id = c.id
   WHERE c.type = 'EXPENSE' AND t.date BETWEEN v_start::DATE AND v_end::DATE;
 
-  -- 4. Total Income (from finance_transactions joined with finance_categories)
+  -- 4. Total Income (from finance_transactions, excluding ORDER_PAYMENT to prevent double-counting)
   SELECT COALESCE(SUM(t.amount), 0.00) INTO v_total_income
   FROM public.finance_transactions t
   JOIN public.finance_categories c ON t.category_id = c.id
-  WHERE c.type = 'INCOME' AND t.date BETWEEN v_start::DATE AND v_end::DATE;
+  WHERE c.type = 'INCOME' AND c.name != 'ORDER_PAYMENT' AND t.date BETWEEN v_start::DATE AND v_end::DATE;
 
-  -- 5. Calculate overall revenue (order revenue + other incomes)
+  -- 5. Calculate overall revenue (order revenue + other non-order incomes)
   v_revenue := v_order_revenue + v_total_income;
 
-  -- 6. Weekly Revenue (using extract week)
+  -- 6. Weekly Revenue (using extract week, including ship fees)
   WITH weekly_rev AS (
     SELECT 
       EXTRACT(WEEK FROM delivery_date) AS week_num,
-      SUM(price) AS rev
+      SUM(price + ship) AS rev
     FROM public.orders
     WHERE status = 'DELIVERED' AND delivery_date BETWEEN v_start::DATE AND v_end::DATE
     GROUP BY EXTRACT(WEEK FROM delivery_date)

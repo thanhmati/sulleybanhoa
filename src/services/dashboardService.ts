@@ -23,13 +23,16 @@ export const dashboardService = {
 
       const { data: orderData } = await supabase
         .from('orders')
-        .select('price, due_amount')
+        .select('price, ship, due_amount')
         .neq('status', 'CANCELLED')
         .gte('delivery_date', startDate)
         .lte('delivery_date', endDate);
 
       if (orderData) {
-        const sumPrice = orderData.reduce((sum, o) => sum + (Number(o.price) || 0), 0);
+        const sumPrice = orderData.reduce(
+          (sum, o) => sum + (Number(o.price) || 0) + (Number(o.ship) || 0),
+          0,
+        );
         const sumDue = orderData.reduce((sum, o) => sum + (Number(o.due_amount) || 0), 0);
         totalDue = sumDue;
         totalPaid = Math.max(0, sumPrice - sumDue);
