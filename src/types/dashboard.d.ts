@@ -15,6 +15,8 @@ export interface DashboardSummary {
   totalExpense: number;
   totalProfit: number;
   revenue: number;
+  totalPaid: number;
+  totalDue: number;
   weeklyRevenue: WeeklyRevenue[];
   statusDistribution: StatusDistribution[];
 

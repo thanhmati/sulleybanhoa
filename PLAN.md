@@ -64,3 +64,12 @@ Tài liệu chi tiết phân chia công việc (Task Breakdown) cho 2 pha chuy�
 ### 2.4 Chuyển đổi Landing Page & Storefront Công Khai
 
 - [x] **Task 2.4.1:** Cập nhật [ShopPage.tsx](file:///Users/tanthanh/Documents/sulleybanhoa/src/pages/shop/ShopPage.tsx) & [ContactPage.tsx](file:///Users/tanthanh/Documents/sulleybanhoa/src/pages/contact/ContactPage.tsx) đọc dữ liệu từ `useStoreSettingsQuery()`.
+
+---
+
+## 🟢 PHA 3: Nâng cấp Bảng Điều Khiển Admin (Admin Dashboard Stats & Financial Tracking)
+
+### 3.1 Tích hợp Card Thống kê Thanh toán & Dư nợ Đơn hàng
+
+- [x] **Task 3.1.1:** Bổ sung `totalPaid` và `totalDue` vào types, service layer và RPC schema.
+- [x] **Task 3.1.2:** Cập nhật `StatCard` và `OrderStats` hiển thị 2 thẻ **"Đã thanh toán"** và **"Số tiền cần thu hồi"** với giao diện đồng bộ trang Đơn hàng.

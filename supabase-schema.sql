@@ -285,6 +285,9 @@ DECLARE
   v_total_expense NUMERIC(12, 2);
   v_total_income NUMERIC(12, 2);
   v_revenue NUMERIC(12, 2);
+  v_total_due NUMERIC(12, 2);
+  v_total_paid NUMERIC(12, 2);
+  v_order_price_sum NUMERIC(12, 2);
   v_weekly_revenue JSON;
   v_status_distribution JSON;
   v_result JSON;
@@ -302,6 +305,14 @@ BEGIN
   SELECT COALESCE(SUM(price), 0.00) INTO v_order_revenue
   FROM public.orders
   WHERE status = 'DELIVERED' AND delivery_date BETWEEN v_start::DATE AND v_end::DATE;
+
+  -- 2b. Calculate Order total price & due amount for non-cancelled orders
+  SELECT COALESCE(SUM(price), 0.00), COALESCE(SUM(due_amount), 0.00)
+  INTO v_order_price_sum, v_total_due
+  FROM public.orders
+  WHERE status != 'CANCELLED' AND delivery_date BETWEEN v_start::DATE AND v_end::DATE;
+
+  v_total_paid := GREATEST(0.00, v_order_price_sum - v_total_due);
 
   -- 3. Total Expense (from finance_transactions joined with finance_categories)
   SELECT COALESCE(SUM(t.amount), 0.00) INTO v_total_expense
@@ -364,6 +375,8 @@ BEGIN
     'totalExpense', v_total_expense,
     'totalProfit', (v_revenue - v_total_expense),
     'revenue', v_revenue,
+    'totalPaid', v_total_paid,
+    'totalDue', v_total_due,
     'weeklyRevenue', v_weekly_revenue,
     'statusDistribution', v_status_distribution
   );
