@@ -66,3 +66,14 @@ export function usePayOrder() {
     },
   });
 }
+
+export function useDeleteOrderTransaction() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (transactionId: string) => orderService.deleteTransaction(transactionId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ORDER_DETAIL_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: ORDER_QUERY_KEY });
+    },
+  });
+}

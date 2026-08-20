@@ -74,3 +74,4 @@ Tài liệu chi tiết phân chia công việc (Task Breakdown) cho 2 pha chuy�
 - [x] **Task 3.1.1:** Bổ sung `totalPaid` và `totalDue` vào types, service layer và RPC schema.
 - [x] **Task 3.1.2:** Cập nhật `StatCard` và `OrderStats` hiển thị 2 thẻ **"Đã thanh toán"** và **"Số tiền cần thu hồi"** với giao diện đồng bộ trang Đơn hàng.
 - [x] **Task 3.1.3:** Nâng cấp UI chọn loại hoa (Autocomplete Multi-Select, sắp xếp A-Z) và khắc phục lỗi khởi tạo ngày giao dịch thu chi trong `FinanceTransactionFormDialog.tsx`.
+- [x] **Task 3.1.4:** Tích hợp tính năng xoá khoản thanh toán đã nhập trong Chi tiết đơn hàng (`PaymentInfo.tsx`) kèm hộp thoại xác nhận `ConfirmDialog`.

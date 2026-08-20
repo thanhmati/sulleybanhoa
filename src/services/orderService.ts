@@ -26,6 +26,7 @@ export function mapOrderFromDb(dbOrder: any): Order {
     createdAt: new Date(dbOrder.created_at),
     updatedAt: new Date(dbOrder.updated_at),
     transaction: (dbOrder.transaction || []).map((t: any) => ({
+      id: t.id,
       amount: Number(t.amount),
       type: t.type,
       paymentDate: t.payment_date,
@@ -127,5 +128,12 @@ export const orderService = {
 
     if (error) throw error;
     return 'Payment processed successfully';
+  },
+
+  deleteTransaction: async (transactionId: string): Promise<string> => {
+    const { error } = await supabase.from('order_transactions').delete().eq('id', transactionId);
+
+    if (error) throw error;
+    return 'Payment transaction deleted successfully';
   },
 };

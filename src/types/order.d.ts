@@ -6,6 +6,7 @@ interface client {
 }
 
 export interface ITransaction {
+  id?: string;
   amount: number;
   type: TRANSACTION_TYPE;
   paymentDate: string;
