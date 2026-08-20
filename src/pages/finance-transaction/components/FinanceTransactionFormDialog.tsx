@@ -38,11 +38,11 @@ import {
 import { IFinanceTransaction } from '@/types/finance-transaction';
 import { zodResolver } from '@hookform/resolvers/zod';
 import dayjs from 'dayjs';
-import { Check, Tag } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import z from 'zod';
+import { FlowerTypeAutocompleteSelect } from './FlowerTypeAutocompleteSelect';
 
 const financeTransactionSchema = z.object({
   amount: z.number().min(1, 'Vui lòng nhập số tiền'),
@@ -53,12 +53,13 @@ const financeTransactionSchema = z.object({
 
 type FinanceTransactionFormValues = z.infer<typeof financeTransactionSchema>;
 
-const defaultValues: FinanceTransactionFormValues = {
-  amount: 0,
-  categoryId: '',
-  note: '',
-  date: dayjs().format('YYYY-MM-DD'),
-};
+// Dynamic generator for initial form values to prevent stale module-scoped dates
+const getInitialFormValues = (data?: IFinanceTransaction): FinanceTransactionFormValues => ({
+  amount: data?.amount ?? 0,
+  categoryId: data?.categoryId ?? '',
+  note: data?.note ?? '',
+  date: data?.date ? dayjs(data.date).format('YYYY-MM-DD') : dayjs().format('YYYY-MM-DD'),
+});
 
 interface Props {
   open: boolean;
@@ -71,7 +72,7 @@ export function FinanceTransactionFormDialog({ open, onOpenChange, data }: Props
 
   const form = useForm<FinanceTransactionFormValues>({
     resolver: zodResolver(financeTransactionSchema),
-    defaultValues,
+    defaultValues: getInitialFormValues(data),
   });
 
   const isEditing = !!data;
@@ -92,18 +93,11 @@ export function FinanceTransactionFormDialog({ open, onOpenChange, data }: Props
       FINANCE_CATEGORY_LABEL[selectedCategory.name] === 'Nhập hoa' ||
       selectedCategory.name?.toLowerCase().includes('hoa'));
 
+  // Reset form with dynamic current date whenever dialog opens
   useEffect(() => {
-    if (!open) {
-      form.reset(defaultValues);
-      setSelectedFlowerNames([]);
-    }
-  }, [open, form]);
-
-  useEffect(() => {
-    if (data) {
-      form.reset(data);
-      // If editing existing note containing flower import list
-      if (data.note && data.note.includes('Nhập hoa:')) {
+    if (open) {
+      form.reset(getInitialFormValues(data));
+      if (data?.note && data.note.includes('Nhập hoa:')) {
         const match = data.note.match(/Nhập hoa:\s*([^|]+)/);
         if (match && match[1]) {
           const names = match[1]
@@ -111,17 +105,16 @@ export function FinanceTransactionFormDialog({ open, onOpenChange, data }: Props
             .map((s) => s.trim())
             .filter(Boolean);
           setSelectedFlowerNames(names);
+        } else {
+          setSelectedFlowerNames([]);
         }
+      } else {
+        setSelectedFlowerNames([]);
       }
     }
-  }, [data, form]);
+  }, [open, data, form]);
 
-  const toggleFlowerType = (name: string) => {
-    const isSelected = selectedFlowerNames.includes(name);
-    const nextNames = isSelected
-      ? selectedFlowerNames.filter((item) => item !== name)
-      : [...selectedFlowerNames, name];
-
+  const handleFlowerSelectChange = (nextNames: string[]) => {
     setSelectedFlowerNames(nextNames);
 
     // Format and append/replace "Nhập hoa: ..." in the note field
@@ -133,7 +126,7 @@ export function FinanceTransactionFormDialog({ open, onOpenChange, data }: Props
       const parts = currentNote.split(/\s*\|\s*/);
       const otherParts = parts.filter((p) => !p.trim().startsWith('Nhập hoa:'));
       updatedNote = flowerNotePrefix
-        ? [flowerNotePrefix, ...otherParts].join(' | ')
+        ? [flowerNotePrefix, ...otherParts].filter(Boolean).join(' | ')
         : otherParts.join(' | ');
     } else {
       updatedNote = currentNote ? `${flowerNotePrefix} | ${currentNote}` : flowerNotePrefix;
@@ -213,7 +206,6 @@ export function FinanceTransactionFormDialog({ open, onOpenChange, data }: Props
                               value={value}
                               onValueChange={(val) => {
                                 onChange(val);
-                                // If switching away from Nhập hoa, clear flower selections if appropriate
                               }}
                             >
                               <SelectTrigger className="w-full">
@@ -254,45 +246,14 @@ export function FinanceTransactionFormDialog({ open, onOpenChange, data }: Props
                   )}
                 />
 
-                {/* Selective Flower Type Selector for "Nhập hoa" Transactions */}
+                {/* Autocomplete Multi-Select for "Nhập hoa" Transactions */}
                 {isFlowerImport && (
-                  <div className="col-span-12 space-y-2 p-3.5 rounded-xl bg-card border border-border/80">
-                    <div className="flex justify-between items-center">
-                      <span className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-                        <Tag size={14} className="text-primary" /> Chọn các loại hoa nhập vào
-                      </span>
-                      <span className="text-[11px] text-muted-foreground font-medium">
-                        Đã chọn:{' '}
-                        <strong className="text-foreground">{selectedFlowerNames.length}</strong>
-                      </span>
-                    </div>
-
-                    <div className="flex flex-wrap gap-1.5 p-2.5 rounded-lg bg-background border border-border min-h-[44px]">
-                      {dbFlowerTypes.length > 0 ? (
-                        dbFlowerTypes.map((ft) => {
-                          const isSelected = selectedFlowerNames.includes(ft.name);
-                          return (
-                            <button
-                              key={ft.id}
-                              type="button"
-                              onClick={() => toggleFlowerType(ft.name)}
-                              className={`text-xs px-2.5 py-1 rounded-full border transition-all flex items-center gap-1 cursor-pointer font-medium ${
-                                isSelected
-                                  ? 'bg-primary text-primary-foreground border-primary font-semibold shadow-xs'
-                                  : 'bg-card text-muted-foreground hover:border-primary/50 hover:text-foreground'
-                              }`}
-                            >
-                              {isSelected && <Check size={11} />}
-                              {ft.name}
-                            </button>
-                          );
-                        })
-                      ) : (
-                        <span className="text-xs text-muted-foreground italic">
-                          Chưa có loại hoa nào trong hệ thống
-                        </span>
-                      )}
-                    </div>
+                  <div className="col-span-12">
+                    <FlowerTypeAutocompleteSelect
+                      flowerTypes={dbFlowerTypes}
+                      selectedNames={selectedFlowerNames}
+                      onSelectChange={handleFlowerSelectChange}
+                    />
                   </div>
                 )}
 
