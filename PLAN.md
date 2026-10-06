@@ -76,3 +76,12 @@ Tài liệu chi tiết phân chia công việc (Task Breakdown) cho 2 pha chuy�
 - [x] **Task 3.1.3:** Nâng cấp UI chọn loại hoa (Autocomplete Multi-Select, sắp xếp A-Z) và khắc phục lỗi khởi tạo ngày giao dịch thu chi trong `FinanceTransactionFormDialog.tsx`.
 - [x] **Task 3.1.4:** Tích hợp tính năng xoá khoản thanh toán đã nhập trong Chi tiết đơn hàng (`PaymentInfo.tsx`) kèm hộp thoại xác nhận `ConfirmDialog`.
 - [x] **Task 3.1.5:** Chuyển đổi bộ lọc thời gian Dashboard (`DashboardFilter.tsx`) từ chọn khoảng ngày sang chọn theo tháng (mặc định tháng hiện tại), tích hợp chọn nhanh năm và nút chuyển tháng tiện lợi.
+
+---
+
+### 3.2 Lịch điều phối giao hoa & Tiến độ cắm hoa (Delivery Calendar & Florist Timeline - Multi View)
+
+- [x] **Task 3.2.1:** Thiết lập kiến trúc Multi-View trong [src/pages/order/OrderListPage.tsx](file:///Users/tanthanh/Documents/sulleybanhoa/src/pages/order/OrderListPage.tsx) hỗ trợ chuyển đổi 3 chế độ xem (Bảng dữ liệu `table`, Lịch giao hoa `calendar`, Tiến độ trong ngày `timeline`) đồng bộ URL.
+- [x] **Task 3.2.2:** Xây dựng component [src/pages/order/components/OrderDeliveryCalendar.tsx](file:///Users/tanthanh/Documents/sulleybanhoa/src/pages/order/components/OrderDeliveryCalendar.tsx) hiển thị lịch tháng, badge tổng đơn, thống kê trạng thái theo ngày và tương tác chuyển sang xem ngày chi tiết.
+- [x] **Task 3.2.3:** Xây dựng component [src/pages/order/components/OrderFloristTimeline.tsx](file:///Users/tanthanh/Documents/sulleybanhoa/src/pages/order/components/OrderFloristTimeline.tsx) hiển thị tiến độ theo khung giờ trong ngày, thẻ đơn chi tiết cho Florist/Shipper, đổi nhanh trạng thái và in hoá đơn.
+- [x] **Task 3.2.4:** Kiểm thử đồng bộ Multi-View, đảm bảo toàn vẹn dữ liệu và giữ nguyên 100% tính năng của Table view hiện tại.
