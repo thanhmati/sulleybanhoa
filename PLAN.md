@@ -75,3 +75,4 @@ Tài liệu chi tiết phân chia công việc (Task Breakdown) cho 2 pha chuy�
 - [x] **Task 3.1.2:** Cập nhật `StatCard` và `OrderStats` hiển thị 2 thẻ **"Đã thanh toán"** và **"Số tiền cần thu hồi"** với giao diện đồng bộ trang Đơn hàng.
 - [x] **Task 3.1.3:** Nâng cấp UI chọn loại hoa (Autocomplete Multi-Select, sắp xếp A-Z) và khắc phục lỗi khởi tạo ngày giao dịch thu chi trong `FinanceTransactionFormDialog.tsx`.
 - [x] **Task 3.1.4:** Tích hợp tính năng xoá khoản thanh toán đã nhập trong Chi tiết đơn hàng (`PaymentInfo.tsx`) kèm hộp thoại xác nhận `ConfirmDialog`.
+- [x] **Task 3.1.5:** Chuyển đổi bộ lọc thời gian Dashboard (`DashboardFilter.tsx`) từ chọn khoảng ngày sang chọn theo tháng (mặc định tháng hiện tại), tích hợp chọn nhanh năm và nút chuyển tháng tiện lợi.

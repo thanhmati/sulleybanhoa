@@ -4,6 +4,7 @@ import { OrderStatusPieChart } from './components/OrderStatusPieChart';
 import { RevenueChart } from './components/RevenueChart';
 import { useDashboardSummary } from '@/hooks/useDashboardSummary';
 import { DashboardFilter } from './components/DashboardFilter';
+import dayjs from 'dayjs';
 
 function Wrapper({ children }: { children: React.ReactNode }) {
   return <div className="space-y-6 p-6">{children}</div>;
@@ -13,10 +14,10 @@ export default function DashboardPage() {
   const [params, setParams] = useState<{
     startDate?: string;
     endDate?: string;
-  }>({
-    startDate: undefined,
-    endDate: undefined,
-  });
+  }>(() => ({
+    startDate: dayjs().startOf('month').format('YYYY-MM-DD'),
+    endDate: dayjs().endOf('month').format('YYYY-MM-DD'),
+  }));
 
   const { data, isLoading } = useDashboardSummary(params);
 
