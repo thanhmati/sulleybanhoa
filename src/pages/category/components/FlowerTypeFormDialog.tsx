@@ -19,6 +19,7 @@ import type { IFlowerType, ICreateFlowerTypePayload } from '@/types/catalog-meta
 const flowerTypeSchema = z.object({
   name: z.string().min(2, 'Tên loại hoa phải từ 2 ký tự trở lên (VD: Rose, Tulip)'),
   description: z.string().optional(),
+  leadDays: z.number().min(0, 'Số ngày cần nhập trước phải >= 0'),
 });
 
 type FlowerTypeFormValues = z.infer<typeof flowerTypeSchema>;
@@ -43,6 +44,7 @@ export function FlowerTypeFormDialog({
     defaultValues: {
       name: '',
       description: '',
+      leadDays: 0,
     },
   });
 
@@ -51,11 +53,13 @@ export function FlowerTypeFormDialog({
       form.reset({
         name: flowerType.name,
         description: flowerType.description || '',
+        leadDays: flowerType.leadDays ?? 0,
       });
     } else {
       form.reset({
         name: '',
         description: '',
+        leadDays: 0,
       });
     }
   }, [flowerType, form, isOpen]);
@@ -64,6 +68,7 @@ export function FlowerTypeFormDialog({
     await onSubmit({
       name: data.name,
       description: data.description || '',
+      leadDays: Number(data.leadDays) || 0,
     });
   };
 
@@ -84,6 +89,28 @@ export function FlowerTypeFormDialog({
             />
             {form.formState.errors.name && (
               <p className="text-xs text-destructive">{form.formState.errors.name.message}</p>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="ft-lead-days">Số ngày cần nhập trước</Label>
+              <span className="text-[11px] text-muted-foreground">Mặc định: 0 ngày</span>
+            </div>
+            <Input
+              id="ft-lead-days"
+              type="number"
+              min={0}
+              step={1}
+              {...form.register('leadDays', { valueAsNumber: true })}
+              placeholder="0"
+            />
+            <p className="text-[11px] text-muted-foreground">
+              Ví dụ: Hoa Ly cần chuẩn bị trước 2 ngày so với ngày giao thì điền 2. (0 = nhập trong
+              ngày giao)
+            </p>
+            {form.formState.errors.leadDays && (
+              <p className="text-xs text-destructive">{form.formState.errors.leadDays.message}</p>
             )}
           </div>
 

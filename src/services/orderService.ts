@@ -22,6 +22,7 @@ export function mapOrderFromDb(dbOrder: any): Order {
     note: dbOrder.note || '',
     status: dbOrder.status,
     dueAmount: Number(dbOrder.due_amount),
+    flowers: Array.isArray(dbOrder.flowers) ? dbOrder.flowers : [],
     isPaid: dbOrder.is_paid,
     createdAt: new Date(dbOrder.created_at),
     updatedAt: new Date(dbOrder.updated_at),
@@ -58,6 +59,7 @@ function mapOrderToDb(order: Partial<Order>): any {
   if (order.ship !== undefined) dbOrder.ship = order.ship;
   if (order.note !== undefined) dbOrder.note = order.note;
   if (order.status !== undefined) dbOrder.status = order.status;
+  if (order.flowers !== undefined) dbOrder.flowers = order.flowers;
   return dbOrder;
 }
 

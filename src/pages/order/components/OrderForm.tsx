@@ -15,6 +15,7 @@ import { ORDER_STATUS, ORDER_STATUS_LABEL } from '@/lib/constants/order.constant
 import { Controller, useFormContext } from 'react-hook-form';
 import PaymentInfo from './PaymentInfo';
 import { ITransaction } from '@/types/order';
+import { OrderFlowerPicker } from './OrderFlowerPicker';
 
 export default function OrderForm() {
   const { control, getValues } = useFormContext();
@@ -124,6 +125,19 @@ export default function OrderForm() {
                 <FormLabel>Địa chỉ</FormLabel>
                 <FormControl>
                   <Input type="text" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={control}
+            name="flowers"
+            render={({ field }) => (
+              <FormItem className="col-span-12">
+                <FormControl>
+                  <OrderFlowerPicker value={field.value || []} onChange={field.onChange} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

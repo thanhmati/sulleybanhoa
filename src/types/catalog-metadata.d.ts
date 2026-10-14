@@ -21,6 +21,7 @@ export interface IFlowerType {
   id: string;
   name: string;
   description?: string;
+  leadDays?: number;
   createdAt?: string | Date;
   updatedAt?: string | Date;
 }
@@ -28,6 +29,7 @@ export interface IFlowerType {
 export interface ICreateFlowerTypePayload {
   name: string;
   description?: string;
+  leadDays?: number;
 }
 
 export interface IUpdateFlowerTypePayload extends Partial<ICreateFlowerTypePayload> {

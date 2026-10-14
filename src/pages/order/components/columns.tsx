@@ -50,6 +50,36 @@ export const orderColumns = (
     cell: ({ getValue }) => <span>{getValue<string>()}</span>,
   },
   {
+    accessorKey: 'flowers',
+    header: 'Hoa sử dụng',
+    cell: ({ row }) => {
+      const flowers = row.original.flowers || [];
+      if (flowers.length === 0) {
+        return <span className="text-muted-foreground text-xs italic">—</span>;
+      }
+      return (
+        <div className="flex flex-wrap gap-1 max-w-[200px]">
+          {flowers.slice(0, 2).map((flower, idx) => (
+            <span
+              key={idx}
+              className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-primary/15 text-primary-dark border border-primary/25 whitespace-nowrap"
+            >
+              {flower}
+            </span>
+          ))}
+          {flowers.length > 2 && (
+            <span
+              className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium bg-muted text-muted-foreground border border-border cursor-help"
+              title={flowers.slice(2).join(', ')}
+            >
+              +{flowers.length - 2}
+            </span>
+          )}
+        </div>
+      );
+    },
+  },
+  {
     accessorKey: 'price',
     header: 'Giá tiền',
     cell: ({ getValue }) => <span>{formatCurrency(getValue<number>())}</span>,

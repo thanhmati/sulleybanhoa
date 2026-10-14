@@ -26,6 +26,7 @@ import {
 import { DatePicker } from '@/components/ui/date-picker';
 import { CurrencyInput } from '@/components/ui/currency-input';
 import FormSectionWrapper from '@/components/form-section-wrapper';
+import { OrderFlowerPicker } from './OrderFlowerPicker';
 
 const clientSchema = z.object({
   name: z.string().min(1, 'Tên khách hàng không được để trống'),
@@ -45,6 +46,7 @@ const orderSchema = z.object({
   deliveryTime: z.string().min(1, 'Vui lòng nhập thời gian giao'),
   deliveryDate: z.string().min(1, 'Vui lòng chọn ngày giao'),
   deposit: z.number().min(0, 'Tiền cọc không hợp lệ').optional(),
+  flowers: z.array(z.string()).optional(),
 });
 
 const defaultValues: OrderFormValues = {
@@ -63,6 +65,7 @@ const defaultValues: OrderFormValues = {
   deliveryTime: '',
   deliveryDate: '',
   deposit: 0,
+  flowers: [],
 };
 
 type OrderFormValues = z.infer<typeof orderSchema>;
@@ -215,6 +218,19 @@ export function OrderFormDialog({ open, onOpenChange }: Props) {
                       <FormLabel>Địa chỉ</FormLabel>
                       <FormControl>
                         <Input type="text" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="flowers"
+                  render={({ field }) => (
+                    <FormItem className="col-span-12">
+                      <FormControl>
+                        <OrderFlowerPicker value={field.value || []} onChange={field.onChange} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

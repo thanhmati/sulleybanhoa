@@ -5,11 +5,19 @@ import { DataTableToolbar } from '@/components/ui/DataTableToolbar';
 import { Button } from '@/components/ui/button';
 import { useDeleteOrder, useOrdersQuery } from '@/hooks/useOrders';
 import { orderColumns } from './components/columns';
-import { PlusCircleIcon, Table as TableIcon, Calendar as CalendarIcon, Clock } from 'lucide-react';
+import {
+  PlusCircleIcon,
+  Table as TableIcon,
+  Calendar as CalendarIcon,
+  Clock,
+  Flower2,
+} from 'lucide-react';
 import { OrderFormDialog } from './components/OrderFormDialog';
 import { OrderReceiptDialog } from './components/OrderReceiptDialog';
 import { OrderDeliveryCalendar } from './components/OrderDeliveryCalendar';
 import { OrderFloristTimeline } from './components/OrderFloristTimeline';
+import { FlowerImportDialog } from './components/FlowerImportDialog';
+import { useFlowerTypesQuery } from '@/hooks/useFlowerTypes';
 import { Order } from '@/types/order';
 import { toast } from 'sonner';
 import { OrderFilters } from './components/OrderFilters';
@@ -25,6 +33,8 @@ export default function OrderListPage() {
 
   const [open, setOpen] = useState(false);
   const [receiptOrder, setReceiptOrder] = useState<Order | null>(null);
+  const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
+  const { data: flowerTypes = [] } = useFlowerTypesQuery();
   const navigate = useNavigate();
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -128,6 +138,16 @@ export default function OrderListPage() {
             </button>
           </div>
 
+          {/* Nút Xem hoa cần nhập */}
+          <Button
+            variant="outline"
+            onClick={() => setIsImportDialogOpen(true)}
+            className="cursor-pointer gap-2"
+          >
+            <Flower2 className="h-4 w-4 text-primary" />
+            <span>Hoa cần nhập</span>
+          </Button>
+
           {/* Nút Tạo đơn hàng luôn sẵn sàng ở mọi View */}
           <Button onClick={handleCreate} className="cursor-pointer">
             <PlusCircleIcon className="mr-2 h-4 w-4" />
@@ -185,6 +205,15 @@ export default function OrderListPage() {
         open={!!receiptOrder}
         onOpenChange={(isOpen) => !isOpen && setReceiptOrder(null)}
         order={receiptOrder || undefined}
+      />
+
+      {/* Modal danh sách hoa cần nhập */}
+      <FlowerImportDialog
+        open={isImportDialogOpen}
+        onOpenChange={setIsImportDialogOpen}
+        orders={data || []}
+        flowerTypes={flowerTypes}
+        initialDate={selectedDate}
       />
     </div>
   );

@@ -6,6 +6,7 @@ export function mapFlowerTypeFromDb(row: any): IFlowerType {
     id: row.id,
     name: row.name,
     description: row.description || '',
+    leadDays: row.lead_days !== undefined && row.lead_days !== null ? Number(row.lead_days) : 0,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
@@ -29,6 +30,7 @@ export const flowerTypeService = {
       .insert({
         name: payload.name,
         description: payload.description || '',
+        lead_days: payload.leadDays ?? 0,
       })
       .select('*')
       .single();
@@ -47,6 +49,7 @@ export const flowerTypeService = {
     const dbPayload: any = {};
     if (payload.name !== undefined) dbPayload.name = payload.name;
     if (payload.description !== undefined) dbPayload.description = payload.description;
+    if (payload.leadDays !== undefined) dbPayload.lead_days = payload.leadDays;
 
     const { data, error } = await supabase
       .from('flower_types')

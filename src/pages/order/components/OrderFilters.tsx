@@ -8,11 +8,15 @@ import {
   SelectItem,
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { X } from 'lucide-react';
+import { X, Flower2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { DatePicker } from '@/components/ui/date-picker';
 import { useQueryParams } from '@/hooks/useQueryParams';
 import { Input } from '@/components/ui/input';
+import { useOrdersQuery } from '@/hooks/useOrders';
+import { useFlowerTypesQuery } from '@/hooks/useFlowerTypes';
+import { calculateFlowerImportPlan } from '@/lib/utils/flowerImport';
+import { FlowerImportDialog } from './FlowerImportDialog';
 import dayjs from 'dayjs';
 
 interface OrderFiltersProps<TData> {
@@ -37,12 +41,24 @@ export function OrderFilters<TData>({ table }: OrderFiltersProps<TData>) {
       : undefined,
   );
 
+  const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
+  const { data: allOrders = [] } = useOrdersQuery();
+  const { data: flowerTypes = [] } = useFlowerTypesQuery();
+
   const { queryParams, setQueryParams, clearQueryParams } = useQueryParams<{
     status: ORDER_STATUS;
     paid: string;
     date: string;
     clientName: string;
   }>();
+
+  const targetDateStr = date
+    ? dayjs(date).format('YYYY-MM-DD')
+    : queryParams.date
+      ? dayjs(queryParams.date).format('YYYY-MM-DD')
+      : dayjs().format('YYYY-MM-DD');
+
+  const importPlan = calculateFlowerImportPlan(allOrders, flowerTypes, targetDateStr);
 
   useEffect(() => {
     const filters: { id: string; value: any }[] = [];
@@ -151,11 +167,48 @@ export function OrderFilters<TData>({ table }: OrderFiltersProps<TData>) {
 
       <DatePicker value={date} onChange={handleDateChange} />
 
+      {/* 🌸 Nút xem hoa cần nhập theo ngày lọc */}
+      <Button
+        type="button"
+        variant={date ? 'default' : 'outline'}
+        size="sm"
+        onClick={() => setIsImportDialogOpen(true)}
+        className="gap-2 cursor-pointer h-9 px-3 shrink-0"
+        title={
+          date
+            ? `Xem danh sách hoa cần nhập cho ngày ${dayjs(date).format('DD/MM/YYYY')}`
+            : 'Xem danh sách hoa cần nhập hôm nay'
+        }
+      >
+        <Flower2 className="h-4 w-4" />
+        <span>Hoa cần nhập</span>
+        {importPlan.totalFlowerTypes > 0 && (
+          <span
+            className={`inline-flex items-center px-1.5 py-0.2 rounded-full text-[10px] font-bold ${
+              date
+                ? 'bg-primary-foreground/25 text-primary-foreground'
+                : 'bg-primary/20 text-primary-dark'
+            }`}
+          >
+            {importPlan.totalFlowerTypes} loại
+          </span>
+        )}
+      </Button>
+
       {(status !== '' || paid !== '' || date || clientName !== '') && (
         <Button variant="ghost" size="sm" onClick={handleClearFilters}>
           <X className="mr-1 h-4 w-4" /> Xoá lọc
         </Button>
       )}
+
+      {/* Modal danh sách hoa cần nhập */}
+      <FlowerImportDialog
+        open={isImportDialogOpen}
+        onOpenChange={setIsImportDialogOpen}
+        orders={allOrders}
+        flowerTypes={flowerTypes}
+        initialDate={targetDateStr}
+      />
     </div>
   );
 }

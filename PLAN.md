@@ -85,3 +85,49 @@ Tài liệu chi tiết phân chia công việc (Task Breakdown) cho 2 pha chuy�
 - [x] **Task 3.2.2:** Xây dựng component [src/pages/order/components/OrderDeliveryCalendar.tsx](file:///Users/tanthanh/Documents/sulleybanhoa/src/pages/order/components/OrderDeliveryCalendar.tsx) hiển thị lịch tháng, badge tổng đơn, thống kê trạng thái theo ngày và tương tác chuyển sang xem ngày chi tiết.
 - [x] **Task 3.2.3:** Xây dựng component [src/pages/order/components/OrderFloristTimeline.tsx](file:///Users/tanthanh/Documents/sulleybanhoa/src/pages/order/components/OrderFloristTimeline.tsx) hiển thị tiến độ theo khung giờ trong ngày, thẻ đơn chi tiết cho Florist/Shipper, đổi nhanh trạng thái và in hoá đơn.
 - [x] **Task 3.2.4:** Kiểm thử đồng bộ Multi-View, đảm bảo toàn vẹn dữ liệu và giữ nguyên 100% tính năng của Table view hiện tại.
+
+---
+
+## 🟢 PHA 4: Quản lý Loại Hoa Đơn Hàng & Kế Hoạch Nhập Hoa Theo Ngày (Flower Order Tracking & Import Planning)
+
+### 4.1 Database Migration & SQL Setup
+
+- [x] **Task 4.1.1:** Tạo file Migration SQL `supabase/migrations/03_add_lead_days_and_order_flowers.sql`.
+- [x] **Task 4.1.2:** Thực thi SQL an toàn trên Supabase (thêm cột `lead_days` vào bảng `flower_types` và cột `flowers` vào bảng `orders`).
+
+---
+
+### 4.2 Service Layer & TypeScript Types
+
+- [x] **Task 4.2.1:** Cập nhật TypeScript types trong [src/types/catalog-metadata.d.ts](file:///Users/thanhdo/Documents/Project/sulleybanhoa/src/types/catalog-metadata.d.ts) (`leadDays`) và [src/types/order.d.ts](file:///Users/thanhdo/Documents/Project/sulleybanhoa/src/types/order.d.ts) (`flowers`).
+- [x] **Task 4.2.2:** Cập nhật [src/services/flowerTypeService.ts](file:///Users/thanhdo/Documents/Project/sulleybanhoa/src/services/flowerTypeService.ts) và [src/services/orderService.ts](file:///Users/thanhdo/Documents/Project/sulleybanhoa/src/services/orderService.ts) để map các trường mới.
+
+---
+
+### 4.3 Quản lý Số Ngày Nhập Trước Loại Hoa (`/admin/categories`)
+
+- [x] **Task 4.3.1:** Cập nhật [FlowerTypeFormDialog.tsx](file:///Users/thanhdo/Documents/Project/sulleybanhoa/src/pages/category/components/FlowerTypeFormDialog.tsx) bổ sung field nhập số ngày cần nhập trước (`leadDays`, mặc định 0).
+- [x] **Task 4.3.2:** Cập nhật bảng Loại hoa trong [CategoryManagementPage.tsx](file:///Users/thanhdo/Documents/Project/sulleybanhoa/src/pages/category/CategoryManagementPage.tsx) hiển thị cột số ngày nhập trước trực quan.
+
+---
+
+### 4.4 Nhập Loại Hoa trong Đơn Hàng (`/admin/orders`)
+
+- [x] **Task 4.4.1:** Xây dựng component `OrderFlowerPicker.tsx` hỗ trợ autocomplete chọn nhiều loại hoa từ danh mục, badge tag, thêm nhanh loại hoa mới.
+- [x] **Task 4.4.2:** Tích hợp picker vào form tạo đơn [OrderFormDialog.tsx](file:///Users/thanhdo/Documents/Project/sulleybanhoa/src/pages/order/components/OrderFormDialog.tsx).
+- [x] **Task 4.4.3:** Tích hợp picker vào form chi tiết/chỉnh sửa đơn [OrderForm.tsx](file:///Users/thanhdo/Documents/Project/sulleybanhoa/src/pages/order/components/OrderForm.tsx) và [OrderDetailPage.tsx](file:///Users/thanhdo/Documents/Project/sulleybanhoa/src/pages/order/components/OrderDetailPage.tsx).
+- [x] **Task 4.4.4:** Hiển thị danh sách hoa trong bảng đơn hàng [columns.tsx](file:///Users/thanhdo/Documents/Project/sulleybanhoa/src/pages/order/components/columns.tsx).
+
+---
+
+### 4.5 Thống Kê & Xem Danh Sách Hoa Cần Nhập theo Ngày Lọc
+
+- [x] **Task 4.5.1:** Xây dựng utility tính toán ngày nhập trước: `ImportDate = DeliveryDate - LeadDays`. Thống kê theo loại hoa: số bó cần dùng, danh sách đơn hàng & ngày giao tương ứng.
+- [x] **Task 4.5.2:** Xây dựng [FlowerImportDialog.tsx](file:///Users/thanhdo/Documents/Project/sulleybanhoa/src/pages/order/components/FlowerImportDialog.tsx) hiển thị danh sách hoa cần nhập chi tiết, hỗ trợ Sao chép nhanh (Zalo/tin nhắn) và In danh sách.
+- [x] **Task 4.5.3:** Tích hợp nút xem danh sách hoa cần nhập kèm Badge số lượng vào [OrderFilters.tsx](file:///Users/thanhdo/Documents/Project/sulleybanhoa/src/pages/order/components/OrderFilters.tsx) và [OrderListPage.tsx](file:///Users/thanhdo/Documents/Project/sulleybanhoa/src/pages/order/OrderListPage.tsx).
+
+---
+
+### 4.6 Kiểm Thử & Tối Ưu
+
+- [x] **Task 4.6.1:** Kiểm thử toàn diện các luồng nghiệp vụ (tạo/sửa đơn, cập nhật leadDays, lọc ngày và tính ngày nhập trước). Build kiểm tra TypeScript và Lint.

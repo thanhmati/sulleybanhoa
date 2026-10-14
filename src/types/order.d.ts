@@ -27,6 +27,7 @@ export interface Order {
   status: ORDER_STATUS;
   orderNumber: string;
   dueAmount: number;
+  flowers?: string[];
   transaction: ITransaction[];
   createdAt: Date;
   updatedAt: Date;

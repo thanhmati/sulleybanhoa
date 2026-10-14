@@ -323,8 +323,9 @@ export default function CategoryManagementPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[120px]">STT</TableHead>
-                  <TableHead className="w-[260px]">Tên Loại Hoa</TableHead>
+                  <TableHead className="w-[80px]">STT</TableHead>
+                  <TableHead className="w-[220px]">Tên Loại Hoa</TableHead>
+                  <TableHead className="w-[160px]">Nhập Trước</TableHead>
                   <TableHead>Mô Tả Đặc Tính</TableHead>
                   <TableHead className="w-[120px] text-right">Thao Tác</TableHead>
                 </TableRow>
@@ -332,13 +333,13 @@ export default function CategoryManagementPage() {
               <TableBody>
                 {loadingFt ? (
                   <TableRow>
-                    <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
+                    <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
                       Đang tải danh sách loại hoa...
                     </TableCell>
                   </TableRow>
                 ) : filteredFlowerTypes.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
+                    <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
                       Không tìm thấy loại hoa nào.
                     </TableCell>
                   </TableRow>
@@ -349,6 +350,19 @@ export default function CategoryManagementPage() {
                       <TableCell className="font-medium text-foreground">
                         <span className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-accent/60 text-xs font-semibold">
                           {item.name}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <span
+                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                            (item.leadDays || 0) > 0
+                              ? 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-300 dark:border-amber-800'
+                              : 'bg-muted text-muted-foreground'
+                          }`}
+                        >
+                          {(item.leadDays || 0) > 0
+                            ? `Trước ${item.leadDays} ngày`
+                            : 'Trong ngày (0 ngày)'}
                         </span>
                       </TableCell>
                       <TableCell className="text-muted-foreground text-sm">
