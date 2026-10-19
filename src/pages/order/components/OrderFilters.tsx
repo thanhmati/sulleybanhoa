@@ -198,8 +198,8 @@ export function OrderFilters<TData>({ table }: OrderFiltersProps<TData>) {
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="all">Tất cả tiến độ</SelectItem>
-          <SelectItem value="false">⏳ Chưa chuẩn bị</SelectItem>
-          <SelectItem value="true">🌸 Đã cắm xong</SelectItem>
+          <SelectItem value="false">Chưa chuẩn bị</SelectItem>
+          <SelectItem value="true">Đã cắm xong</SelectItem>
         </SelectContent>
       </Select>
 

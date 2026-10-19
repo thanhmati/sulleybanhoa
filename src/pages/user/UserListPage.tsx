@@ -39,6 +39,7 @@ export default function UserListPage() {
   return (
     <div className="container mx-auto p-6">
       <DataTable
+        storageKey="users"
         isLoading={isLoading}
         columns={userColumns(handleEdit, handleDelete)}
         data={data || []}

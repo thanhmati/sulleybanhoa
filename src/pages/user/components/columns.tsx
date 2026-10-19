@@ -45,6 +45,7 @@ export const userColumns = (
     id: 'actions',
     header: '',
     enableSorting: false,
+    enableHiding: false,
     cell: ({
       cell: {
         row: { original: user },

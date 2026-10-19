@@ -44,6 +44,10 @@ export interface DataTableProps<TData, TValue> {
   footer?: ReactNode;
   pagination?: ReactNode;
 
+  // --- Column visibility persistence
+  storageKey?: string;
+  persistColumnVisibility?: boolean;
+
   // --- Loading state
   isLoading?: boolean;
 
@@ -87,12 +91,24 @@ export function DataTable<TData, TValue>({
   footer,
   pagination,
   emptyState,
+  storageKey,
+  persistColumnVisibility = true,
   externalState,
   onSortingChange,
   onPaginationChange,
   onColumnFiltersChange,
   onColumnVisibilityChange,
 }: DataTableProps<TData, TValue>) {
+  // --- Column visibility persistence key
+  const effectiveStorageKey = useMemo(() => {
+    if (persistColumnVisibility === false) return null;
+    if (storageKey) return `table_visibility_${storageKey}`;
+    if (typeof window !== 'undefined' && window.location.pathname) {
+      return `table_visibility_${window.location.pathname.replace(/\/$/, '')}`;
+    }
+    return null;
+  }, [storageKey, persistColumnVisibility]);
+
   // --- local state fallback if external not provided
   const [sorting, setSorting] = useState<SortingState>(externalState?.sorting ?? []);
   const [paginationState, setPaginationState] = useState<PaginationState>(
@@ -101,9 +117,24 @@ export function DataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(
     externalState?.columnFilters ?? [],
   );
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
-    externalState?.columnVisibility ?? {},
-  );
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(() => {
+    const defaultVisibility = externalState?.columnVisibility ?? {};
+    if (!effectiveStorageKey || typeof window === 'undefined') {
+      return defaultVisibility;
+    }
+    try {
+      const stored = localStorage.getItem(effectiveStorageKey);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (typeof parsed === 'object' && parsed !== null) {
+          return { ...defaultVisibility, ...parsed };
+        }
+      }
+    } catch (e) {
+      console.warn('Failed to load column visibility from localStorage:', e);
+    }
+    return defaultVisibility;
+  });
 
   const table = useReactTable({
     data,
@@ -112,6 +143,9 @@ export function DataTable<TData, TValue>({
     manualSorting,
     manualFiltering,
     pageCount,
+    initialState: {
+      columnVisibility: externalState?.columnVisibility ?? {},
+    },
     state: {
       sorting,
       columnFilters,
@@ -137,6 +171,20 @@ export function DataTable<TData, TValue>({
       const next = typeof updater === 'function' ? updater(columnVisibility) : updater;
       setColumnVisibility(next);
       onColumnVisibilityChange?.(next);
+
+      if (effectiveStorageKey && typeof window !== 'undefined') {
+        try {
+          const defaultVis = externalState?.columnVisibility ?? {};
+          const isDefault = JSON.stringify(next) === JSON.stringify(defaultVis);
+          if (isDefault) {
+            localStorage.removeItem(effectiveStorageKey);
+          } else {
+            localStorage.setItem(effectiveStorageKey, JSON.stringify(next));
+          }
+        } catch (e) {
+          console.warn('Failed to persist column visibility:', e);
+        }
+      }
     },
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: enableSorting ? getSortedRowModel() : undefined,

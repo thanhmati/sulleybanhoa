@@ -43,6 +43,7 @@ export default function FinanceTransactionListPage() {
   return (
     <div className="container mx-auto p-6">
       <DataTable
+        storageKey="finance_transactions"
         isLoading={isLoading}
         columns={financeTransactionColumns(handleEdit, handleDelete)}
         data={data || []}

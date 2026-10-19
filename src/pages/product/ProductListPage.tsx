@@ -85,6 +85,7 @@ export default function ProductListPage() {
   return (
     <div className="container mx-auto p-6">
       <DataTable
+        storageKey="products"
         isLoading={isLoading}
         columns={columns}
         data={products || []}

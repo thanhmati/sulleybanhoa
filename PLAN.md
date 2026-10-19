@@ -177,3 +177,27 @@ Tài liệu chi tiết phân chia công việc (Task Breakdown) cho 2 pha chuy�
 ### 5.6 Kiểm thử & Hoàn thiện
 
 - [x] **Task 5.6.1:** Kiểm tra TypeScript compile, build sản phẩm và kiểm thử toàn bộ luồng đổi trạng thái, lọc đơn.
+
+---
+
+## 🟢 PHA 6: Ghi nhớ Hiển thị Cột Bảng Dữ liệu (DataTable Column Visibility Persistence)
+
+### 6.1 Cấu hình Persistence trong DataTable Component
+
+- [x] **Task 6.1.1:** Nâng cấp [src/components/ui/DataTable.tsx](file:///Users/thanhdo/Documents/Project/sulleybanhoa/src/components/ui/DataTable.tsx) hỗ trợ `storageKey` và tự động lưu/khôi phục `columnVisibility` qua `localStorage`.
+- [x] **Task 6.1.2:** Nâng cấp [src/components/ui/DataTableToolbar.tsx](file:///Users/thanhdo/Documents/Project/sulleybanhoa/src/components/ui/DataTableToolbar.tsx) bổ sung nút "Hiện tất cả" và "Mặc định", giữ menu mở khi toggle checkbox.
+
+---
+
+### 6.2 Đồng bộ các Bảng Dữ liệu trong hệ thống
+
+- [x] **Task 6.2.1:** Cập nhật `storageKey` cho bảng Đơn hàng trong [src/pages/order/OrderListPage.tsx](file:///Users/thanhdo/Documents/Project/sulleybanhoa/src/pages/order/OrderListPage.tsx).
+- [x] **Task 6.2.2:** Cập nhật `storageKey` cho bảng Sản phẩm trong [src/pages/product/ProductListPage.tsx](file:///Users/thanhdo/Documents/Project/sulleybanhoa/src/pages/product/ProductListPage.tsx) và khóa ẩn cột actions.
+- [x] **Task 6.2.3:** Cập nhật `storageKey` cho bảng Người dùng trong [src/pages/user/UserListPage.tsx](file:///Users/thanhdo/Documents/Project/sulleybanhoa/src/pages/user/UserListPage.tsx).
+- [x] **Task 6.2.4:** Cập nhật `storageKey` cho bảng Thu chi trong [src/pages/finance-transaction/FinanceTransactionPage.tsx](file:///Users/thanhdo/Documents/Project/sulleybanhoa/src/pages/finance-transaction/FinanceTransactionPage.tsx).
+
+---
+
+### 6.3 Kiểm thử & Hoàn thiện
+
+- [x] **Task 6.3.1:** Kiểm thử reload trang, chuyển view và kiểm tra lưu trữ `localStorage`. Build kiểm tra TypeScript và Lint.

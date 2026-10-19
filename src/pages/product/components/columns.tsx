@@ -114,6 +114,7 @@ export const getProductColumns = ({
   {
     id: 'actions',
     header: 'Thao tác',
+    enableHiding: false,
     cell: ({ row }) => (
       <div className="flex items-center gap-1">
         <Button

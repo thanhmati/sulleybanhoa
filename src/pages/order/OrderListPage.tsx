@@ -159,6 +159,7 @@ export default function OrderListPage() {
       {/* 🔀 Nội dung theo từng chế độ xem */}
       {currentView === 'table' && (
         <DataTable
+          storageKey="orders"
           isLoading={isLoading}
           columns={orderColumns(handleEdit, handleDelete)}
           data={data || []}

@@ -163,6 +163,7 @@ export const orderColumns = (
     id: 'actions',
     header: '',
     enableSorting: false,
+    enableHiding: false,
     cell: ({
       cell: {
         row: { original: order },
