@@ -41,7 +41,7 @@ export default function FinanceTransactionListPage() {
   };
 
   return (
-    <div className="container mx-auto p-6">
+    <div className="container mx-auto p-6 w-full min-w-0 max-w-full">
       <DataTable
         storageKey="finance_transactions"
         isLoading={isLoading}

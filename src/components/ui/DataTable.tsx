@@ -202,12 +202,12 @@ export function DataTable<TData, TValue>({
 
   return (
     <DataTableProvider table={memoizedTable}>
-      <div className="space-y-4">
+      <div className="space-y-4 w-full min-w-0">
         {topContent && topContent(table)}
 
         {toolbar && <div className="flex items-center justify-between">{toolbar(table)}</div>}
 
-        <div className="overflow-hidden rounded-md border">
+        <div className="overflow-hidden rounded-md border w-full">
           <UiTable>
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (

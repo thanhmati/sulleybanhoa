@@ -64,8 +64,8 @@ export default function AdminLayout() {
         </header>
 
         {/* Content Wrapper */}
-        <main className="flex-1">
-          <div className="mx-auto">
+        <main className="flex-1 min-w-0 w-full">
+          <div className="mx-auto w-full min-w-0">
             <Outlet />
           </div>
         </main>

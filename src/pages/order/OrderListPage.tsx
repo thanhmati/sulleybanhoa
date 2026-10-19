@@ -84,7 +84,7 @@ export default function OrderListPage() {
   };
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <div className="container mx-auto p-6 space-y-6 w-full min-w-0 max-w-full">
       {/* 🏷️ Header trang & Bộ chuyển đổi View (Multi-View Switcher) */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
