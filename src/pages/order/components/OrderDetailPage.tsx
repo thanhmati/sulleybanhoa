@@ -37,6 +37,7 @@ const orderSchema = z.object({
   deliveryDate: z.string().min(1, 'Vui lòng chọn ngày giao'),
   deposit: z.number().min(0, 'Tiền cọc không hợp lệ').optional(),
   flowers: z.array(z.string()).optional(),
+  isPrepared: z.boolean().optional(),
   transactions: z.array(transactionSchema).optional(),
 });
 
@@ -57,6 +58,7 @@ const defaultValues: OrderFormValues = {
   deliveryDate: '',
   deposit: 0,
   flowers: [],
+  isPrepared: false,
 };
 
 type OrderFormValues = z.infer<typeof orderSchema>;
@@ -77,6 +79,7 @@ export function OrderDetailPage() {
     if (order) {
       form.reset({
         ...order,
+        isPrepared: Boolean(order.isPrepared),
         deliveryDate: dayjs(order.deliveryDate).format('YYYY-MM-DD'),
         flowers: order.flowers || [],
       });

@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
 import { ORDER_STATUS, ORDER_STATUS_LABEL } from '@/lib/constants/order.constant';
 import { Controller, useFormContext } from 'react-hook-form';
 import PaymentInfo from './PaymentInfo';
@@ -222,7 +223,7 @@ export default function OrderForm() {
             control={control}
             name="status"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="col-span-6">
                 <FormLabel>Trạng thái</FormLabel>
                 <FormControl>
                   <Select onValueChange={field.onChange} value={field.value}>
@@ -239,6 +240,23 @@ export default function OrderForm() {
                   </Select>
                 </FormControl>
                 <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={control}
+            name="isPrepared"
+            render={({ field }) => (
+              <FormItem className="col-span-6 flex flex-row items-center space-x-2 space-y-0 rounded-lg border p-3 bg-muted/20 self-end h-[42px]">
+                <FormControl>
+                  <Checkbox checked={Boolean(field.value)} onCheckedChange={field.onChange} />
+                </FormControl>
+                <div className="space-y-0.5">
+                  <FormLabel className="text-sm font-medium cursor-pointer">
+                    Đã chuẩn bị hoa xong
+                  </FormLabel>
+                </div>
               </FormItem>
             )}
           />

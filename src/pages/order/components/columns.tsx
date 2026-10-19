@@ -3,6 +3,7 @@ import { Order } from '@/types/order';
 import { formatCurrency, formatDate } from '@/lib/utils/formatters';
 import { OrderActionsCell } from './OrderActionsCell';
 import { EditableStatusBadge } from './EditableStatusBadge';
+import { OrderPreparationBadge } from './OrderPreparationBadge';
 import { PaidIcon } from './PaidIcon';
 import { OrderNoteCell } from './OrderNoteCell';
 import dayjs from 'dayjs';
@@ -134,6 +135,19 @@ export const orderColumns = (
     },
     filterFn: (row, _, filterValue) => {
       return row.original.status === filterValue;
+    },
+  },
+  {
+    accessorKey: 'isPrepared',
+    header: 'Chuẩn bị',
+    cell: ({ row }) => {
+      const { id, isPrepared } = row.original;
+      return <OrderPreparationBadge id={id} isPrepared={Boolean(isPrepared)} size="sm" />;
+    },
+    filterFn: (row, columnId, filterValue) => {
+      if (filterValue === undefined || filterValue === '' || filterValue === 'all') return true;
+      const rowVal = Boolean(row.getValue(columnId));
+      return filterValue === 'true' ? rowVal === true : rowVal === false;
     },
   },
   {

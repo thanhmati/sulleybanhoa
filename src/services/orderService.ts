@@ -24,6 +24,7 @@ export function mapOrderFromDb(dbOrder: any): Order {
     dueAmount: Number(dbOrder.due_amount),
     flowers: Array.isArray(dbOrder.flowers) ? dbOrder.flowers : [],
     isPaid: dbOrder.is_paid,
+    isPrepared: Boolean(dbOrder.is_prepared),
     createdAt: new Date(dbOrder.created_at),
     updatedAt: new Date(dbOrder.updated_at),
     transaction: (dbOrder.transaction || []).map((t: any) => ({
@@ -60,6 +61,7 @@ function mapOrderToDb(order: Partial<Order>): any {
   if (order.note !== undefined) dbOrder.note = order.note;
   if (order.status !== undefined) dbOrder.status = order.status;
   if (order.flowers !== undefined) dbOrder.flowers = order.flowers;
+  if (order.isPrepared !== undefined) dbOrder.is_prepared = order.isPrepared;
   return dbOrder;
 }
 
@@ -100,6 +102,16 @@ export const orderService = {
 
     if (error) throw error;
     return 'Status updated successfully';
+  },
+
+  updatePreparationStatus: async (id: string, isPrepared: boolean): Promise<string> => {
+    const { error } = await supabase
+      .from('orders')
+      .update({ is_prepared: isPrepared })
+      .eq('id', id);
+
+    if (error) throw error;
+    return 'Preparation status updated successfully';
   },
 
   delete: async (id: string): Promise<string> => {

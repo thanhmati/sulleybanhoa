@@ -32,6 +32,7 @@ export interface Order {
   createdAt: Date;
   updatedAt: Date;
   isPaid: boolean;
+  isPrepared: boolean;
 }
 
 export interface IPayOrder {

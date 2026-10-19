@@ -349,9 +349,14 @@ export function OrderDeliveryCalendar({
                         )}
                         title={`${order.deliveryTime || 'Chưa có giờ'} - ${order.client?.name} (${order.type}) - ${order.tone}`}
                       >
-                        <span className="truncate">
-                          <span className="font-bold mr-1">{order.deliveryTime || '—'}</span>
-                          {order.client?.name || 'Khách'}
+                        <span className="truncate flex items-center gap-1">
+                          <span className="font-bold mr-0.5">{order.deliveryTime || '—'}</span>
+                          {order.isPrepared && (
+                            <span className="text-[10px]" title="Đã cắm hoa xong">
+                              🌸
+                            </span>
+                          )}
+                          <span className="truncate">{order.client?.name || 'Khách'}</span>
                         </span>
                         <span className="text-[10px] opacity-70 shrink-0 font-sans">
                           {order.tone}

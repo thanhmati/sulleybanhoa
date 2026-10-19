@@ -48,6 +48,18 @@ export function useUpdateOrderStatus() {
   });
 }
 
+export function useUpdateOrderPreparationStatus() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, isPrepared }: { id: string; isPrepared: boolean }) =>
+      orderService.updatePreparationStatus(id, isPrepared),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ORDER_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: ORDER_DETAIL_QUERY_KEY });
+    },
+  });
+}
+
 export function useDeleteOrder() {
   const queryClient = useQueryClient();
   return useMutation({

@@ -28,9 +28,13 @@ export function OrderFilters<TData>({ table }: OrderFiltersProps<TData>) {
   const deliveryDateColumn = table.getColumn('deliveryDate');
   const paidColumn = table.getColumn('isPaid');
   const clientNameColumn = table.getColumn('clientName');
+  const preparedColumn = table.getColumn('isPrepared');
 
   const [status, setStatus] = useState<string>((statusColumn?.getFilterValue() as string) ?? '');
   const [paid, setPaid] = useState<string>((paidColumn?.getFilterValue() as string) ?? '');
+  const [prepared, setPrepared] = useState<string>(
+    (preparedColumn?.getFilterValue() as string) ?? '',
+  );
   const [clientName, setClientName] = useState<string>(
     (clientNameColumn?.getFilterValue() as string) ?? '',
   );
@@ -50,6 +54,7 @@ export function OrderFilters<TData>({ table }: OrderFiltersProps<TData>) {
     paid: string;
     date: string;
     clientName: string;
+    prepared: string;
   }>();
 
   const targetDateStr = date
@@ -83,8 +88,20 @@ export function OrderFilters<TData>({ table }: OrderFiltersProps<TData>) {
       filters.push({ id: 'clientName', value: queryParams.clientName });
     }
 
+    if (queryParams.prepared) {
+      setPrepared(queryParams.prepared);
+      filters.push({ id: 'isPrepared', value: queryParams.prepared });
+    }
+
     table.setColumnFilters(filters);
-  }, [queryParams.date, queryParams.paid, queryParams.status, queryParams.clientName, table]);
+  }, [
+    queryParams.date,
+    queryParams.paid,
+    queryParams.status,
+    queryParams.clientName,
+    queryParams.prepared,
+    table,
+  ]);
 
   // --- handlers
   const handleStatusChange = (value: string) => {
@@ -93,6 +110,14 @@ export function OrderFilters<TData>({ table }: OrderFiltersProps<TData>) {
     const filterValue = value === 'all' ? undefined : value;
     statusColumn?.setFilterValue(filterValue);
     setQueryParams({ status: filterValue });
+  };
+
+  const handlePreparedChange = (value: string) => {
+    setPrepared(value);
+
+    const filterValue = value === 'all' ? undefined : value;
+    preparedColumn?.setFilterValue(filterValue);
+    setQueryParams({ prepared: filterValue });
   };
 
   const handleClientNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -123,6 +148,7 @@ export function OrderFilters<TData>({ table }: OrderFiltersProps<TData>) {
     setStatus('');
     setDate(undefined);
     setPaid('');
+    setPrepared('');
     setClientName('');
     table.resetColumnFilters();
     clearQueryParams();
@@ -165,6 +191,18 @@ export function OrderFilters<TData>({ table }: OrderFiltersProps<TData>) {
         </SelectContent>
       </Select>
 
+      {/* 🌸 Preparation filter (Thợ cắm hoa) */}
+      <Select value={prepared} onValueChange={handlePreparedChange}>
+        <SelectTrigger className="w-[160px]">
+          <SelectValue placeholder="Tiến độ cắm hoa" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">Tất cả tiến độ</SelectItem>
+          <SelectItem value="false">⏳ Chưa chuẩn bị</SelectItem>
+          <SelectItem value="true">🌸 Đã cắm xong</SelectItem>
+        </SelectContent>
+      </Select>
+
       <DatePicker value={date} onChange={handleDateChange} />
 
       {/* 🌸 Nút xem hoa cần nhập theo ngày lọc */}
@@ -195,7 +233,7 @@ export function OrderFilters<TData>({ table }: OrderFiltersProps<TData>) {
         )}
       </Button>
 
-      {(status !== '' || paid !== '' || date || clientName !== '') && (
+      {(status !== '' || paid !== '' || prepared !== '' || date || clientName !== '') && (
         <Button variant="ghost" size="sm" onClick={handleClearFilters}>
           <X className="mr-1 h-4 w-4" /> Xoá lọc
         </Button>

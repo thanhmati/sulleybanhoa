@@ -25,6 +25,7 @@ import {
 } from '@/components/ui/form';
 import { DatePicker } from '@/components/ui/date-picker';
 import { CurrencyInput } from '@/components/ui/currency-input';
+import { Checkbox } from '@/components/ui/checkbox';
 import FormSectionWrapper from '@/components/form-section-wrapper';
 import { OrderFlowerPicker } from './OrderFlowerPicker';
 
@@ -47,6 +48,7 @@ const orderSchema = z.object({
   deliveryDate: z.string().min(1, 'Vui lòng chọn ngày giao'),
   deposit: z.number().min(0, 'Tiền cọc không hợp lệ').optional(),
   flowers: z.array(z.string()).optional(),
+  isPrepared: z.boolean().optional(),
 });
 
 const defaultValues: OrderFormValues = {
@@ -66,6 +68,7 @@ const defaultValues: OrderFormValues = {
   deliveryDate: '',
   deposit: 0,
   flowers: [],
+  isPrepared: false,
 };
 
 type OrderFormValues = z.infer<typeof orderSchema>;
@@ -307,6 +310,23 @@ export function OrderFormDialog({ open, onOpenChange }: Props) {
                         <Input type="text" {...field} />
                       </FormControl>
                       <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="isPrepared"
+                  render={({ field }) => (
+                    <FormItem className="col-span-12 flex flex-row items-center space-x-2 space-y-0 rounded-lg border p-3 bg-muted/20">
+                      <FormControl>
+                        <Checkbox checked={Boolean(field.value)} onCheckedChange={field.onChange} />
+                      </FormControl>
+                      <div className="space-y-0.5">
+                        <FormLabel className="text-sm font-medium cursor-pointer">
+                          Đã chuẩn bị hoa xong
+                        </FormLabel>
+                      </div>
                     </FormItem>
                   )}
                 />

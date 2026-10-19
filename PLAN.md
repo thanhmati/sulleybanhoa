@@ -131,3 +131,49 @@ Tài liệu chi tiết phân chia công việc (Task Breakdown) cho 2 pha chuy�
 ### 4.6 Kiểm Thử & Tối Ưu
 
 - [x] **Task 4.6.1:** Kiểm thử toàn diện các luồng nghiệp vụ (tạo/sửa đơn, cập nhật leadDays, lọc ngày và tính ngày nhập trước). Build kiểm tra TypeScript và Lint.
+
+---
+
+## 🟢 PHA 5: Theo dõi Tiến độ Chuẩn bị Đơn hàng cho Thợ Hoa (Florist Preparation Tracking & Filtering)
+
+### 5.1 Database Migration & SQL Setup
+
+- [x] **Task 5.1.1:** Tạo file Migration SQL `supabase/migrations/04_add_is_prepared_to_orders.sql`.
+- [x] **Task 5.1.2:** Thực thi SQL an toàn trên Supabase (thêm cột `is_prepared BOOLEAN NOT NULL DEFAULT FALSE` vào bảng `orders`).
+
+---
+
+### 5.2 Service Layer & TypeScript Types
+
+- [x] **Task 5.2.1:** Cập nhật TypeScript types trong [src/types/order.d.ts](file:///Users/thanhdo/Documents/Project/sulleybanhoa/src/types/order.d.ts) (`isPrepared: boolean`).
+- [x] **Task 5.2.2:** Cập nhật [src/services/orderService.ts](file:///Users/thanhdo/Documents/Project/sulleybanhoa/src/services/orderService.ts) (map `is_prepared`, bổ sung `updatePreparationStatus`).
+- [x] **Task 5.2.3:** Bổ sung React Query hook `useUpdateOrderPreparationStatus` trong [src/hooks/useOrders.ts](file:///Users/thanhdo/Documents/Project/sulleybanhoa/src/hooks/useOrders.ts).
+
+---
+
+### 5.3 Giao diện Quản lý Đơn hàng - Bảng dữ liệu (Table View) & Bộ lọc
+
+- [x] **Task 5.3.1:** Cập nhật [src/pages/order/components/columns.tsx](file:///Users/thanhdo/Documents/Project/sulleybanhoa/src/pages/order/components/columns.tsx) bổ sung cột "Chuẩn bị" kèm component chuyển đổi nhanh 1-click (toggle badge).
+- [x] **Task 5.3.2:** Cập nhật [src/pages/order/components/OrderFilters.tsx](file:///Users/thanhdo/Documents/Project/sulleybanhoa/src/pages/order/components/OrderFilters.tsx) bổ sung bộ lọc "Chuẩn bị" (Tất cả / Chưa chuẩn bị / Đã chuẩn bị), đồng bộ URL search params.
+
+---
+
+### 5.4 Giao diện Tiến độ trong ngày (Florist Timeline View) & Lịch giao hoa (Calendar View)
+
+- [x] **Task 5.4.1:** Cập nhật [src/pages/order/components/OrderFloristTimeline.tsx](file:///Users/thanhdo/Documents/Project/sulleybanhoa/src/pages/order/components/OrderFloristTimeline.tsx):
+  - Bổ sung bộ lọc trạng thái chuẩn bị (giúp thợ hoa lọc xem riêng danh sách các đơn chưa chuẩn bị).
+  - Thêm thẻ/nút bấm nhanh "Đã cắm xong" / "Chưa cắm" ngay trên Card đơn hoa.
+  - Bổ sung thống kê nhanh số đơn "Chưa cắm" / "Đã cắm" ở thanh điều hướng ngày.
+- [x] **Task 5.4.2:** Cập nhật [src/pages/order/components/OrderDeliveryCalendar.tsx](file:///Users/thanhdo/Documents/Project/sulleybanhoa/src/pages/order/components/OrderDeliveryCalendar.tsx) hiển thị trạng thái chuẩn bị hoa trong danh sách đơn của ngày được chọn.
+
+---
+
+### 5.5 Form Tạo & Chỉnh sửa Đơn hàng
+
+- [x] **Task 5.5.1:** Cập nhật [src/pages/order/components/OrderForm.tsx](file:///Users/thanhdo/Documents/Project/sulleybanhoa/src/pages/order/components/OrderForm.tsx) và [src/pages/order/components/OrderFormDialog.tsx](file:///Users/thanhdo/Documents/Project/sulleybanhoa/src/pages/order/components/OrderFormDialog.tsx) bổ sung trường trạng thái chuẩn bị hoa.
+
+---
+
+### 5.6 Kiểm thử & Hoàn thiện
+
+- [x] **Task 5.6.1:** Kiểm tra TypeScript compile, build sản phẩm và kiểm thử toàn bộ luồng đổi trạng thái, lọc đơn.

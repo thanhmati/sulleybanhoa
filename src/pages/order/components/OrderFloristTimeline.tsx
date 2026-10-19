@@ -5,8 +5,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Order } from '@/types/order';
 import { ORDER_STATUS } from '@/lib/constants/order.constant';
 import { formatCurrency } from '@/lib/utils/formatters';
-import { useUpdateOrderStatus } from '@/hooks/useOrders';
+import { useUpdateOrderStatus, useUpdateOrderPreparationStatus } from '@/hooks/useOrders';
 import { EditableStatusBadge } from './EditableStatusBadge';
+import { OrderPreparationBadge } from './OrderPreparationBadge';
 import dayjs from 'dayjs';
 import {
   ChevronLeft,
@@ -28,6 +29,8 @@ import {
   Truck,
   DollarSign,
   Palette,
+  Sparkles,
+  Flower2,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
@@ -126,10 +129,12 @@ export function OrderFloristTimeline({
   onOpenReceipt,
 }: OrderFloristTimelineProps) {
   const [statusFilter, setStatusFilter] = useState<'ALL' | ORDER_STATUS>('ALL');
+  const [preparedFilter, setPreparedFilter] = useState<'ALL' | 'UNPREPARED' | 'PREPARED'>('ALL');
   const [calendarOpen, setCalendarOpen] = useState(false);
 
   const currentDate = dayjs(selectedDate).isValid() ? dayjs(selectedDate) : dayjs();
   const updateOrderStatus = useUpdateOrderStatus();
+  const updatePreparationStatus = useUpdateOrderPreparationStatus();
 
   // Chuyển ngày
   const handlePrevDay = () => onDateChange(currentDate.subtract(1, 'day').format('YYYY-MM-DD'));
@@ -144,11 +149,15 @@ export function OrderFloristTimeline({
     });
   }, [orders, selectedDate]);
 
-  // Áp dụng bộ lọc trạng thái
+  // Áp dụng bộ lọc trạng thái giao và trạng thái chuẩn bị hoa
   const filteredDayOrders = useMemo(() => {
-    if (statusFilter === 'ALL') return dayOrders;
-    return dayOrders.filter((o) => o.status === statusFilter);
-  }, [dayOrders, statusFilter]);
+    return dayOrders.filter((o) => {
+      if (statusFilter !== 'ALL' && o.status !== statusFilter) return false;
+      if (preparedFilter === 'UNPREPARED' && o.isPrepared) return false;
+      if (preparedFilter === 'PREPARED' && !o.isPrepared) return false;
+      return true;
+    });
+  }, [dayOrders, statusFilter, preparedFilter]);
 
   // Thống kê nhanh trong ngày
   const dayStats = useMemo(() => {
@@ -159,6 +168,12 @@ export function OrderFloristTimeline({
       (o) => o.status === ORDER_STATUS.CANCELLED || o.status === ORDER_STATUS.RETURNED,
     ).length;
 
+    const activeOrders = dayOrders.filter(
+      (o) => o.status !== ORDER_STATUS.CANCELLED && o.status !== ORDER_STATUS.RETURNED,
+    );
+    const unprepared = activeOrders.filter((o) => !o.isPrepared).length;
+    const prepared = activeOrders.filter((o) => o.isPrepared).length;
+
     const totalPrice = dayOrders
       .filter((o) => o.status !== ORDER_STATUS.CANCELLED)
       .reduce((sum, o) => sum + (Number(o.price) || 0) + (Number(o.ship) || 0), 0);
@@ -167,7 +182,7 @@ export function OrderFloristTimeline({
       .filter((o) => o.status !== ORDER_STATUS.CANCELLED)
       .reduce((sum, o) => sum + (Number(o.dueAmount) || 0), 0);
 
-    return { total, pending, delivered, cancelled, totalPrice, totalDue };
+    return { total, pending, delivered, cancelled, unprepared, prepared, totalPrice, totalDue };
   }, [dayOrders]);
 
   // Gom đơn vào các Time Slots
@@ -199,6 +214,23 @@ export function OrderFloristTimeline({
       {
         onSuccess: () => toast.success('Đã cập nhật trạng thái: Đã giao hoa!'),
         onError: () => toast.error('Không thể cập nhật trạng thái đơn'),
+      },
+    );
+  };
+
+  // Nhanh chóng đánh dấu trạng thái chuẩn bị hoa của thợ
+  const handleMarkPrepared = (orderId: string, isPrepared: boolean) => {
+    updatePreparationStatus.mutate(
+      { id: orderId, isPrepared },
+      {
+        onSuccess: () => {
+          if (isPrepared) {
+            toast.success('Đã đánh dấu: Hoa đã chuẩn bị xong! 🌸');
+          } else {
+            toast.info('Đã chuyển về: Chưa chuẩn bị');
+          }
+        },
+        onError: () => toast.error('Không thể cập nhật tiến độ chuẩn bị'),
       },
     );
   };
@@ -282,21 +314,55 @@ export function OrderFloristTimeline({
         </div>
 
         {/* Thống kê đơn trong ngày */}
-        <div className="flex items-center gap-3 flex-wrap">
+        <div className="flex items-center gap-2 flex-wrap">
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-muted/60 text-xs">
-            <span className="text-muted-foreground">Tổng đơn ngày:</span>
+            <span className="text-muted-foreground">Tổng:</span>
             <span className="font-bold text-foreground">{dayStats.total}</span>
           </div>
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-500/10 text-amber-700 dark:text-amber-400 text-xs">
+
+          {/* Nút lọc nhanh Chưa cắm */}
+          <button
+            type="button"
+            onClick={() =>
+              setPreparedFilter((prev) => (prev === 'UNPREPARED' ? 'ALL' : 'UNPREPARED'))
+            }
+            title="Bấm để lọc nhanh các đơn hoa chưa chuẩn bị"
+            className={cn(
+              'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium cursor-pointer transition-all border',
+              preparedFilter === 'UNPREPARED'
+                ? 'bg-amber-500 text-white border-amber-600 shadow-xs'
+                : 'bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-300/60 dark:border-amber-800/60 hover:bg-amber-500/20',
+            )}
+          >
             <AlertCircle className="h-3.5 w-3.5" />
-            <span>Chờ cắm/giao:</span>
-            <span className="font-bold">{dayStats.pending}</span>
-          </div>
+            <span>Chưa cắm:</span>
+            <span className="font-bold">{dayStats.unprepared}</span>
+          </button>
+
+          {/* Nút lọc nhanh Đã cắm */}
+          <button
+            type="button"
+            onClick={() => setPreparedFilter((prev) => (prev === 'PREPARED' ? 'ALL' : 'PREPARED'))}
+            title="Bấm để lọc nhanh các đơn hoa đã cắm xong"
+            className={cn(
+              'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium cursor-pointer transition-all border',
+              preparedFilter === 'PREPARED'
+                ? 'bg-teal-600 text-white border-teal-700 shadow-xs'
+                : 'bg-teal-500/10 text-teal-700 dark:text-teal-400 border-teal-300/60 dark:border-teal-800/60 hover:bg-teal-500/20',
+            )}
+          >
+            <Flower2 className="h-3.5 w-3.5" />
+            <span>Đã cắm:</span>
+            <span className="font-bold">{dayStats.prepared}</span>
+          </button>
+
+          {/* Đã giao */}
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 text-xs">
             <CheckCircle2 className="h-3.5 w-3.5" />
             <span>Đã giao:</span>
             <span className="font-bold">{dayStats.delivered}</span>
           </div>
+
           {dayStats.totalDue > 0 && (
             <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-500/10 text-rose-700 dark:text-rose-400 text-xs">
               <DollarSign className="h-3.5 w-3.5" />
@@ -307,43 +373,88 @@ export function OrderFloristTimeline({
         </div>
 
         {/* Lọc trạng thái trong ngày */}
-        <div className="flex items-center gap-1 bg-muted p-1 rounded-lg self-start lg:self-auto text-xs">
-          <button
-            type="button"
-            onClick={() => setStatusFilter('ALL')}
-            className={cn(
-              'px-2.5 py-1 rounded-md transition-colors cursor-pointer',
-              statusFilter === 'ALL'
-                ? 'bg-background text-foreground shadow-2xs font-semibold'
-                : 'text-muted-foreground hover:text-foreground',
-            )}
-          >
-            Tất cả ({dayStats.total})
-          </button>
-          <button
-            type="button"
-            onClick={() => setStatusFilter(ORDER_STATUS.PENDING)}
-            className={cn(
-              'px-2.5 py-1 rounded-md transition-colors cursor-pointer',
-              statusFilter === ORDER_STATUS.PENDING
-                ? 'bg-background text-amber-600 dark:text-amber-400 shadow-2xs font-semibold'
-                : 'text-muted-foreground hover:text-foreground',
-            )}
-          >
-            Chờ xử lý ({dayStats.pending})
-          </button>
-          <button
-            type="button"
-            onClick={() => setStatusFilter(ORDER_STATUS.DELIVERED)}
-            className={cn(
-              'px-2.5 py-1 rounded-md transition-colors cursor-pointer',
-              statusFilter === ORDER_STATUS.DELIVERED
-                ? 'bg-background text-emerald-600 dark:text-emerald-400 shadow-2xs font-semibold'
-                : 'text-muted-foreground hover:text-foreground',
-            )}
-          >
-            Đã xong ({dayStats.delivered})
-          </button>
+        <div className="flex items-center gap-2 flex-wrap">
+          {/* Lọc tiến độ cắm hoa của thợ */}
+          <div className="flex items-center gap-1 bg-muted p-1 rounded-lg text-xs">
+            <span className="text-[11px] font-semibold text-muted-foreground px-2">Cắm hoa:</span>
+            <button
+              type="button"
+              onClick={() => setPreparedFilter('ALL')}
+              className={cn(
+                'px-2.5 py-1 rounded-md transition-colors cursor-pointer',
+                preparedFilter === 'ALL'
+                  ? 'bg-background text-foreground shadow-2xs font-semibold'
+                  : 'text-muted-foreground hover:text-foreground',
+              )}
+            >
+              Tất cả
+            </button>
+            <button
+              type="button"
+              onClick={() => setPreparedFilter('UNPREPARED')}
+              className={cn(
+                'px-2.5 py-1 rounded-md transition-colors cursor-pointer',
+                preparedFilter === 'UNPREPARED'
+                  ? 'bg-amber-500 text-white shadow-2xs font-semibold'
+                  : 'text-amber-700 dark:text-amber-400 hover:text-foreground',
+              )}
+            >
+              ⏳ Chưa cắm ({dayStats.unprepared})
+            </button>
+            <button
+              type="button"
+              onClick={() => setPreparedFilter('PREPARED')}
+              className={cn(
+                'px-2.5 py-1 rounded-md transition-colors cursor-pointer',
+                preparedFilter === 'PREPARED'
+                  ? 'bg-teal-600 text-white shadow-2xs font-semibold'
+                  : 'text-teal-700 dark:text-teal-400 hover:text-foreground',
+              )}
+            >
+              🌸 Đã cắm ({dayStats.prepared})
+            </button>
+          </div>
+
+          {/* Lọc trạng thái giao hàng */}
+          <div className="flex items-center gap-1 bg-muted p-1 rounded-lg text-xs">
+            <span className="text-[11px] font-semibold text-muted-foreground px-2">Giao hàng:</span>
+            <button
+              type="button"
+              onClick={() => setStatusFilter('ALL')}
+              className={cn(
+                'px-2.5 py-1 rounded-md transition-colors cursor-pointer',
+                statusFilter === 'ALL'
+                  ? 'bg-background text-foreground shadow-2xs font-semibold'
+                  : 'text-muted-foreground hover:text-foreground',
+              )}
+            >
+              Tất cả
+            </button>
+            <button
+              type="button"
+              onClick={() => setStatusFilter(ORDER_STATUS.PENDING)}
+              className={cn(
+                'px-2.5 py-1 rounded-md transition-colors cursor-pointer',
+                statusFilter === ORDER_STATUS.PENDING
+                  ? 'bg-background text-amber-600 dark:text-amber-400 shadow-2xs font-semibold'
+                  : 'text-muted-foreground hover:text-foreground',
+              )}
+            >
+              Chờ giao ({dayStats.pending})
+            </button>
+            <button
+              type="button"
+              onClick={() => setStatusFilter(ORDER_STATUS.DELIVERED)}
+              className={cn(
+                'px-2.5 py-1 rounded-md transition-colors cursor-pointer',
+                statusFilter === ORDER_STATUS.DELIVERED
+                  ? 'bg-background text-emerald-600 dark:text-emerald-400 shadow-2xs font-semibold'
+                  : 'text-muted-foreground hover:text-foreground',
+              )}
+            >
+              Đã giao ({dayStats.delivered})
+            </button>
+          </div>
         </div>
       </div>
 
@@ -392,17 +503,20 @@ export function OrderFloristTimeline({
                     const isCancelled =
                       order.status === ORDER_STATUS.CANCELLED ||
                       order.status === ORDER_STATUS.RETURNED;
+                    const isPrepared = Boolean(order.isPrepared);
 
                     return (
                       <Card
                         key={order.id}
                         className={cn(
                           'transition-all hover:shadow-md border-l-4 overflow-hidden relative',
-                          isDelivered
-                            ? 'border-l-emerald-500 bg-card/60'
-                            : isCancelled
-                              ? 'border-l-destructive/50 opacity-60 bg-muted/20'
-                              : 'border-l-amber-500 bg-card',
+                          isCancelled
+                            ? 'border-l-destructive/50 opacity-60 bg-muted/20'
+                            : isDelivered
+                              ? 'border-l-emerald-500 bg-card/60'
+                              : isPrepared
+                                ? 'border-l-teal-500 bg-card'
+                                : 'border-l-amber-500 bg-card',
                         )}
                       >
                         <CardContent className="p-4 space-y-3">
@@ -418,8 +532,15 @@ export function OrderFloristTimeline({
                               </span>
                             </div>
 
-                            {/* Badge trạng thái có thể bấm đổi nhanh */}
-                            <EditableStatusBadge id={order.id} status={order.status} />
+                            {/* Badge trạng thái chuẩn bị hoa & trạng thái giao */}
+                            <div className="flex items-center gap-1.5 flex-wrap justify-end">
+                              <OrderPreparationBadge
+                                id={order.id}
+                                isPrepared={isPrepared}
+                                size="sm"
+                              />
+                              <EditableStatusBadge id={order.id} status={order.status} />
+                            </div>
                           </div>
 
                           {/* Thông tin hoa & Tone màu */}
@@ -492,7 +613,7 @@ export function OrderFloristTimeline({
                           </div>
 
                           {/* Quick Actions Footer */}
-                          <div className="pt-2 flex items-center justify-between gap-2">
+                          <div className="pt-2 flex items-center justify-between gap-2 flex-wrap">
                             <div className="flex items-center gap-1">
                               <Button
                                 variant="outline"
@@ -515,17 +636,40 @@ export function OrderFloristTimeline({
                               </Button>
                             </div>
 
-                            {/* Nút bấm nhanh đổi sang Đã giao */}
-                            {order.status === ORDER_STATUS.PENDING && (
-                              <Button
-                                size="sm"
-                                className="h-8 px-3 text-xs bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer"
-                                onClick={() => handleMarkDelivered(order.id)}
-                              >
-                                <Truck className="h-3.5 w-3.5 mr-1" />
-                                Đã giao
-                              </Button>
-                            )}
+                            <div className="flex items-center gap-1.5">
+                              {/* Thao tác nhanh cho thợ cắm hoa */}
+                              {!isCancelled &&
+                                !isDelivered &&
+                                (!isPrepared ? (
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="h-8 px-2.5 text-xs text-amber-700 dark:text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 border-amber-300/80 dark:border-amber-800 cursor-pointer"
+                                    onClick={() => handleMarkPrepared(order.id, true)}
+                                    title="Đánh dấu đã cắm hoa xong"
+                                  >
+                                    <Sparkles className="h-3.5 w-3.5 mr-1 text-amber-600 dark:text-amber-400" />
+                                    Xong hoa
+                                  </Button>
+                                ) : (
+                                  <span className="text-[11px] text-teal-700 dark:text-teal-300 font-medium px-2 py-1 rounded-md bg-teal-500/10 border border-teal-200 dark:border-teal-900 flex items-center gap-1">
+                                    <CheckCircle2 className="h-3 w-3 text-teal-600 dark:text-teal-400" />
+                                    Đã cắm
+                                  </span>
+                                ))}
+
+                              {/* Nút bấm nhanh đổi sang Đã giao */}
+                              {order.status === ORDER_STATUS.PENDING && (
+                                <Button
+                                  size="sm"
+                                  className="h-8 px-3 text-xs bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer"
+                                  onClick={() => handleMarkDelivered(order.id)}
+                                >
+                                  <Truck className="h-3.5 w-3.5 mr-1" />
+                                  Đã giao
+                                </Button>
+                              )}
+                            </div>
                           </div>
                         </CardContent>
                       </Card>
