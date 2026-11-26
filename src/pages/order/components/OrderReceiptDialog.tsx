@@ -1,7 +1,7 @@
 import { useMemo, useRef, useState } from 'react';
-import { toBlob, toPng } from 'html-to-image';
+import { toBlob } from 'html-to-image';
 import { toast } from 'sonner';
-import { Copy, Download, Printer, Check } from 'lucide-react';
+import { Copy, Printer, Check } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -31,7 +31,6 @@ interface OrderReceiptDialogInnerProps {
 function OrderReceiptDialogInner({ open, onOpenChange, order }: OrderReceiptDialogInnerProps) {
   const captureRef = useRef<HTMLDivElement>(null);
   const [isCopying, setIsCopying] = useState(false);
-  const [isDownloading, setIsDownloading] = useState(false);
   const [justCopied, setJustCopied] = useState(false);
 
   const { data: settings } = useStoreSettingsQuery();
@@ -61,7 +60,7 @@ function OrderReceiptDialogInner({ open, onOpenChange, order }: OrderReceiptDial
       !navigator.clipboard?.write ||
       typeof ClipboardItem === 'undefined'
     ) {
-      toast.error('Trình duyệt không hỗ trợ copy ảnh trực tiếp, vui lòng dùng nút Tải ảnh');
+      toast.error('Trình duyệt không hỗ trợ copy ảnh trực tiếp.');
       return;
     }
 
@@ -83,39 +82,12 @@ function OrderReceiptDialogInner({ open, onOpenChange, order }: OrderReceiptDial
 
       await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
       setJustCopied(true);
-      toast.success('Đã copy ảnh hoá đơn! Bạn có thể dán thẳng vào Zalo/Messenger.');
+      toast.success('Đã copy ảnh hoá đơn!');
       setTimeout(() => setJustCopied(false), 2000);
     } catch {
-      toast.error('Không thể copy vào Clipboard. Vui lòng dùng nút Tải ảnh để gửi khách.');
+      toast.error('Không thể copy vào Clipboard, vui lòng thử lại.');
     } finally {
       setIsCopying(false);
-    }
-  };
-
-  const handleDownloadImage = async () => {
-    if (!captureRef.current) return;
-
-    setIsDownloading(true);
-    try {
-      const node = captureRef.current;
-      const dataUrl = await toPng(node, {
-        pixelRatio: 3,
-        backgroundColor: '#ffffff',
-        cacheBust: true,
-        width: node.offsetWidth,
-        height: node.offsetHeight,
-        style: { margin: '0' },
-      });
-
-      const link = document.createElement('a');
-      link.download = `hoa-don-${paymentCode}.png`;
-      link.href = dataUrl;
-      link.click();
-      toast.success(`Đã tải xuống hoa-don-${paymentCode}.png`);
-    } catch {
-      toast.error('Tải ảnh hoá đơn thất bại, vui lòng thử lại.');
-    } finally {
-      setIsDownloading(false);
     }
   };
 
@@ -153,7 +125,7 @@ function OrderReceiptDialogInner({ open, onOpenChange, order }: OrderReceiptDial
               type="button"
               variant="outline"
               onClick={handleCopyImage}
-              disabled={isCopying || isDownloading}
+              disabled={isCopying}
               className="gap-1.5 cursor-pointer"
             >
               {justCopied ? (
@@ -162,17 +134,6 @@ function OrderReceiptDialogInner({ open, onOpenChange, order }: OrderReceiptDial
                 <Copy className="h-4 w-4" />
               )}
               {isCopying ? 'Đang copy...' : justCopied ? 'Đã copy' : 'Copy ảnh'}
-            </Button>
-
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleDownloadImage}
-              disabled={isCopying || isDownloading}
-              className="gap-1.5 cursor-pointer"
-            >
-              <Download className="h-4 w-4" />
-              {isDownloading ? 'Đang tải...' : 'Tải ảnh'}
             </Button>
 
             <Button type="button" onClick={handlePrint} className="gap-1.5 cursor-pointer">
