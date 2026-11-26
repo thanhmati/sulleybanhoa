@@ -163,7 +163,7 @@ export default function OrderListPage() {
             </button>
           </div>
 
-          {/* Nút Đối soát chuyển khoản SePay */}
+          {/* Nút Đối soát chuyển khoản ApiPay */}
           <Button
             variant="outline"
             onClick={() => setIsReconcileOpen(true)}
@@ -259,7 +259,7 @@ export default function OrderListPage() {
         initialDate={selectedDate}
       />
 
-      {/* Modal đối soát giao dịch ngân hàng SePay */}
+      {/* Modal đối soát giao dịch ngân hàng ApiPay */}
       {isReconcileOpen && (
         <BankReconciliationDialog
           open={isReconcileOpen}

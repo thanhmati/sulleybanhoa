@@ -168,7 +168,7 @@ export function InvoiceBankConfigTab({ initialConfig }: InvoiceBankConfigTabProp
           </CardTitle>
           <CardDescription>
             Thiết lập thông tin cửa hàng hiển thị trên hoá đơn bán hàng và tài khoản ngân hàng dùng
-            để tự động tạo mã VietQR & đối soát SePay Webhook.
+            để tự động tạo mã VietQR & đối soát ApiPay Webhook.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -261,18 +261,18 @@ export function InvoiceBankConfigTab({ initialConfig }: InvoiceBankConfigTabProp
               </div>
             </div>
 
-            {selectedBank?.sepayNote && (
+            {selectedBank?.providerNote && (
               <div className="flex items-start gap-2.5 p-3 rounded-lg border border-border bg-muted/40 text-xs text-muted-foreground">
-                {selectedBank.requiresVa || selectedBank.requiresSevqrPrefix ? (
+                {selectedBank.requiresVa || selectedBank.isWarning ? (
                   <AlertCircle className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />
                 ) : (
                   <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
                 )}
                 <div className="space-y-1">
                   <p className="font-medium text-foreground">
-                    Lưu ý SePay cho {selectedBank.shortName} (BIN: {selectedBank.bin}):
+                    Lưu ý ApiPay cho {selectedBank.shortName} (BIN: {selectedBank.bin}):
                   </p>
-                  <p>{selectedBank.sepayNote}</p>
+                  <p>{selectedBank.providerNote}</p>
                 </div>
               </div>
             )}

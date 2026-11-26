@@ -1,6 +1,13 @@
 {
   "version": 2,
   "skills": {
+    "apipay": {
+      "source": "apipay-vn/apipay",
+      "commit": "278b9e47d2791b149e99a6832aac74946136bb1a",
+      "sourceType": "github",
+      "skillPath": "skills/apipay/SKILL.md",
+      "computedHash": "be7ced49a350af79196a6922e134ad7a184461366629a55a4d14464959ea5cd7"
+    },
     "brandkit": {
       "source": "Leonxlnx/taste-skill",
       "sourceType": "github",

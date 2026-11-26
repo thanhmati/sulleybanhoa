@@ -72,7 +72,7 @@ const STATUS_BADGE_MAP: Record<BankWebhookMatchStatus, { label: string; classNam
 
 const SOURCE_LABELS: Record<IBankWebhookLog['source'], string> = {
   WEBHOOK: 'Webhook',
-  RECONCILE_API: 'SePay API',
+  RECONCILE_API: 'ApiPay API',
   MANUAL_ASSIGN: 'Gắn tay',
 };
 
@@ -154,7 +154,7 @@ export function BankReconciliationDialog({
       .slice(0, 25);
   }, [orders, orderSearch]);
 
-  const handleSyncFromSepay = () => {
+  const handleSyncFromProvider = () => {
     reconcileMutation.mutate(undefined, {
       onSuccess: (summary) => {
         toast.success(
@@ -162,7 +162,7 @@ export function BankReconciliationDialog({
         );
       },
       onError: (err: Error) => {
-        toast.error(err.message || 'Không thể đồng bộ giao dịch từ SePay');
+        toast.error(err.message || 'Không thể đồng bộ giao dịch từ ApiPay');
       },
     });
   };
@@ -205,7 +205,7 @@ export function BankReconciliationDialog({
           <div>
             <DialogTitle className="flex items-center gap-2">
               <Landmark className="h-5 w-5 text-primary" />
-              Đối soát giao dịch chuyển khoản (SePay)
+              Đối soát giao dịch chuyển khoản (ApiPay)
             </DialogTitle>
             <DialogDescription>
               Theo dõi biến động số dư nhận qua Webhook và gắn tay các giao dịch khách ghi sai nội
@@ -218,12 +218,12 @@ export function BankReconciliationDialog({
               type="button"
               variant="outline"
               size="sm"
-              onClick={handleSyncFromSepay}
+              onClick={handleSyncFromProvider}
               disabled={reconcileMutation.isPending}
               className="gap-2 shrink-0 cursor-pointer"
             >
               <RefreshCw className={cn('h-4 w-4', reconcileMutation.isPending && 'animate-spin')} />
-              {reconcileMutation.isPending ? 'Đang đồng bộ...' : 'Đồng bộ từ SePay'}
+              {reconcileMutation.isPending ? 'Đang đồng bộ...' : 'Đồng bộ từ ApiPay'}
             </Button>
           )}
         </DialogHeader>
@@ -322,6 +322,15 @@ export function BankReconciliationDialog({
                         {log.paymentCode && (
                           <Badge variant="outline" className="text-[11px] font-mono">
                             {log.paymentCode}
+                          </Badge>
+                        )}
+
+                        {log.isSandbox && (
+                          <Badge
+                            variant="outline"
+                            className="text-[10px] border-amber-500/40 text-amber-600 dark:text-amber-400"
+                          >
+                            Sandbox
                           </Badge>
                         )}
                       </div>

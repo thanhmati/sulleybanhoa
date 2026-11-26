@@ -5,8 +5,8 @@ export interface IVietnamBank {
   name: string;
   requiresVa?: boolean;
   requiresVaForPersonal?: boolean;
-  requiresSevqrPrefix?: boolean;
-  sepayNote?: string;
+  providerNote?: string;
+  isWarning?: boolean;
 }
 
 export const DEFAULT_BANK_BIN = '970422'; // MBBank
@@ -17,30 +17,33 @@ export const VIETNAM_BANKS: IVietnamBank[] = [
     code: 'MB',
     shortName: 'MBBank',
     name: 'Ngân hàng TMCP Quân đội',
-    sepayNote:
-      'Hỗ trợ nhận tiền trực tiếp ở tài khoản chính và VA (Cá nhân, Hộ kinh doanh, Doanh nghiệp).',
+    providerNote:
+      'ApiPay hỗ trợ liên kết tự động qua OTP cho cả Cá nhân, Hộ kinh doanh (dùng CCCD chủ hộ) và Doanh nghiệp.',
   },
   {
     bin: '970416',
     code: 'ACB',
     shortName: 'ACB',
     name: 'Ngân hàng TMCP Á Châu',
-    sepayNote: 'Hỗ trợ nhận tiền trực tiếp ở tài khoản chính và VA.',
+    providerNote:
+      'ApiPay hỗ trợ liên kết tự động qua OTP (HKD/Doanh nghiệp cần thêm tên đăng nhập ACB Onebiz).',
   },
   {
     bin: '970436',
     code: 'VCB',
     shortName: 'Vietcombank',
     name: 'Ngân hàng TMCP Ngoại Thương Việt Nam',
-    sepayNote: 'Doanh nghiệp / Hộ kinh doanh trên SePay nhận qua VA chính thức.',
+    providerNote:
+      'Cá nhân xác nhận qua app VCB; Hộ kinh doanh / Doanh nghiệp cần gửi yêu cầu kích hoạt trên ApiPay.',
   },
   {
     bin: '970415',
     code: 'ICB',
     shortName: 'VietinBank',
     name: 'Ngân hàng TMCP Công thương Việt Nam',
-    requiresSevqrPrefix: true,
-    sepayNote: 'Tài khoản cá nhân / hộ kinh doanh cần có chuỗi SEVQR trong nội dung chuyển khoản.',
+    isWarning: true,
+    providerNote:
+      'Lưu ý ApiPay: Giao dịch về VietinBank không kèm nội dung chuyển khoản nên không tự khớp được theo mã đơn hàng.',
   },
   {
     bin: '970407',
@@ -53,59 +56,61 @@ export const VIETNAM_BANKS: IVietnamBank[] = [
     code: 'BIDV',
     shortName: 'BIDV',
     name: 'Ngân hàng TMCP Đầu tư và Phát triển Việt Nam',
-    requiresVaForPersonal: true,
-    sepayNote: 'Tài khoản cá nhân / hộ kinh doanh kết nối API chỉ nhận giao dịch qua VA.',
+    providerNote:
+      'Cá nhân / Hộ kinh doanh liên kết tự động qua OTP; Doanh nghiệp cần yêu cầu kích hoạt.',
   },
   {
     bin: '970432',
     code: 'VPB',
     shortName: 'VPBank',
     name: 'Ngân hàng TMCP Việt Nam Thịnh Vượng',
-    sepayNote: 'Hỗ trợ tài khoản chính (tùy cấu hình liên kết) hoặc VA.',
+    providerNote:
+      'Cá nhân / Hộ kinh doanh (dùng CCCD chủ hộ) liên kết tự động qua OTP; Doanh nghiệp cần yêu cầu kích hoạt.',
   },
   {
     bin: '970423',
     code: 'TPB',
     shortName: 'TPBank',
     name: 'Ngân hàng TMCP Tiên Phong',
-    sepayNote: 'Nhận tiền ở tài khoản chính; hỗ trợ TKP nếu dùng nhiều nhánh.',
+    providerNote: 'Xác nhận liên kết trực tiếp trên ứng dụng TPBank.',
   },
   {
     bin: '970403',
     code: 'STB',
     shortName: 'Sacombank',
     name: 'Ngân hàng TMCP Sài Gòn Thương Tín',
-    sepayNote: 'Hỗ trợ nhận tiền trực tiếp ở tài khoản chính và VA.',
+    providerNote:
+      'ApiPay hỗ trợ Cá nhân & Hộ kinh doanh tự động qua OTP (chưa hỗ trợ Doanh nghiệp).',
   },
   {
     bin: '970441',
     code: 'VIB',
     shortName: 'VIB',
     name: 'Ngân hàng TMCP Quốc tế Việt Nam',
+    providerNote:
+      'Cần bật tính năng "Nhận loa" trên ứng dụng VIB Business trước khi liên kết ApiPay.',
   },
   {
     bin: '970426',
     code: 'MSB',
     shortName: 'MSB',
     name: 'Ngân hàng TMCP Hàng Hải Việt Nam',
-    requiresVa: true,
-    sepayNote: 'Kết nối API trên SePay yêu cầu nhận tiền qua VA chính thức.',
+    isWarning: true,
+    providerNote:
+      'Cần gửi yêu cầu kích hoạt trên ApiPay; tài khoản Doanh nghiệp phải bật MSB Merchant tại quầy trước.',
   },
   {
     bin: '970448',
     code: 'OCB',
     shortName: 'OCB',
     name: 'Ngân hàng TMCP Phương Đông',
-    requiresVa: true,
-    sepayNote: 'Kết nối API trên SePay yêu cầu nhận tiền qua VA chính thức.',
+    providerNote: 'Cá nhân & Hộ kinh doanh tự động qua OTP; Doanh nghiệp cần yêu cầu kích hoạt.',
   },
   {
     bin: '970452',
     code: 'KLB',
     shortName: 'KienLongBank',
     name: 'Ngân hàng TMCP Kiên Long',
-    requiresVa: true,
-    sepayNote: 'Kết nối API trên SePay yêu cầu nhận tiền qua VA chính thức.',
   },
   {
     bin: '970437',
@@ -136,6 +141,7 @@ export const VIETNAM_BANKS: IVietnamBank[] = [
     code: 'VBA',
     shortName: 'Agribank',
     name: 'Ngân hàng Nông nghiệp và Phát triển Nông thôn Việt Nam',
+    providerNote: 'Tài khoản cần đăng ký thanh toán thương mại điện tử với ngân hàng trước.',
   },
   {
     bin: '970454',

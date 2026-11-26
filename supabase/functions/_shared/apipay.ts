@@ -1,10 +1,7 @@
-export interface VerifyHmacParams {
+export interface VerifyApiPaySignatureParams {
   rawBody: string;
   signatureHeader: string | null;
-  timestampHeader: string | null;
   secret: string;
-  nowSeconds?: number;
-  maxSkewSeconds?: number;
 }
 
 export interface VerifyResult {
@@ -33,43 +30,22 @@ export function constantTimeEqual(a: string, b: string): boolean {
 }
 
 /**
- * Xác thực chữ ký HMAC-SHA256 của SePay trên raw body và timestamp chống replay (±5 phút).
- * Fail-closed: secret rỗng luôn trả về false.
+ * Xác thực chữ ký ApiPay-Signature: HMAC-SHA256 (hex) của raw request body.
+ * Fail-closed: secret rỗng hoặc header thiếu/sai định dạng luôn trả về false.
  */
-export async function verifySePayHmacSignature({
+export async function verifyApiPaySignature({
   rawBody,
   signatureHeader,
-  timestampHeader,
   secret,
-  nowSeconds = Math.floor(Date.now() / 1000),
-  maxSkewSeconds = 300,
-}: VerifyHmacParams): Promise<VerifyResult> {
+}: VerifyApiPaySignatureParams): Promise<VerifyResult> {
   const cleanSecret = (secret || '').trim();
   if (!cleanSecret) {
     return { ok: false, reason: 'missing_secret' };
   }
 
-  if (!signatureHeader || !timestampHeader) {
-    return { ok: false, reason: 'missing_headers' };
-  }
-
-  const timestamp = Number(timestampHeader.trim());
-  if (!Number.isFinite(timestamp) || timestamp <= 0) {
-    return { ok: false, reason: 'invalid_timestamp' };
-  }
-
-  if (Math.abs(nowSeconds - timestamp) > maxSkewSeconds) {
-    return { ok: false, reason: 'expired_timestamp' };
-  }
-
-  const trimmedSig = signatureHeader.trim();
-  if (!trimmedSig.toLowerCase().startsWith('sha256=')) {
-    return { ok: false, reason: 'invalid_signature_format' };
-  }
-
-  const receivedHex = trimmedSig.slice(7).toLowerCase();
+  const receivedHex = (signatureHeader || '').trim().toLowerCase();
   if (!/^[0-9a-f]{64}$/.test(receivedHex)) {
-    return { ok: false, reason: 'invalid_signature_hex' };
+    return { ok: false, reason: 'invalid_signature_format' };
   }
 
   const cryptoKey = await crypto.subtle.importKey(
@@ -80,11 +56,7 @@ export async function verifySePayHmacSignature({
     ['sign'],
   );
 
-  const signedBuffer = await crypto.subtle.sign(
-    'HMAC',
-    cryptoKey,
-    encoder.encode(`${Math.trunc(timestamp)}.${rawBody}`),
-  );
+  const signedBuffer = await crypto.subtle.sign('HMAC', cryptoKey, encoder.encode(rawBody));
 
   const expectedHex = Array.from(new Uint8Array(signedBuffer))
     .map((byte) => byte.toString(16).padStart(2, '0'))
@@ -98,42 +70,42 @@ export async function verifySePayHmacSignature({
 }
 
 /**
- * Xác thực API Key header (Authorization: Apikey <key>) theo constant-time, fail-closed.
+ * Tạo header Authorization theo chuẩn ApiPay: Bearer base64(accessKey:secretKey).
  */
-export function verifySePayApiKey(authHeader: string | null, expectedKey: string): VerifyResult {
-  const cleanKey = (expectedKey || '').trim();
-  if (!cleanKey) {
-    return { ok: false, reason: 'missing_secret' };
+export function buildApiPayAuthHeader(accessKey: string, secretKey: string): string {
+  const raw = `${accessKey.trim()}:${secretKey.trim()}`;
+  const bytes = encoder.encode(raw);
+  let binary = '';
+  for (let i = 0; i < bytes.length; i += 1) {
+    binary += String.fromCharCode(bytes[i]);
   }
-
-  if (!authHeader || !authHeader.startsWith('Apikey ')) {
-    return { ok: false, reason: 'missing_apikey' };
-  }
-
-  const provided = authHeader.slice(7);
-  if (!constantTimeEqual(provided, cleanKey)) {
-    return { ok: false, reason: 'apikey_mismatch' };
-  }
-
-  return { ok: true };
+  return `Bearer ${btoa(binary)}`;
 }
 
 /**
- * Chuyển đổi chuỗi thời gian của SePay ("YYYY-MM-DD HH:mm:ss" giờ Việt Nam UTC+7) sang ISO-8601 có offset +07:00.
+ * Trích xuất mã đơn hàng dạng ORD000001 từ nội dung chuyển khoản (ApiPay trả nguyên văn content).
+ * Hỗ trợ trường hợp ngân hàng chèn chữ trước/sau hoặc khách gõ thêm dấu '-' / khoảng trắng (VD: ORD-000001).
  */
-export function toVietnamIsoTimestamp(dateStr?: string | null): string {
-  const raw = (dateStr || '').trim();
-  if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(raw)) {
-    return `${raw.replace(' ', 'T')}+07:00`;
-  }
+export function extractOrderPaymentCode(content?: string | null): string | null {
+  if (!content || typeof content !== 'string') return null;
 
+  const match = content.match(/(?:^|[^A-Za-z0-9])(ORD)[-\s]?(\d{6,8})(?=$|[^A-Za-z0-9])/i);
+  if (!match) return null;
+
+  return `ORD${match[2]}`;
+}
+
+/**
+ * Chuẩn hóa timestamp ISO-8601 từ ApiPay (fallback về thời điểm hiện tại nếu thiếu).
+ */
+export function toIsoTimestamp(dateStr?: string | null): string {
+  const raw = (dateStr || '').trim();
   if (raw) {
     const parsed = new Date(raw);
     if (!Number.isNaN(parsed.getTime())) {
       return parsed.toISOString();
     }
   }
-
   return new Date().toISOString();
 }
 

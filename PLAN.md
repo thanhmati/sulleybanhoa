@@ -316,3 +316,36 @@ Tài liệu chi tiết phân chia công việc (Task Breakdown) cho 2 pha chuy�
 - [ ] **Task 7.6.2:** Kiểm thử xuất ảnh PNG từ `OrderReceiptDialog`: kiểm tra **Copy ảnh** (dán thử vào chat/Zalo), **Tải ảnh**, và **In nhiệt 75mm** trên cả Light/Dark theme Admin.
 - [ ] **Task 7.6.3:** Viết automated tests cho webhook logic (`sepay-webhook`) theo checklist SePay: từ chối chữ ký sai (`401`), từ chối khi secret rỗng (`401`), trùng `id` trả nguyên verdict cũ không cộng 2 lần, race condition 2 request đồng thời, `UNMATCHED` / đơn huỷ / đã trả đủ trả `200 {"success": false}`.
 - [ ] **Task 7.6.4:** Chạy thử trên **SePay Test mode (`Mô phỏng giao dịch`)** hoặc `sepay` CLI, kiểm thử `BankReconciliationDialog` + `sepay-reconcile` + Realtime UI, sau đó chạy `pnpm build` và `pnpm lint` kiểm tra TypeScript, ESLint và cập nhật trạng thái hoàn thành trong `PLAN.md`.
+
+---
+
+## 🟡 PHA 8: Chuyển đổi Hệ thống Thanh toán Tự động từ SePay sang ApiPay
+
+> **Mục tiêu:** Thay thế hoàn toàn nhà cung cấp SePay bằng **ApiPay** (`apipay.vn`) để tối ưu chi phí giao dịch phát sinh, đồng thời giữ nguyên toàn bộ luồng nghiệp vụ hiện tại (tạo VietQR nội bộ trên hoá đơn, tự động xác nhận thanh toán qua Webhook, đối soát API bổ sung, gắn tay giao dịch sai nội dung và đồng bộ Supabase Realtime).
+
+### 8.1 Database Migration Non-destructive
+
+- [x] **Task 8.1.1:** Tạo file Migration SQL [supabase/migrations/06_switch_to_apipay.sql](file:///Users/thanhdo/sulleybanhoa/supabase/migrations/06_switch_to_apipay.sql) _(chờ xác nhận người dùng trước khi chạy lên Supabase production)_:
+  - Cập nhật default `provider = 'APIPAY'` và bổ sung cột `is_sandbox BOOLEAN NOT NULL DEFAULT FALSE` cho bảng `public.bank_webhook_logs` (giữ nguyên toàn bộ dữ liệu lịch sử).
+  - Tạo RPC atomic `public.process_bank_payment(...)` dedupe theo `external_tx_id` (`transactionId` dùng chung cho cả Webhook và Metrics API của ApiPay), khóa dòng `FOR UPDATE` trên `orders` và tự động ghi `order_transactions` (`type = 'BANK'`).
+
+### 8.2 Supabase Edge Functions (ApiPay) & Dọn dẹp SePay
+
+- [x] **Task 8.2.1:** Xây dựng helper [supabase/functions/\_shared/apipay.ts](file:///Users/thanhdo/sulleybanhoa/supabase/functions/_shared/apipay.ts) xác thực `ApiPay-Signature` (HMAC-SHA256 trên raw body, constant-time, fail-closed), tạo header `Authorization: Bearer base64(accessKey:secretKey)` và trích xuất mã đơn `ORD000001` từ `data.content`.
+- [x] **Task 8.2.2:** Xây dựng Edge Function [supabase/functions/apipay-webhook/index.ts](file:///Users/thanhdo/sulleybanhoa/supabase/functions/apipay-webhook/index.ts):
+  - Đọc `await req.text()`, verify `ApiPay-Signature` trước khi parse JSON (`401` nếu sai/thiếu secret).
+  - Bỏ qua mặc định sự kiện `sandbox: true` / `test_txn_*` trên production (chỉ cho phép khi `APIPAY_ALLOW_SANDBOX=true`).
+  - Xử lý `event === 'transaction.in'`, gọi RPC `process_bank_payment(...)`, trả `200` sau khi lưu DB thành công (kể cả `UNMATCHED`) để tránh retry thừa; trả `500` nếu lỗi DB.
+- [x] **Task 8.2.3:** Xây dựng Edge Function đối soát dự phòng [supabase/functions/apipay-reconcile/index.ts](file:///Users/thanhdo/sulleybanhoa/supabase/functions/apipay-reconcile/index.ts) (JWT role `administrator`) gọi `GET https://app.apipay.vn/v1/client/metrics/transactions`.
+- [x] **Task 8.2.4:** Gỡ bỏ các file SePay cũ (`supabase/functions/sepay-webhook/`, `supabase/functions/sepay-reconcile/`, `supabase/functions/_shared/sepay.ts`, `sepay-doc.md`) và viết hướng dẫn cấu hình tại [supabase/functions/apipay-webhook/README.md](file:///Users/thanhdo/sulleybanhoa/supabase/functions/apipay-webhook/README.md).
+
+### 8.3 Cập nhật Frontend & Cấu hình
+
+- [x] **Task 8.3.1:** Cập nhật [src/types/bank-webhook.d.ts](file:///Users/thanhdo/sulleybanhoa/src/types/bank-webhook.d.ts) và [src/services/bankWebhookService.ts](file:///Users/thanhdo/sulleybanhoa/src/services/bankWebhookService.ts) (gọi `apipay-reconcile`, đọc `is_sandbox`).
+- [x] **Task 8.3.2:** Cập nhật danh sách ngân hàng [src/lib/constants/vietnam-banks.constant.ts](file:///Users/thanhdo/sulleybanhoa/src/lib/constants/vietnam-banks.constant.ts), [src/lib/utils/vietqr.ts](file:///Users/thanhdo/sulleybanhoa/src/lib/utils/vietqr.ts) (bỏ prefix `SEVQR` đặc thù SePay), [BankReconciliationDialog.tsx](file:///Users/thanhdo/sulleybanhoa/src/pages/order/components/BankReconciliationDialog.tsx), [OrderListPage.tsx](file:///Users/thanhdo/sulleybanhoa/src/pages/order/OrderListPage.tsx), [InvoiceBankConfigTab.tsx](file:///Users/thanhdo/sulleybanhoa/src/pages/setting/components/InvoiceBankConfigTab.tsx) và [.env.example](file:///Users/thanhdo/sulleybanhoa/.env.example).
+
+### 8.4 Kiểm thử & Triển khai Production
+
+- [x] **Task 8.4.1:** Viết và chạy unit test [supabase/functions/\_shared/apipay.test.ts](file:///Users/thanhdo/sulleybanhoa/supabase/functions/_shared/apipay.test.ts) + chạy `pnpm build` & `pnpm lint`.
+- [x] **Task 8.4.2:** Chạy migration `06_switch_to_apipay.sql` lên Supabase (`ufdkwcwegrakqlxbicdm`) và deploy `apipay-webhook` (`verify_jwt: false`) & `apipay-reconcile` (`verify_jwt: true`) thành công.
+- [ ] **Task 8.4.3:** Cấu hình Secrets (`APIPAY_WEBHOOK_SECRET`, `APIPAY_ACCESS_KEY`, `APIPAY_SECRET_KEY`, `APIPAY_ALLOW_SANDBOX`), gỡ `sepay-webhook` / `sepay-reconcile` trên Supabase Dashboard, và kiểm thử **ApiPay Sandbox (`ak_test_`)** → **Live Test** → **Live Key** (`APIPAY_ALLOW_SANDBOX=false`) với 1 giao dịch thật giá trị nhỏ.

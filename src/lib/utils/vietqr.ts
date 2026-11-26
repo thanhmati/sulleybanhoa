@@ -1,5 +1,3 @@
-import { findVietnamBankByBin } from '@/lib/constants/vietnam-banks.constant';
-
 export interface IVietQRPayloadParams {
   bankBin: string;
   accountNumber: string;
@@ -28,7 +26,7 @@ export function stripVietnameseDiacritics(input: string): string {
 }
 
 /**
- * Chuẩn hóa mã đơn hàng thành mã thanh toán tương thích cấu trúc SePay (VD: ORD-000001 -> ORD000001).
+ * Chuẩn hóa mã đơn hàng thành mã thanh toán không dấu gạch ngang (VD: ORD-000001 -> ORD000001).
  */
 export function formatOrderPaymentCode(orderNumber?: string, fallbackId?: string): string {
   const raw = (orderNumber || '').trim();
@@ -48,14 +46,13 @@ export function formatOrderPaymentCode(orderNumber?: string, fallbackId?: string
 }
 
 /**
- * Tạo nội dung chuyển khoản tự động đặt mã thanh toán lên đầu (hoặc sau SEVQR nếu là VietinBank),
- * đảm bảo không bị ngân hàng trung gian cắt mất mã đơn và khớp 100% với SePay Payment Code.
+ * Tạo nội dung chuyển khoản tự động đặt mã thanh toán lên đầu,
+ * đảm bảo không bị ngân hàng trung gian cắt mất mã đơn để ApiPay đối soát chính xác.
  */
 export function buildOrderTransferContent({
   orderNumber,
   fallbackId,
   transferPrefix,
-  bankBin,
 }: ITransferContentParams): string {
   const paymentCode = formatOrderPaymentCode(orderNumber, fallbackId);
   const sanitizedPrefix = transferPrefix
@@ -64,14 +61,7 @@ export function buildOrderTransferContent({
         .trim()
     : '';
 
-  const baseMemo = sanitizedPrefix ? `${paymentCode} ${sanitizedPrefix}`.trim() : paymentCode;
-  const bank = findVietnamBankByBin(bankBin);
-
-  let finalMemo = baseMemo;
-  if (bank?.requiresSevqrPrefix && finalMemo && !/^SEVQR\b/i.test(finalMemo)) {
-    finalMemo = `SEVQR ${finalMemo}`;
-  }
-
+  const finalMemo = sanitizedPrefix ? `${paymentCode} ${sanitizedPrefix}`.trim() : paymentCode;
   return finalMemo.slice(0, 50).trim();
 }
 

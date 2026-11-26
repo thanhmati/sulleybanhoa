@@ -22,7 +22,6 @@ export interface IBankWebhookLog {
   id: string;
   provider: string;
   externalTxId: string | null;
-  sepayApiId: string | null;
   gateway: string | null;
   accountNumber: string | null;
   subAccount: string | null;
@@ -36,6 +35,7 @@ export interface IBankWebhookLog {
   orderTransactionId: string | null;
   matchStatus: BankWebhookMatchStatus;
   webhookSuccess: boolean;
+  isSandbox: boolean;
   source: BankWebhookSource;
   note: string | null;
   createdAt: string;
@@ -43,7 +43,7 @@ export interface IBankWebhookLog {
   matchedOrder?: IMatchedOrderSummary | null;
 }
 
-export interface ISePayReconcileSummary {
+export interface IBankReconcileSummary {
   success: boolean;
   rateLimited: boolean;
   fetched: number;
