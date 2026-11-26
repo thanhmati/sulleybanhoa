@@ -217,7 +217,7 @@ export function OrderReceipt({
       <div
         ref={captureRef}
         id={enablePrintPortal ? 'receipt-capture' : undefined}
-        className="w-[320px] shrink-0 bg-white text-[#18181b] p-4 rounded-sm border border-[#e4e4e7] shadow-xs print:hidden"
+        className="w-[320px] h-fit shrink-0 bg-white text-[#18181b] p-4 rounded-sm border border-[#e4e4e7] shadow-xs print:hidden"
         style={{ fontFamily: 'Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif' }}
       >
         {receiptContent}

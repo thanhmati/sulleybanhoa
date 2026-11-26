@@ -67,12 +67,14 @@ function OrderReceiptDialogInner({ open, onOpenChange, order }: OrderReceiptDial
     setIsCopying(true);
     try {
       const node = captureRef.current;
+      const exportWidth = Math.ceil(node.scrollWidth || node.offsetWidth);
+      const exportHeight = Math.ceil(node.scrollHeight || node.offsetHeight);
       const blob = await toBlob(node, {
         pixelRatio: 3,
         backgroundColor: '#ffffff',
         cacheBust: true,
-        width: node.offsetWidth,
-        height: node.offsetHeight,
+        width: exportWidth,
+        height: exportHeight,
         style: { margin: '0' },
       });
 
@@ -93,24 +95,26 @@ function OrderReceiptDialogInner({ open, onOpenChange, order }: OrderReceiptDial
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
-        <DialogHeader>
+      <DialogContent className="max-w-md max-h-[92dvh] flex flex-col">
+        <DialogHeader className="shrink-0">
           <DialogTitle className="flex items-center gap-2">
             <Printer className="h-5 w-5 text-primary" />
             Xem trước hoá đơn ({paymentCode})
           </DialogTitle>
         </DialogHeader>
 
-        <div className="my-1 max-h-[68vh] overflow-y-auto p-4 bg-muted/30 rounded-lg border border-border flex justify-center print:p-0 print:m-0 print:border-none print:bg-transparent print:max-h-none print:overflow-visible">
-          <OrderReceipt
-            order={liveOrder}
-            invoiceConfig={invoiceConfig}
-            captureRef={captureRef}
-            enablePrintPortal={open}
-          />
+        <div className="my-1 flex-1 min-h-0 overflow-auto p-4 bg-muted/30 rounded-lg border border-border print:p-0 print:m-0 print:border-none print:bg-transparent print:max-h-none print:overflow-visible">
+          <div className="flex justify-center items-start min-w-fit">
+            <OrderReceipt
+              order={liveOrder}
+              invoiceConfig={invoiceConfig}
+              captureRef={captureRef}
+              enablePrintPortal={open}
+            />
+          </div>
         </div>
 
-        <DialogFooter className="flex-wrap gap-2 sm:justify-between">
+        <DialogFooter className="shrink-0 flex-wrap gap-2 sm:justify-between">
           <Button
             type="button"
             variant="ghost"
