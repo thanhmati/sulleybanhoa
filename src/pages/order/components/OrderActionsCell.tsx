@@ -56,7 +56,9 @@ export function OrderActionsCell({ order, onEdit, onDelete }: OrderActionsCellPr
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <OrderReceiptDialog open={openReceipt} onOpenChange={setOpenReceipt} order={order} />
+      {openReceipt && (
+        <OrderReceiptDialog open={openReceipt} onOpenChange={setOpenReceipt} order={order} />
+      )}
 
       <ConfirmDialog
         open={openConfirm}

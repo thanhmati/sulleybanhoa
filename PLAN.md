@@ -201,3 +201,118 @@ Tài liệu chi tiết phân chia công việc (Task Breakdown) cho 2 pha chuy�
 ### 6.3 Kiểm thử & Hoàn thiện
 
 - [x] **Task 6.3.1:** Kiểm thử reload trang, chuyển view và kiểm tra lưu trữ `localStorage`. Build kiểm tra TypeScript và Lint.
+
+---
+
+## 🟡 PHA 7: Nâng cấp Hoá đơn Bán hàng, VietQR Động, Xuất Ảnh & Tự động Đối soát Chuyển khoản (Chuẩn SePay)
+
+> **Mục tiêu:** Thiết kế lại hoá đơn bán hàng theo mẫu tối giản mới (bỏ mã vạch, bổ sung dòng tiền cọc, khối VietQR động cho tài khoản **MBBank hộ kinh doanh cá nhân** với mã thanh toán `ORD000001`), hỗ trợ Admin preview/copy/tải ảnh hoá đơn gửi khách, cấu hình thông tin tiệm & ngân hàng động, và tự động ghi nhận giao dịch chuyển khoản theo đúng chuẩn kỹ thuật SePay (**EMVCo VietQR + `qrcode.react` + `html-to-image` + SePay Webhooks HMAC-SHA256 + SePay API v2 Reconciliation + Supabase Edge Functions + Supabase Realtime**).
+>
+> **Lưu ý an toàn Database (`AGENTS.md`):** Các bước chạy Migration SQL, deploy Edge Function và cập nhật Supabase Secrets đều tác động trực tiếp lên môi trường production và cần xác nhận của người dùng trước khi thực thi. Mọi tích hợp SePay phải test qua **Test mode (Sandbox)** trước khi chuyển sang Live.
+
+### 7.1 Cài đặt Thư viện Open-source & Thiết lập Hạ tầng Dữ liệu
+
+- [x] **Task 7.1.1:** Cài đặt các thư viện open-source miễn phí:
+  - `qrcode.react` (`^4.2.0`, ISC) để render mã VietQR dạng SVG sắc nét nội bộ (không phụ thuộc API ảnh bên ngoài, tránh lỗi CORS khi xuất ảnh).
+  - `html-to-image` (`^1.11.13`, MIT) để convert DOM hoá đơn sang PNG Blob/DataURL phục vụ Preview, Copy Clipboard và Tải ảnh.
+- [x] **Task 7.1.2:** Tạo bộ hằng số danh sách ngân hàng Việt Nam chuẩn NAPAS BIN trong [src/lib/constants/vietnam-banks.constant.ts](file:///Users/tanthanh/Documents/Project/sulleybanhoa/src/lib/constants/vietnam-banks.constant.ts) (đối chiếu chuẩn `vietqr.app/banks.json`: MBBank `970422` / `MB`, ACB `970416`, VCB `970436`, TCB `970407`, BIDV `970418`, CTG `970415`, VPB `970432`, TPB `970423`, VIB `970441`, MSB `970426`, OCB `970448`, Sacombank `970403`...).
+- [x] **Task 7.1.3:** Xây dựng tiện ích sinh chuỗi **EMVCo VietQR (NAPAS 247 Dynamic QR, Tag `01 = 12`)** chuẩn open-source trong [src/lib/utils/vietqr.ts](file:///Users/tanthanh/Documents/Project/sulleybanhoa/src/lib/utils/vietqr.ts):
+  - Tuân thủ cấu trúc TLV (Tag-Length-Value) + checksum `CRC16-CCITT (0xFFFF)`.
+  - Thiết lập `Tag 01 = 12` (Dynamic QR), số tiền nguyên VND (`Tag 54`) và nội dung thanh toán không dấu đặt ở đầu `Tag 62.08` (mặc định **`ORD000001`** — không dấu `-`, không chứa ký tự đặc biệt để tương thích tuyệt đối với **Cấu trúc mã thanh toán SePay** và không bị ngân hàng cắt đuôi memo).
+  - Hỗ trợ rule đặc thù theo ngân hàng SePay (`vietqr.md`): tự thêm `SEVQR ` ở đầu nếu admin đổi sang VietinBank cá nhân/HKD, hoặc hỗ trợ số VA nếu dùng ngân hàng yêu cầu VA.
+  - Chuẩn hóa hàm helper `formatOrderPaymentCode(orderNumber)` chuyển `ORD-000001` → `ORD000001` để đồng bộ cả đơn cũ lẫn đơn mới.
+- [x] **Task 7.1.4:** Tạo file Migration SQL [supabase/migrations/05_bank_webhook_and_invoice_settings.sql](file:///Users/tanthanh/Documents/Project/sulleybanhoa/supabase/migrations/05_bank_webhook_and_invoice_settings.sql) _(đã tạo file — chờ xác nhận của người dùng trước khi thực thi lên Supabase production)_:
+  - Cập nhật hàm `public.generate_order_number()` cho đơn hàng mới sinh định dạng liền **`ORD000001`** (thay vì `ORD-000001`), đồng thời bổ sung cột `payment_code TEXT GENERATED ALWAYS AS (UPPER(REPLACE(order_number, '-', ''))) STORED` kèm `UNIQUE INDEX` trên `public.orders` để đơn cũ và đơn mới đều khớp `ORD000001` mà không sửa dữ liệu lịch sử.
+  - Tạo bảng `public.bank_webhook_logs` lưu log biến động số dư chuẩn SePay:
+    - `external_tx_id TEXT UNIQUE` (lưu `payload.id` từ webhook để `INSERT ... ON CONFLICT DO NOTHING` atomic), `sepay_api_id TEXT UNIQUE` (lưu UUID từ SePay API v2 khi đối soát bổ sung).
+    - `provider`, `gateway`, `account_number`, `sub_account`, `transfer_type`, `amount BIGINT` (số nguyên VND), `payment_code` (`payload.code`), `content`, `reference_code`, `transaction_date TIMESTAMPTZ`.
+    - `matched_order_id`, `order_transaction_id`, `match_status` (`MATCHED | PARTIAL | OVERPAID | UNMATCHED | IGNORED | ERROR`), `webhook_success BOOLEAN` (lưu lại verdict của lần xử lý đầu tiên để retry/replay trả đúng verdict cũ), `source` (`WEBHOOK | RECONCILE_API | MANUAL_ASSIGN`), `note`, `raw_payload JSONB`, `created_at`.
+  - Tạo Postgres RPC atomic `public.process_sepay_payment(...)` (dùng transaction + row lock `FOR UPDATE` trên `orders` để tránh race condition khi nhiều request/reconcile chạy song song): kiểm tra điều kiện đơn (`status != 'CANCELLED'`, chưa trả đủ `is_paid = false`), insert `order_transactions` (`type = 'BANK'`), để trigger `recalculate_order_financials` tự trừ `due_amount` & cập nhật `is_paid` (giữ nguyên `orders.status`, không ghi trùng `finance_transactions`).
+  - Thiết lập RLS chặt chẽ cho `bank_webhook_logs` (Staff/Admin `SELECT`, Admin `UPDATE` để đối soát/gắn tay đơn hàng; `INSERT` chỉ qua `service_role`) và bật `supabase_realtime` publication cho `orders`, `order_transactions`, `bank_webhook_logs`.
+
+---
+
+### 7.2 Cấu hình Động Thông tin Tiệm & Ngân hàng trên Hoá đơn (`/admin/store-config`)
+
+- [x] **Task 7.2.1:** Bổ sung interface `StoreInvoiceBankConfig` trong [src/types/store-setting.d.ts](file:///Users/tanthanh/Documents/Project/sulleybanhoa/src/types/store-setting.d.ts) cho key `store_invoice_bank` (`storeName`, `storePhone`, `bankBin`, `bankShortName`, `bankAccountNumber`, `bankAccountName`, `bankAccountType`, `vaNumber`, `transferPrefix`, `footerText`).
+- [x] **Task 7.2.2:** Cập nhật [src/services/storeSettingService.ts](file:///Users/tanthanh/Documents/Project/sulleybanhoa/src/services/storeSettingService.ts) bổ sung `DEFAULT_STORE_INVOICE_BANK` mặc định chọn **MBBank (`bin: '970422'`, `bankShortName: 'MBBank'`, `bankAccountType: 'BUSINESS_HOUSEHOLD'`, `transferPrefix: ''`)**.
+- [x] **Task 7.2.3:** Nâng cấp [src/pages/setting/components/StoreConfigPage.tsx](file:///Users/tanthanh/Documents/Project/sulleybanhoa/src/pages/setting/components/StoreConfigPage.tsx) thêm tab **"Hoá đơn & Ngân hàng"** (tách component [InvoiceBankConfigTab.tsx](file:///Users/tanthanh/Documents/Project/sulleybanhoa/src/pages/setting/components/InvoiceBankConfigTab.tsx)):
+  - Form nhập Tên tiệm trên bill, SĐT tiệm, chọn Ngân hàng từ danh sách NAPAS BIN (hiển thị lưu ý SePay tương ứng theo ngân hàng — với **MBBank hộ kinh doanh cá nhân** nhận tiền trực tiếp ở STK chính, không bắt buộc VA), Số tài khoản, Tên chủ tài khoản, Tiền tố nội dung (mặc định rỗng để nội dung là `ORD000001`), Lời cảm ơn cuối bill.
+  - Khung **Live Preview** mẫu hoá đơn & mã QR thử nghiệm ngay cạnh form để admin kiểm tra trực quan trước khi lưu.
+
+---
+
+### 7.3 Thiết kế lại Hoá đơn Bán hàng & Hỗ trợ Preview / Copy / Tải Ảnh
+
+- [x] **Task 7.3.1:** Thiết kế lại [src/pages/order/components/OrderReceipt.tsx](file:///Users/tanthanh/Documents/Project/sulleybanhoa/src/pages/order/components/OrderReceipt.tsx) theo bố cục ảnh mẫu mới (dùng màu hex/rgb chuẩn trên nền trắng tinh khiết để tránh sai màu khi Dark Mode hoặc lỗi CSS khi xuất PNG):
+  - **Header:** Tên tiệm (`store_invoice_bank.storeName`) + SĐT (`store_invoice_bank.storePhone`), gạch ngang mảnh.
+  - **Tiêu đề & Meta:** `HÓA ĐƠN BÁN HÀNG` + `{paymentCode} - {DD/MM/YY HH:mm}` với `{paymentCode}` hiển thị dạng **`ORD000001`** (**bỏ mã vạch**).
+  - **Khách hàng:** Layout tối giản `Khách: {client.name || 'Khách lẻ'}` (ẩn địa chỉ, SĐT khách, ngày/giờ giao, ghi chú nội bộ).
+  - **Bảng sản phẩm (`Đơn giá` | `SL` | `T.tiền`):** Hiển thị 1 dòng từ đơn hàng hiện có (`1. {order.type}{order.tone ? ' - ' + order.tone : ''}`, dòng dưới canh 3 cột `{price}` | `x1` | `{price}`).
+  - **Tổng kết tài chính:**
+    - `Tạm tính`: `{price} đ`
+    - `Vận chuyển`: `{ship} đ` (hiển thị khi `ship > 0`)
+    - `Tổng cộng 1SP`: `{price + ship} đ` (in đậm, giá trị nổi bật màu vàng cam `#d99b26`)
+    - `Tiền cọc`: `{deposit} đ` (bổ sung dòng tiền cọc theo yêu cầu)
+    - `Đã thanh toán`: `{paidTransactions} đ` (hiển thị khi đã có giao dịch thanh toán thêm trước đó)
+    - `Nợ cho đơn hàng này`: `{dueAmount} đ`
+  - **Khối chuyển khoản VietQR (hiển thị khi `dueAmount > 0` và đã cấu hình ngân hàng):**
+    - Bên trái: Nhãn vector `VIETQR` + `<QRCodeSVG>` từ `generateVietQRPayload(...)` theo số tiền nguyên `dueAmount` và nội dung **`ORD000001`**.
+    - Bên phải (canh lề phải): `{bankShortName}` (`MBBank`) / `{bankAccountName}` / `{bankAccountNumber}`.
+    - Dòng dưới: `Nội dung` (trái) | **`ORD000001`** (phải).
+    - Nếu `dueAmount <= 0`: ẩn khối QR và hiển thị badge **"ĐÃ THANH TOÁN ĐỦ"**.
+  - **Footer:** `{footerText}` (mặc định `Cảm ơn quý khách và hẹn gặp lại`).
+- [x] **Task 7.3.2:** Nâng cấp [src/pages/order/components/OrderReceiptDialog.tsx](file:///Users/tanthanh/Documents/Project/sulleybanhoa/src/pages/order/components/OrderReceiptDialog.tsx):
+  - Đọc `store_invoice_bank` qua `useStoreSettingsQuery()` và đồng bộ dữ liệu đơn hàng mới nhất (tự cập nhật ngay khi đơn hàng vừa nhận tiền qua Realtime).
+  - Gắn `ref` vào container hoá đơn (`#receipt-capture`) và bổ sung tiện ích xuất ảnh (`html-to-image` với `pixelRatio: 3`, `backgroundColor: '#ffffff'`):
+    - Nút **Copy ảnh**: Tạo PNG Blob và ghi vào Clipboard (`navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })])`), kèm toast thông báo hoặc fallback gợi ý tải ảnh nếu trình duyệt chặn quyền Clipboard.
+    - Nút **Tải ảnh**: Tạo PNG DataURL và tải xuống file `hoa-don-{paymentCode}.png`.
+    - Nút **In hoá đơn**: Giữ nguyên cơ chế `window.print()` portaled 75mm cho máy in nhiệt.
+
+---
+
+### 7.4 Tự động Detect & Đối soát Giao dịch Chuẩn SePay (Edge Functions)
+
+- [x] **Task 7.4.1:** Xây dựng **Supabase Edge Function** [supabase/functions/sepay-webhook/index.ts](file:///Users/tanthanh/Documents/Project/sulleybanhoa/supabase/functions/sepay-webhook/index.ts) (kèm helper [supabase/functions/\_shared/sepay.ts](file:///Users/tanthanh/Documents/Project/sulleybanhoa/supabase/functions/_shared/sepay.ts)) tuân thủ nghiêm ngặt đặc tả SePay:
+  - **Fail-closed Authentication:** Đọc raw body bằng `await req.text()`. Mặc định xác thực **HMAC-SHA256** (`X-SePay-Signature: sha256=<hex>` + `X-SePay-Timestamp` ký chuỗi `{timestamp}.{raw_body}`, kiểm tra lệch tối đa 300s, so sánh constant-time); hỗ trợ fallback mode `API Key` (`Authorization: Apikey <key>` constant-time) theo cấu hình env. Từ chối `401` nếu secret env rỗng hoặc chữ ký sai.
+  - **Parse & Validate dữ liệu:** Chỉ nhận `transferType === 'in'` và số tiền nguyên dương `transferAmount > 0`. Parse `transactionDate` (`YYYY-MM-DD HH:mm:ss`) theo múi giờ `+07:00` (`Asia/Ho_Chi_Minh`). Kiểm tra `accountNumber`/`subAccount` khớp với cấu hình `store_invoice_bank` (nếu đã cấu hình).
+  - **Idempotency Atomic:** Ghi event vào `bank_webhook_logs` bằng `INSERT ... ON CONFLICT (external_tx_id) DO NOTHING`. Nếu giao dịch đã tồn tại (retry / manual replay): trả về `200` với đúng `{"success": existing.webhook_success}` đã lưu lần đầu để không làm sai lệch trạng thái _Thành công/Thất bại_ trên `my.sepay.vn` và không cộng tiền 2 lần. Nếu lỗi DB không lưu được event: trả `500` để SePay tự retry.
+  - **Matching chuẩn SePay:** Chỉ đối chiếu qua `payload.code` (trường SePay bóc tách từ cấu trúc mã thanh toán tiền tố `ORD` + 6 chữ số nguyên, VD `ORD000001`), **không tự regex trên `content`**. Gọi RPC atomic `process_sepay_payment(...)`:
+    - Khớp đơn hợp lệ (`PENDING`/`DELIVERED`, chưa `is_paid`): insert `order_transactions` (`BANK`), cập nhật `match_status` (`MATCHED` / `PARTIAL` / `OVERPAID`) và `webhook_success = true` → trả `200 {"success": true}`.
+    - Không có `code` / không thấy đơn / đơn `CANCELLED` / đơn đã `is_paid = true` / sai STK / `transferType = 'out'`: lưu log (`UNMATCHED` / `IGNORED`) với `webhook_success = false` → trả `200 {"success": false}` (nhãn _Thất bại_ trên `my.sepay.vn`, không retry).
+  - **Bảo mật log (`Decree 13/2023/NĐ-CP`):** Tuyệt đối không `console.log` raw payload, `content`, `description`, tên chủ tài khoản hay headers bí mật; chỉ log `eventId`, `code`, `amount`, `matchStatus`, 4 số cuối STK.
+- [x] **Task 7.4.2:** Xây dựng **Supabase Edge Function** đối soát dự phòng [supabase/functions/sepay-reconcile/index.ts](file:///Users/tanthanh/Documents/Project/sulleybanhoa/supabase/functions/sepay-reconcile/index.ts) (yêu cầu JWT Admin):
+  - Gọi SePay API v2 `GET https://userapi.sepay.vn/v2/transactions?since_id=...` (kèm `transaction_date_sort=asc`, `timestamp_format=iso8601`) sử dụng `SEPAY_API_TOKEN` lưu trong Supabase Secrets.
+  - Dedupe theo `sepay_api_id` (UUID của API v2, tách biệt hoàn toàn với `external_tx_id` integer của webhook) và chạy cùng RPC `process_sepay_payment(...)` để bổ sung giao dịch nếu webhook bị miss sau khi hết lịch retry 33 phút.
+- [x] **Task 7.4.3:** Tạo [.env.example](file:///Users/tanthanh/Documents/Project/sulleybanhoa/.env.example) (chỉ khai báo tên biến, không chứa giá trị bí mật) và tài liệu [supabase/functions/sepay-webhook/README.md](file:///Users/tanthanh/Documents/Project/sulleybanhoa/supabase/functions/sepay-webhook/README.md) hướng dẫn đầy đủ:
+  - Bước 1: Test trong **SePay Test mode** (**Mô phỏng giao dịch** trên `my.sepay.vn` hoặc `sepay` CLI `sepay webhook listen` / `sepay sandbox simulate`).
+  - Bước 2: Cấu hình **Cấu trúc mã thanh toán** trên `my.sepay.vn` (Tiền tố `ORD`, hậu tố 6-8 ký tự, loại **Số nguyên**).
+  - Bước 3: Tạo Webhook (chọn tài khoản **MBBank hộ kinh doanh cá nhân**, bật **Tiền vào** và **Dùng để xác thực thanh toán**, **TẮT** _Chỉ gửi khi có mã thanh toán_ và _Lọc theo mã thanh toán_ để giao dịch sai nội dung vẫn về bảng đối soát, xác thực **HMAC-SHA256**).
+  - Bước 4: Go-live checklist (bật _Tự động gửi lại khi server trả lỗi_ & _Cảnh báo lỗi liên tiếp_, thử 1 giao dịch thật giá trị nhỏ).
+
+---
+
+### 7.5 Realtime UI & Giao diện Đối soát Giao dịch Ngân hàng (`/admin/orders`)
+
+- [x] **Task 7.5.1:** Tạo types [src/types/bank-webhook.d.ts](file:///Users/tanthanh/Documents/Project/sulleybanhoa/src/types/bank-webhook.d.ts) và service [src/services/bankWebhookService.ts](file:///Users/tanthanh/Documents/Project/sulleybanhoa/src/services/bankWebhookService.ts) (tuân thủ pattern Service Layer của `AGENTS.md`):
+  - `getLogs()`: lấy danh sách `bank_webhook_logs` kèm thông tin đơn hàng liên kết.
+  - `assignLogToOrder(logId, orderId)`: gọi RPC hoặc tạo `order_transactions` (`type = 'BANK'`) cho đơn được chọn và cập nhật `bank_webhook_logs` (`matched_order_id`, `order_transaction_id`, `match_status = 'MATCHED'`, `source = 'MANUAL_ASSIGN'`).
+  - `ignoreLog(logId)`: đánh dấu giao dịch không liên quan (`IGNORED`).
+  - `triggerReconcile()`: gọi Edge Function `sepay-reconcile` kéo giao dịch thiếu từ SePay API v2.
+- [x] **Task 7.5.2:** Tạo hook [src/hooks/useBankWebhookLogs.ts](file:///Users/tanthanh/Documents/Project/sulleybanhoa/src/hooks/useBankWebhookLogs.ts):
+  - React Query hooks: `useBankWebhookLogsQuery`, `useAssignWebhookLogMutation`, `useIgnoreWebhookLogMutation`, `useTriggerReconcileMutation`.
+  - Hook `useOrderPaymentRealtime()`: subscribe kênh `supabase.channel('order-payments-realtime')` lắng nghe `INSERT`/`UPDATE` trên `order_transactions` và `bank_webhook_logs` để tự động invalidate `['orders']`, `['order_detail']`, `['bank_webhook_logs']`, `['dashboard-summary']` và hiển thị toast thông báo ngay khi tiền về.
+- [x] **Task 7.5.3:** Xây dựng modal [src/pages/order/components/BankReconciliationDialog.tsx](file:///Users/tanthanh/Documents/Project/sulleybanhoa/src/pages/order/components/BankReconciliationDialog.tsx):
+  - Hiển thị lịch sử giao dịch chuyển khoản từ webhook/API, bộ lọc theo trạng thái (`Tất cả`, `Chưa khớp`, `Chuyển thiếu`, `Đã khớp`, `Bỏ qua`).
+  - Escape an toàn nội dung `content`/`description` khi hiển thị (chống XSS).
+  - Nút **"Đồng bộ từ SePay"** (`triggerReconcile`), nút **Gắn vào đơn hàng** 1-click cho giao dịch sai nội dung, và nút **Bỏ qua**.
+- [x] **Task 7.5.4:** Tích hợp nút **"Đối soát chuyển khoản"** (kèm badge đếm giao dịch `UNMATCHED` / `PARTIAL`) và kích hoạt `useOrderPaymentRealtime()` trong [src/pages/order/OrderListPage.tsx](file:///Users/tanthanh/Documents/Project/sulleybanhoa/src/pages/order/OrderListPage.tsx) và [src/pages/order/components/OrderDetailPage.tsx](file:///Users/tanthanh/Documents/Project/sulleybanhoa/src/pages/order/components/OrderDetailPage.tsx).
+
+---
+
+### 7.6 Kiểm thử & Hoàn thiện
+
+- [ ] **Task 7.6.1:** Kiểm thử sinh mã VietQR (`generateVietQRPayload`) cho MBBank (`970422`) bằng app ngân hàng thực tế: xác minh tự điền đúng STK, số tiền `dueAmount` và nội dung `ORD000001`.
+- [ ] **Task 7.6.2:** Kiểm thử xuất ảnh PNG từ `OrderReceiptDialog`: kiểm tra **Copy ảnh** (dán thử vào chat/Zalo), **Tải ảnh**, và **In nhiệt 75mm** trên cả Light/Dark theme Admin.
+- [ ] **Task 7.6.3:** Viết automated tests cho webhook logic (`sepay-webhook`) theo checklist SePay: từ chối chữ ký sai (`401`), từ chối khi secret rỗng (`401`), trùng `id` trả nguyên verdict cũ không cộng 2 lần, race condition 2 request đồng thời, `UNMATCHED` / đơn huỷ / đã trả đủ trả `200 {"success": false}`.
+- [ ] **Task 7.6.4:** Chạy thử trên **SePay Test mode (`Mô phỏng giao dịch`)** hoặc `sepay` CLI, kiểm thử `BankReconciliationDialog` + `sepay-reconcile` + Realtime UI, sau đó chạy `pnpm build` và `pnpm lint` kiểm tra TypeScript, ESLint và cập nhật trạng thái hoàn thành trong `PLAN.md`.

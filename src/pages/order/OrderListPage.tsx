@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { DataTable } from '@/components/ui/DataTable';
 import { DataTableToolbar } from '@/components/ui/DataTableToolbar';
@@ -11,13 +11,16 @@ import {
   Calendar as CalendarIcon,
   Clock,
   Flower2,
+  Landmark,
 } from 'lucide-react';
 import { OrderFormDialog } from './components/OrderFormDialog';
 import { OrderReceiptDialog } from './components/OrderReceiptDialog';
 import { OrderDeliveryCalendar } from './components/OrderDeliveryCalendar';
 import { OrderFloristTimeline } from './components/OrderFloristTimeline';
 import { FlowerImportDialog } from './components/FlowerImportDialog';
+import { BankReconciliationDialog } from './components/BankReconciliationDialog';
 import { useFlowerTypesQuery } from '@/hooks/useFlowerTypes';
+import { useBankWebhookLogsQuery, useOrderPaymentRealtime } from '@/hooks/useBankWebhookLogs';
 import { Order } from '@/types/order';
 import { toast } from 'sonner';
 import { OrderFilters } from './components/OrderFilters';
@@ -28,14 +31,28 @@ import dayjs from 'dayjs';
 type OrderViewMode = 'table' | 'calendar' | 'timeline';
 
 export default function OrderListPage() {
+  useOrderPaymentRealtime();
+
   const { data, isLoading } = useOrdersQuery();
-  const deleteOrder = useDeleteOrder();
+  const { mutate: deleteOrderMutate } = useDeleteOrder();
+  const { data: webhookLogs = [] } = useBankWebhookLogsQuery();
 
   const [open, setOpen] = useState(false);
   const [receiptOrder, setReceiptOrder] = useState<Order | null>(null);
   const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
+  const [isReconcileOpen, setIsReconcileOpen] = useState(false);
   const { data: flowerTypes = [] } = useFlowerTypesQuery();
   const navigate = useNavigate();
+
+  const pendingReconcileCount = useMemo(
+    () =>
+      webhookLogs.filter(
+        (log) =>
+          log.matchStatus === 'UNMATCHED' ||
+          (log.matchStatus === 'PARTIAL' && !log.orderTransactionId),
+      ).length,
+    [webhookLogs],
+  );
 
   const [searchParams, setSearchParams] = useSearchParams();
   const currentView = (searchParams.get('view') as OrderViewMode) || 'table';
@@ -61,18 +78,26 @@ export default function OrderListPage() {
     setOpen(true);
   };
 
-  const handleEdit = (order: Order) => {
-    navigate(`/admin/orders/${order.id}`);
-  };
+  const handleEdit = useCallback(
+    (order: Order) => {
+      navigate(`/admin/orders/${order.id}`);
+    },
+    [navigate],
+  );
 
-  const handleDelete = (orderId: string) => {
-    deleteOrder.mutate(orderId, {
-      onSuccess: () => {
-        toast.success('Xoá đơn hàng thành công!');
-      },
-      onError: () => toast.error('Không thể xoá đơn hàng này'),
-    });
-  };
+  const handleDelete = useCallback(
+    (orderId: string) => {
+      deleteOrderMutate(orderId, {
+        onSuccess: () => {
+          toast.success('Xoá đơn hàng thành công!');
+        },
+        onError: () => toast.error('Không thể xoá đơn hàng này'),
+      });
+    },
+    [deleteOrderMutate],
+  );
+
+  const columns = useMemo(() => orderColumns(handleEdit, handleDelete), [handleEdit, handleDelete]);
 
   const handleSelectDateFromCalendar = (dateStr: string) => {
     setSearchParams((prev) => {
@@ -138,6 +163,21 @@ export default function OrderListPage() {
             </button>
           </div>
 
+          {/* Nút Đối soát chuyển khoản SePay */}
+          <Button
+            variant="outline"
+            onClick={() => setIsReconcileOpen(true)}
+            className="cursor-pointer gap-2 relative"
+          >
+            <Landmark className="h-4 w-4 text-primary" />
+            <span>Đối soát CK</span>
+            {pendingReconcileCount > 0 && (
+              <span className="inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-full text-[11px] font-bold bg-destructive text-destructive-foreground">
+                {pendingReconcileCount}
+              </span>
+            )}
+          </Button>
+
           {/* Nút Xem hoa cần nhập */}
           <Button
             variant="outline"
@@ -161,7 +201,7 @@ export default function OrderListPage() {
         <DataTable
           storageKey="orders"
           isLoading={isLoading}
-          columns={orderColumns(handleEdit, handleDelete)}
+          columns={columns}
           data={data || []}
           topContent={(table) => <OrderSummaryCards table={table} isLoading={isLoading} />}
           externalState={{
@@ -202,11 +242,13 @@ export default function OrderListPage() {
       <OrderFormDialog open={open} onOpenChange={setOpen} />
 
       {/* Modal in hoá đơn / phiếu giao hoa dùng chung */}
-      <OrderReceiptDialog
-        open={!!receiptOrder}
-        onOpenChange={(isOpen) => !isOpen && setReceiptOrder(null)}
-        order={receiptOrder || undefined}
-      />
+      {receiptOrder && (
+        <OrderReceiptDialog
+          open={!!receiptOrder}
+          onOpenChange={(isOpen) => !isOpen && setReceiptOrder(null)}
+          order={receiptOrder}
+        />
+      )}
 
       {/* Modal danh sách hoa cần nhập */}
       <FlowerImportDialog
@@ -216,6 +258,15 @@ export default function OrderListPage() {
         flowerTypes={flowerTypes}
         initialDate={selectedDate}
       />
+
+      {/* Modal đối soát giao dịch ngân hàng SePay */}
+      {isReconcileOpen && (
+        <BankReconciliationDialog
+          open={isReconcileOpen}
+          onOpenChange={setIsReconcileOpen}
+          orders={data || []}
+        />
+      )}
     </div>
   );
 }

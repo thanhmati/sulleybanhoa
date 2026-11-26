@@ -101,6 +101,21 @@ export interface LandingReviewsConfig {
   subtitle: string;
 }
 
+export type BankAccountType = 'PERSONAL' | 'BUSINESS_HOUSEHOLD' | 'ENTERPRISE';
+
+export interface StoreInvoiceBankConfig {
+  storeName: string;
+  storePhone: string;
+  bankBin: string;
+  bankShortName: string;
+  bankAccountNumber: string;
+  bankAccountName: string;
+  bankAccountType?: BankAccountType;
+  vaNumber?: string;
+  transferPrefix?: string;
+  footerText: string;
+}
+
 export interface StoreSettingItem<T = any> {
   key: string;
   value: T;

@@ -11,6 +11,7 @@ export function useStoreSettingsQuery() {
   return useQuery({
     queryKey: STORE_SETTING_QUERY_KEYS.all,
     queryFn: () => storeSettingService.getSettings(),
+    staleTime: 5 * 60 * 1000,
   });
 }
 
@@ -18,6 +19,7 @@ export function useStoreSettingByKeyQuery<T = any>(key: string, fallbackDefault:
   return useQuery({
     queryKey: STORE_SETTING_QUERY_KEYS.key(key),
     queryFn: () => storeSettingService.getSettingByKey<T>(key, fallbackDefault),
+    staleTime: 5 * 60 * 1000,
   });
 }
 

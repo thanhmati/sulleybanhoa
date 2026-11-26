@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { useOrderDetailQuery, useUpdateOrder } from '@/hooks/useOrders';
+import { useOrderPaymentRealtime } from '@/hooks/useBankWebhookLogs';
 import { ORDER_STATUS, TRANSACTION_TYPE } from '@/lib/constants/order.constant';
 import { Form } from '@/components/ui/form';
 import dayjs from 'dayjs';
@@ -64,6 +65,8 @@ const defaultValues: OrderFormValues = {
 type OrderFormValues = z.infer<typeof orderSchema>;
 
 export function OrderDetailPage() {
+  useOrderPaymentRealtime();
+
   const form = useForm<OrderFormValues>({
     resolver: zodResolver(orderSchema),
     defaultValues,

@@ -10,6 +10,7 @@ import type {
   ShopHeaderConfig,
   AboutPageConfig,
   StoreContactConfig,
+  StoreInvoiceBankConfig,
   FAQItem,
   StoreSettingItem,
 } from '@/types/store-setting';
@@ -153,6 +154,19 @@ const DEFAULT_LANDING_REVIEWS: LandingReviewsConfig = {
   subtitle: 'Niềm tin & sự hài lòng của hơn 2.000+ khách hàng tại TP.HCM',
 };
 
+export const DEFAULT_STORE_INVOICE_BANK: StoreInvoiceBankConfig = {
+  storeName: 'SULLEY FLORAL STUDIO',
+  storePhone: '034 908 1629',
+  bankBin: '970422',
+  bankShortName: 'MBBank',
+  bankAccountNumber: '',
+  bankAccountName: '',
+  bankAccountType: 'BUSINESS_HOUSEHOLD',
+  vaNumber: '',
+  transferPrefix: '',
+  footerText: 'Cảm ơn quý khách và hẹn gặp lại',
+};
+
 export const storeSettingService = {
   async getSettings(): Promise<Record<string, any>> {
     try {
@@ -170,6 +184,7 @@ export const storeSettingService = {
         about_page: DEFAULT_ABOUT_PAGE,
         store_contact: DEFAULT_CONTACT,
         landing_faqs: DEFAULT_FAQS,
+        store_invoice_bank: DEFAULT_STORE_INVOICE_BANK,
       };
 
       if (error || !data) {
@@ -203,6 +218,7 @@ export const storeSettingService = {
         about_page: DEFAULT_ABOUT_PAGE,
         store_contact: DEFAULT_CONTACT,
         landing_faqs: DEFAULT_FAQS,
+        store_invoice_bank: DEFAULT_STORE_INVOICE_BANK,
       };
     }
   },

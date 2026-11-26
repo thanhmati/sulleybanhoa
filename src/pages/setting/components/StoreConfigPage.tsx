@@ -29,8 +29,10 @@ import {
   Star,
   Heart,
   Layers,
+  QrCode,
 } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
+import { InvoiceBankConfigTab } from './InvoiceBankConfigTab';
 
 export default function StoreConfigPage() {
   const { data: settings, isLoading } = useStoreSettingsQuery();
@@ -280,7 +282,7 @@ export default function StoreConfigPage() {
       </div>
 
       <Tabs defaultValue="landing" className="w-full">
-        <TabsList className="grid grid-cols-2 md:grid-cols-4 w-full bg-card border border-border">
+        <TabsList className="grid grid-cols-2 md:grid-cols-5 w-full bg-card border border-border">
           <TabsTrigger value="landing" className="gap-2 text-xs">
             <Sparkles size={14} /> Trang chủ (Landing)
           </TabsTrigger>
@@ -292,6 +294,9 @@ export default function StoreConfigPage() {
           </TabsTrigger>
           <TabsTrigger value="contact" className="gap-2 text-xs">
             <Store size={14} /> Thông tin liên hệ
+          </TabsTrigger>
+          <TabsTrigger value="invoice-bank" className="gap-2 text-xs">
+            <QrCode size={14} /> Hoá đơn & Ngân hàng
           </TabsTrigger>
         </TabsList>
 
@@ -1130,6 +1135,11 @@ export default function StoreConfigPage() {
               </Button>
             </div>
           </form>
+        </TabsContent>
+
+        {/* 5. Invoice & Bank Tab */}
+        <TabsContent value="invoice-bank" className="pt-4">
+          <InvoiceBankConfigTab initialConfig={settings?.store_invoice_bank} />
         </TabsContent>
       </Tabs>
     </div>
