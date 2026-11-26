@@ -150,7 +150,7 @@ export function OrderReceipt({
         )}
 
         <div className="flex justify-between">
-          <span className="text-[#27272a]">Nợ cho đơn hàng này</span>
+          <span className="text-[#27272a]">Còn lại</span>
           <span className="font-semibold text-[#18181b]">{formatVndLabel(dueAmount)}</span>
         </div>
       </div>
