@@ -62,6 +62,10 @@ function mapOrderToDb(order: Partial<Order>): any {
   if (order.status !== undefined) dbOrder.status = order.status;
   if (order.flowers !== undefined) dbOrder.flowers = order.flowers;
   if (order.isPrepared !== undefined) dbOrder.is_prepared = order.isPrepared;
+  // Khi đơn hàng đã giao thì tự động đánh dấu đã chuẩn bị hoa xong
+  if (order.status === ORDER_STATUS.DELIVERED) {
+    dbOrder.is_prepared = true;
+  }
   return dbOrder;
 }
 
@@ -98,7 +102,12 @@ export const orderService = {
   },
 
   updateStatus: async (id: string, status: ORDER_STATUS): Promise<string> => {
-    const { error } = await supabase.from('orders').update({ status }).eq('id', id);
+    const updateData: { status: ORDER_STATUS; is_prepared?: boolean } = { status };
+    if (status === ORDER_STATUS.DELIVERED) {
+      updateData.is_prepared = true;
+    }
+
+    const { error } = await supabase.from('orders').update(updateData).eq('id', id);
 
     if (error) throw error;
     return 'Status updated successfully';

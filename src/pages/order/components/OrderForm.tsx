@@ -19,7 +19,7 @@ import { ITransaction } from '@/types/order';
 import { OrderFlowerPicker } from './OrderFlowerPicker';
 
 export default function OrderForm() {
-  const { control, getValues } = useFormContext();
+  const { control, getValues, setValue } = useFormContext();
 
   const transactions = getValues('transaction') as ITransaction[];
 
@@ -226,7 +226,15 @@ export default function OrderForm() {
               <FormItem className="col-span-6">
                 <FormLabel>Trạng thái</FormLabel>
                 <FormControl>
-                  <Select onValueChange={field.onChange} value={field.value}>
+                  <Select
+                    onValueChange={(value) => {
+                      field.onChange(value);
+                      if (value === ORDER_STATUS.DELIVERED) {
+                        setValue('isPrepared', true, { shouldDirty: true });
+                      }
+                    }}
+                    value={field.value}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Chọn trạng thái" />
                     </SelectTrigger>

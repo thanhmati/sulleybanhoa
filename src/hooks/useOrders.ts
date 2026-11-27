@@ -35,7 +35,10 @@ export function useUpdateOrder() {
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<Order> }) =>
       orderService.update(id, data),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ORDER_QUERY_KEY }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ORDER_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: ORDER_DETAIL_QUERY_KEY });
+    },
   });
 }
 
@@ -44,7 +47,10 @@ export function useUpdateOrderStatus() {
   return useMutation({
     mutationFn: ({ id, status }: { id: string; status: ORDER_STATUS }) =>
       orderService.updateStatus(id, status),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ORDER_QUERY_KEY }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ORDER_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: ORDER_DETAIL_QUERY_KEY });
+    },
   });
 }
 
