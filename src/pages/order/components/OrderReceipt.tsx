@@ -285,6 +285,17 @@ export function OrderReceipt({
         )}
       </div>
 
+      {/* Lưu ý giữ hoa trong 30 phút cho Hoá đơn đặt cọc đang chờ thanh toán */}
+      {isDepositMode && qrAmount > 0 && dueAmount > 0 && !order.isPaid && (
+        <div className="py-2 border-b border-[#d4d4d8]">
+          <p className="text-[10.5px] leading-snug font-medium text-[#92400e] bg-[#fffbeb] border border-[#f59e0b] rounded px-2.5 py-2 text-center">
+            <span className="font-bold text-[#78350f]">Lưu ý:</span> Vui lòng cọc trong{' '}
+            <span className="font-bold text-[#78350f]">30 phút</span> để giữ hoa xinh nhé. Quá 30
+            phút chưa cọc, đơn sẽ tự huỷ ạ.
+          </p>
+        </div>
+      )}
+
       {/* Footer cảm ơn */}
       <div className="text-center pt-2.5">
         <p className="text-[11px] font-medium text-[#18181b]">
