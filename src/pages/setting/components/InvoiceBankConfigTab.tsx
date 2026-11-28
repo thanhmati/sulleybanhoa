@@ -1,9 +1,10 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { AlertCircle, CheckCircle2, Eye, Loader2, QrCode, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { CurrencyInput } from '@/components/ui/currency-input';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,7 +23,7 @@ import {
   VIETNAM_BANKS,
 } from '@/lib/constants/vietnam-banks.constant';
 import { buildOrderTransferContent, stripVietnameseDiacritics } from '@/lib/utils/vietqr';
-import { OrderReceipt } from '@/pages/order/components/OrderReceipt';
+import { OrderReceipt, type ReceiptMode } from '@/pages/order/components/OrderReceipt';
 import type { Order } from '@/types/order';
 import type { BankAccountType, StoreInvoiceBankConfig } from '@/types/store-setting';
 
@@ -44,6 +45,7 @@ const invoiceBankSchema = z.object({
     .regex(/^[a-zA-Z0-9]*$/, 'Số VA chỉ gồm chữ và số')
     .optional(),
   transferPrefix: z.string().trim().max(20, 'Tiền tố tối đa 20 ký tự').optional(),
+  defaultDepositAmount: z.number().min(0, 'Số tiền cọc mặc định không hợp lệ').optional(),
   footerText: z.string().trim().min(1, 'Vui lòng nhập lời cảm ơn cuối hoá đơn'),
 });
 
@@ -63,6 +65,7 @@ const DEFAULT_VALUES: InvoiceBankFormValues = {
   bankAccountType: 'BUSINESS_HOUSEHOLD',
   vaNumber: '',
   transferPrefix: '',
+  defaultDepositAmount: 200000,
   footerText: 'Cảm ơn quý khách và hẹn gặp lại',
 };
 
@@ -96,6 +99,7 @@ const SAMPLE_PREVIEW_ORDER: Order = {
 
 export function InvoiceBankConfigTab({ initialConfig }: InvoiceBankConfigTabProps) {
   const updateMutation = useUpdateStoreSettingMutation();
+  const [previewMode, setPreviewMode] = useState<ReceiptMode>('sale');
 
   const form = useForm<InvoiceBankFormValues>({
     resolver: zodResolver(invoiceBankSchema),
@@ -114,6 +118,10 @@ export function InvoiceBankConfigTab({ initialConfig }: InvoiceBankConfigTabProp
         bankAccountType: initialConfig.bankAccountType || 'BUSINESS_HOUSEHOLD',
         vaNumber: initialConfig.vaNumber || '',
         transferPrefix: initialConfig.transferPrefix || '',
+        defaultDepositAmount:
+          initialConfig.defaultDepositAmount !== undefined
+            ? Number(initialConfig.defaultDepositAmount)
+            : DEFAULT_VALUES.defaultDepositAmount,
         footerText: initialConfig.footerText || DEFAULT_VALUES.footerText,
       });
     }
@@ -128,8 +136,21 @@ export function InvoiceBankConfigTab({ initialConfig }: InvoiceBankConfigTabProp
         orderNumber: 'ORD000001',
         transferPrefix: watched.transferPrefix,
         bankBin: watched.bankBin,
+        isDeposit: previewMode === 'deposit',
       }),
-    [watched.transferPrefix, watched.bankBin],
+    [watched.transferPrefix, watched.bankBin, previewMode],
+  );
+
+  const previewOrder = useMemo<Order>(
+    () =>
+      previewMode === 'deposit'
+        ? {
+            ...SAMPLE_PREVIEW_ORDER,
+            deposit: 0,
+            dueAmount: SAMPLE_PREVIEW_ORDER.price + SAMPLE_PREVIEW_ORDER.ship,
+          }
+        : SAMPLE_PREVIEW_ORDER,
+    [previewMode],
   );
 
   const previewInvoiceConfig: StoreInvoiceBankConfig = useMemo(
@@ -143,6 +164,7 @@ export function InvoiceBankConfigTab({ initialConfig }: InvoiceBankConfigTabProp
       bankAccountType: watched.bankAccountType || 'BUSINESS_HOUSEHOLD',
       vaNumber: watched.vaNumber || '',
       transferPrefix: watched.transferPrefix || '',
+      defaultDepositAmount: Number(watched.defaultDepositAmount ?? 200000),
       footerText: watched.footerText || DEFAULT_VALUES.footerText,
     }),
     [watched],
@@ -154,6 +176,7 @@ export function InvoiceBankConfigTab({ initialConfig }: InvoiceBankConfigTabProp
       bankAccountName: stripVietnameseDiacritics(values.bankAccountName).toUpperCase(),
       vaNumber: values.vaNumber?.trim() || '',
       transferPrefix: values.transferPrefix?.trim() || '',
+      defaultDepositAmount: Math.max(0, Math.round(Number(values.defaultDepositAmount ?? 200000))),
     };
     await updateMutation.mutateAsync({ key: 'store_invoice_bank', value: normalizedPayload });
   };
@@ -336,18 +359,39 @@ export function InvoiceBankConfigTab({ initialConfig }: InvoiceBankConfigTabProp
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="invoiceFooterText">Lời cảm ơn cuối hoá đơn</Label>
-              <Input
-                id="invoiceFooterText"
-                {...form.register('footerText')}
-                placeholder="Cảm ơn quý khách và hẹn gặp lại"
-              />
-              {form.formState.errors.footerText && (
-                <p className="text-xs text-destructive">
-                  {form.formState.errors.footerText.message}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Tiền cọc mặc định (Hoá đơn đặt cọc)</Label>
+                <Controller
+                  control={form.control}
+                  name="defaultDepositAmount"
+                  render={({ field: { value, onChange } }) => (
+                    <CurrencyInput value={value ?? 200000} onChange={onChange} />
+                  )}
+                />
+                <p className="text-[11px] text-muted-foreground">
+                  Áp dụng tự động trên hoá đơn cọc (giới hạn tối đa bằng giá trị còn nợ của đơn).
                 </p>
-              )}
+                {form.formState.errors.defaultDepositAmount && (
+                  <p className="text-xs text-destructive">
+                    {form.formState.errors.defaultDepositAmount.message}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="invoiceFooterText">Lời cảm ơn cuối hoá đơn</Label>
+                <Input
+                  id="invoiceFooterText"
+                  {...form.register('footerText')}
+                  placeholder="Cảm ơn quý khách và hẹn gặp lại"
+                />
+                {form.formState.errors.footerText && (
+                  <p className="text-xs text-destructive">
+                    {form.formState.errors.footerText.message}
+                  </p>
+                )}
+              </div>
             </div>
 
             <div className="flex justify-end pt-2">
@@ -366,18 +410,45 @@ export function InvoiceBankConfigTab({ initialConfig }: InvoiceBankConfigTabProp
 
       {/* Live Mini Preview dùng chung component OrderReceipt */}
       <Card className="lg:col-span-5">
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm flex items-center gap-2">
-            <Eye size={15} className="text-primary" /> Xem trước mẫu Hoá đơn &amp; VietQR
-          </CardTitle>
+        <CardHeader className="pb-3 space-y-2">
+          <div className="flex items-center justify-between gap-2">
+            <CardTitle className="text-sm flex items-center gap-2">
+              <Eye size={15} className="text-primary" /> Xem trước Hoá đơn &amp; VietQR
+            </CardTitle>
+            <div className="inline-flex rounded-md border bg-muted/60 p-0.5 text-[11px]">
+              <button
+                type="button"
+                onClick={() => setPreviewMode('sale')}
+                className={`px-2 py-1 rounded-sm cursor-pointer transition-colors ${
+                  previewMode === 'sale'
+                    ? 'bg-background text-foreground font-semibold shadow-2xs'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                Bán hàng
+              </button>
+              <button
+                type="button"
+                onClick={() => setPreviewMode('deposit')}
+                className={`px-2 py-1 rounded-sm cursor-pointer transition-colors ${
+                  previewMode === 'deposit'
+                    ? 'bg-background text-foreground font-semibold shadow-2xs'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                Đặt cọc
+              </button>
+            </div>
+          </div>
           <CardDescription className="text-xs">
-            Dữ liệu minh hoạ đơn hàng <strong>ORD000001</strong> còn nợ <strong>270.000 đ</strong>.
+            Dữ liệu minh hoạ đơn hàng <strong>ORD000001</strong> (tổng <strong>370.000 đ</strong>).
           </CardDescription>
         </CardHeader>
         <CardContent className="flex justify-center bg-muted/30 p-4 rounded-b-xl border-t border-border">
           <OrderReceipt
-            order={SAMPLE_PREVIEW_ORDER}
+            order={previewOrder}
             invoiceConfig={previewInvoiceConfig}
+            mode={previewMode}
             enablePrintPortal={false}
           />
         </CardContent>

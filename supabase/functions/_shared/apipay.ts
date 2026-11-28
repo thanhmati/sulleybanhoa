@@ -84,15 +84,26 @@ export function buildApiPayAuthHeader(accessKey: string, secretKey: string): str
 
 /**
  * Trích xuất mã đơn hàng dạng ORD000001 từ nội dung chuyển khoản (ApiPay trả nguyên văn content).
- * Hỗ trợ trường hợp ngân hàng chèn chữ trước/sau hoặc khách gõ thêm dấu '-' / khoảng trắng (VD: ORD-000001).
+ * Hỗ trợ trường hợp ngân hàng chèn chữ trước/sau, thêm tiền tố COC (COCORD000001 / COC ORD000001)
+ * hoặc khách gõ thêm dấu '-' / khoảng trắng (VD: ORD-000001).
  */
 export function extractOrderPaymentCode(content?: string | null): string | null {
   if (!content || typeof content !== 'string') return null;
 
-  const match = content.match(/(?:^|[^A-Za-z0-9])(ORD)[-\s]?(\d{6,8})(?=$|[^A-Za-z0-9])/i);
+  const match = content.match(
+    /(?:^|[^A-Za-z0-9](?:COC)?|^COC)[-\s]?(ORD)[-\s]?(\d{6,8})(?=$|[^A-Za-z0-9])/i,
+  );
   if (!match) return null;
 
   return `ORD${match[2]}`;
+}
+
+/**
+ * Kiểm tra nội dung chuyển khoản có mang từ khoá đặt cọc (COC) hay không.
+ */
+export function hasDepositKeyword(content?: string | null): boolean {
+  if (!content || typeof content !== 'string') return false;
+  return /(^|[^A-Za-z0-9])COC([^A-Za-z0-9]|$|ORD\d{6,8})/i.test(content);
 }
 
 /**

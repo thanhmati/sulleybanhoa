@@ -53,10 +53,15 @@ export const bankWebhookService = {
     return (data || []).map(mapBankWebhookLogFromDb);
   },
 
-  assignLogToOrder: async (logId: string, orderId: string): Promise<string> => {
-    const { data, error } = await supabase.rpc('assign_bank_log_to_order', {
+  assignLogToOrder: async (
+    logId: string,
+    orderId: string,
+    asDeposit?: boolean,
+  ): Promise<string> => {
+    const { data, error } = await supabase.rpc('reconcile_bank_log_to_order', {
       p_log_id: logId,
       p_order_id: orderId,
+      p_as_deposit: asDeposit ?? null,
     });
 
     if (error) throw error;

@@ -4,6 +4,7 @@ import test from 'node:test';
 import {
   buildApiPayAuthHeader,
   extractOrderPaymentCode,
+  hasDepositKeyword,
   maskAccountLast4,
   normalizeExpectedAccount,
   toIsoTimestamp,
@@ -55,12 +56,22 @@ test('verifyApiPaySignature fails closed when secret is empty or signature is wr
 
 test('extractOrderPaymentCode extracts and normalizes ORD codes from noisy bank memos', () => {
   assert.equal(extractOrderPaymentCode('ORD000001'), 'ORD000001');
+  assert.equal(extractOrderPaymentCode('COC ORD000567'), 'ORD000567');
+  assert.equal(extractOrderPaymentCode('COCORD000567'), 'ORD000567');
   assert.equal(extractOrderPaymentCode('MBVCB.99881122.ord000558.CT tu NGUYEN VAN A'), 'ORD000558');
   assert.equal(extractOrderPaymentCode('Thanh toan hoa don ORD-001234 cam on'), 'ORD001234');
   assert.equal(extractOrderPaymentCode('ORD 12345678'), 'ORD12345678');
   assert.equal(extractOrderPaymentCode('Chuyen tien mua hoa'), null);
   assert.equal(extractOrderPaymentCode('RECORD000001'), null);
   assert.equal(extractOrderPaymentCode(null), null);
+});
+
+test('hasDepositKeyword detects COC transfer markers without false positives', () => {
+  assert.equal(hasDepositKeyword('COC ORD000567'), true);
+  assert.equal(hasDepositKeyword('MBVCB.123.coc ORD000567'), true);
+  assert.equal(hasDepositKeyword('COCORD000567'), true);
+  assert.equal(hasDepositKeyword('ORD000567'), false);
+  assert.equal(hasDepositKeyword('COCA COLA ORD000567'), false);
 });
 
 test('buildApiPayAuthHeader encodes Bearer base64(accessKey:secretKey)', () => {

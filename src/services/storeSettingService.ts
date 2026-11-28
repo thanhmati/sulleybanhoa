@@ -164,6 +164,7 @@ export const DEFAULT_STORE_INVOICE_BANK: StoreInvoiceBankConfig = {
   bankAccountType: 'BUSINESS_HOUSEHOLD',
   vaNumber: '',
   transferPrefix: '',
+  defaultDepositAmount: 200000,
   footerText: 'Cảm ơn quý khách và hẹn gặp lại',
 };
 

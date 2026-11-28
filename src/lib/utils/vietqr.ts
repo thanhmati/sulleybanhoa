@@ -10,6 +10,7 @@ export interface ITransferContentParams {
   fallbackId?: string;
   transferPrefix?: string;
   bankBin?: string;
+  isDeposit?: boolean;
 }
 
 /**
@@ -53,6 +54,7 @@ export function buildOrderTransferContent({
   orderNumber,
   fallbackId,
   transferPrefix,
+  isDeposit,
 }: ITransferContentParams): string {
   const paymentCode = formatOrderPaymentCode(orderNumber, fallbackId);
   const sanitizedPrefix = transferPrefix
@@ -61,7 +63,8 @@ export function buildOrderTransferContent({
         .trim()
     : '';
 
-  const finalMemo = sanitizedPrefix ? `${paymentCode} ${sanitizedPrefix}`.trim() : paymentCode;
+  const baseMemo = sanitizedPrefix ? `${paymentCode} ${sanitizedPrefix}`.trim() : paymentCode;
+  const finalMemo = isDeposit && baseMemo ? `COC ${baseMemo}` : baseMemo;
   return finalMemo.slice(0, 50).trim();
 }
 

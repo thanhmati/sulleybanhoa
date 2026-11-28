@@ -167,13 +167,17 @@ export function BankReconciliationDialog({
     });
   };
 
-  const handleAssignOrder = (logId: string, order: Order) => {
+  const handleAssignOrder = (logId: string, order: Order, asDeposit: boolean) => {
     assignMutation.mutate(
-      { logId, orderId: order.id },
+      { logId, orderId: order.id, asDeposit },
       {
         onSuccess: () => {
           const code = formatOrderPaymentCode(order.orderNumber, order.id);
-          toast.success(`Đã gắn giao dịch vào đơn ${code}`);
+          toast.success(
+            asDeposit
+              ? `Đã gắn giao dịch vào Tiền cọc của đơn ${code}`
+              : `Đã gắn giao dịch vào Thanh toán của đơn ${code}`,
+          );
           setAssigningLogId(null);
           setOrderSearch('');
         },
@@ -283,13 +287,19 @@ export function BankReconciliationDialog({
           ) : (
             filteredLogs.map((log) => {
               const badge = STATUS_BADGE_MAP[log.matchStatus] || STATUS_BADGE_MAP.UNMATCHED;
+              const isAlreadyReconciled =
+                Boolean(log.orderTransactionId) ||
+                (Boolean(log.matchedOrderId) && log.webhookSuccess);
               const canAssign =
                 isAdmin &&
-                !log.orderTransactionId &&
+                !isAlreadyReconciled &&
                 log.transferType === 'in' &&
                 log.amount > 0 &&
                 log.matchStatus !== 'IGNORED';
               const isPickingOrder = assigningLogId === log.id;
+              const hasDepositKeywordInLog = /(^|[^A-Za-z0-9])COC([^A-Za-z0-9]|$|ORD\d{6,8})/i.test(
+                log.content || '',
+              );
 
               return (
                 <div
@@ -366,6 +376,9 @@ export function BankReconciliationDialog({
                             </span>
                           </div>
                           <p className="text-[11px] text-muted-foreground">
+                            {!log.orderTransactionId && log.webhookSuccess
+                              ? 'Cộng vào Tiền cọc • '
+                              : ''}
                             Còn nợ: {formatCurrency(log.matchedOrder.dueAmount)}
                           </p>
                         </div>
@@ -421,10 +434,13 @@ export function BankReconciliationDialog({
                         ) : (
                           assignableOrders.map((order) => {
                             const payCode = formatOrderPaymentCode(order.orderNumber, order.id);
+                            const preferDeposit =
+                              (hasDepositKeywordInLog && log.amount <= order.dueAmount) ||
+                              (Number(order.deposit || 0) === 0 && log.amount < order.dueAmount);
                             return (
                               <div
                                 key={order.id}
-                                className="flex items-center justify-between gap-2 px-2.5 py-1.5 rounded bg-background border border-border text-xs"
+                                className="flex flex-wrap items-center justify-between gap-2 px-2.5 py-1.5 rounded bg-background border border-border text-xs"
                               >
                                 <div className="min-w-0">
                                   <span className="font-semibold font-mono">{payCode}</span>
@@ -442,17 +458,35 @@ export function BankReconciliationDialog({
                                       ? `Nợ ${formatCurrency(order.dueAmount)}`
                                       : 'Đã đủ'}
                                   </span>
+                                  {Number(order.deposit || 0) > 0 && (
+                                    <span className="ml-1.5 text-[11px] text-muted-foreground">
+                                      (Đã cọc {formatCurrency(order.deposit)})
+                                    </span>
+                                  )}
                                 </div>
 
-                                <Button
-                                  type="button"
-                                  size="sm"
-                                  disabled={assignMutation.isPending}
-                                  onClick={() => handleAssignOrder(log.id, order)}
-                                  className="h-6 px-2.5 text-[11px] shrink-0 cursor-pointer"
-                                >
-                                  Gắn
-                                </Button>
+                                <div className="flex items-center gap-1.5 shrink-0">
+                                  <Button
+                                    type="button"
+                                    size="sm"
+                                    variant={preferDeposit ? 'default' : 'outline'}
+                                    disabled={assignMutation.isPending}
+                                    onClick={() => handleAssignOrder(log.id, order, true)}
+                                    className="h-6 px-2.5 text-[11px] cursor-pointer"
+                                  >
+                                    {preferDeposit ? 'Gắn Tiền cọc (gợi ý)' : 'Gắn Tiền cọc'}
+                                  </Button>
+                                  <Button
+                                    type="button"
+                                    size="sm"
+                                    variant={preferDeposit ? 'outline' : 'default'}
+                                    disabled={assignMutation.isPending}
+                                    onClick={() => handleAssignOrder(log.id, order, false)}
+                                    className="h-6 px-2.5 text-[11px] cursor-pointer"
+                                  >
+                                    Gắn Thanh toán
+                                  </Button>
+                                </div>
                               </div>
                             );
                           })

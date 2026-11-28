@@ -49,7 +49,7 @@ export default function OrderListPage() {
       webhookLogs.filter(
         (log) =>
           log.matchStatus === 'UNMATCHED' ||
-          (log.matchStatus === 'PARTIAL' && !log.orderTransactionId),
+          (log.matchStatus === 'PARTIAL' && !log.orderTransactionId && !log.matchedOrderId),
       ).length,
     [webhookLogs],
   );

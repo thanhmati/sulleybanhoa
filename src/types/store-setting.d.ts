@@ -113,6 +113,7 @@ export interface StoreInvoiceBankConfig {
   bankAccountType?: BankAccountType;
   vaNumber?: string;
   transferPrefix?: string;
+  defaultDepositAmount?: number;
   footerText: string;
 }
 

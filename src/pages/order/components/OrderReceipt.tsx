@@ -13,11 +13,15 @@ import {
   stripVietnameseDiacritics,
 } from '@/lib/utils/vietqr';
 
+export type ReceiptMode = 'sale' | 'deposit';
+
 interface OrderReceiptProps {
   order: Order;
   invoiceConfig?: StoreInvoiceBankConfig;
   captureRef?: RefObject<HTMLDivElement | null>;
   enablePrintPortal?: boolean;
+  mode?: ReceiptMode;
+  depositAmountOverride?: number;
 }
 
 function formatVndPlain(value: number): string {
@@ -33,6 +37,8 @@ export function OrderReceipt({
   invoiceConfig,
   captureRef,
   enablePrintPortal = true,
+  mode = 'sale',
+  depositAmountOverride,
 }: OrderReceiptProps) {
   const config = invoiceConfig || DEFAULT_STORE_INVOICE_BANK;
 
@@ -46,6 +52,31 @@ export function OrderReceipt({
     ? order.transaction.reduce((sum, tx) => sum + Number(tx.amount || 0), 0)
     : Math.max(0, totalAmount - deposit - dueAmount);
 
+  const isDepositMode = mode === 'deposit';
+  const configuredDeposit = Math.max(
+    0,
+    Math.round(
+      Number(
+        config.defaultDepositAmount ?? DEFAULT_STORE_INVOICE_BANK.defaultDepositAmount ?? 200000,
+      ),
+    ),
+  );
+  const autoDepositAmount =
+    dueAmount <= 0 || order.isPaid
+      ? 0
+      : deposit > 0
+        ? 0
+        : Math.min(configuredDeposit > 0 ? configuredDeposit : 200000, dueAmount);
+
+  const rawRequestedDeposit =
+    depositAmountOverride !== undefined && Number.isFinite(depositAmountOverride)
+      ? Math.max(0, Math.round(depositAmountOverride))
+      : autoDepositAmount;
+
+  const depositRequestAmount = isDepositMode ? Math.min(rawRequestedDeposit, dueAmount) : 0;
+  const remainingAfterDeposit = Math.max(0, dueAmount - depositRequestAmount);
+  const qrAmount = isDepositMode ? depositRequestAmount : dueAmount;
+
   const paymentCode = formatOrderPaymentCode(order.orderNumber, order.id);
   const receivingAccount = (config.vaNumber || config.bankAccountNumber || '').trim();
   const transferContent = buildOrderTransferContent({
@@ -53,14 +84,15 @@ export function OrderReceipt({
     fallbackId: order.id,
     transferPrefix: config.transferPrefix,
     bankBin: config.bankBin,
+    isDeposit: isDepositMode,
   });
 
   const qrPayload =
-    dueAmount > 0 && config.bankBin && receivingAccount
+    qrAmount > 0 && config.bankBin && receivingAccount
       ? generateVietQRPayload({
           bankBin: config.bankBin,
           accountNumber: receivingAccount,
-          amount: dueAmount,
+          amount: qrAmount,
           description: transferContent,
         })
       : '';
@@ -85,7 +117,7 @@ export function OrderReceipt({
       {/* Tiêu đề & Mã đơn (không mã vạch) */}
       <div className="text-center py-2.5 border-b border-[#d4d4d8] space-y-0.5">
         <h2 className="font-bold text-[12px] uppercase tracking-wide text-[#18181b]">
-          HÓA ĐƠN BÁN HÀNG
+          {isDepositMode ? 'HÓA ĐƠN ĐẶT CỌC' : 'HÓA ĐƠN BÁN HÀNG'}
         </h2>
         <p className="text-[11px] text-[#27272a]">
           {paymentCode} - {formatDate(order.createdAt || new Date(), 'DD/MM/YY HH:mm')}
@@ -132,35 +164,86 @@ export function OrderReceipt({
           </div>
         )}
 
-        <div className="flex justify-between font-bold text-[12px]">
-          <span className="text-[#18181b]">Tổng cộng</span>
-          <span className="text-[#d99b26]">{formatVndLabel(totalAmount)}</span>
-        </div>
+        {isDepositMode ? (
+          <>
+            <div className="flex justify-between">
+              <span className="text-[#27272a]">Tổng cộng</span>
+              <span className="font-semibold text-[#18181b]">{formatVndLabel(totalAmount)}</span>
+            </div>
 
-        <div className="flex justify-between">
-          <span className="text-[#27272a]">Tiền cọc</span>
-          <span className="font-semibold">{formatVndLabel(deposit)}</span>
-        </div>
+            {deposit > 0 && (
+              <div className="flex justify-between">
+                <span className="text-[#27272a]">Đã đặt cọc</span>
+                <span className="font-semibold">{formatVndLabel(deposit)}</span>
+              </div>
+            )}
 
-        {paidFromTransactions > 0 && (
-          <div className="flex justify-between">
-            <span className="text-[#27272a]">Đã thanh toán</span>
-            <span className="font-semibold">{formatVndLabel(paidFromTransactions)}</span>
-          </div>
+            {paidFromTransactions > 0 && (
+              <div className="flex justify-between">
+                <span className="text-[#27272a]">Đã thanh toán</span>
+                <span className="font-semibold">{formatVndLabel(paidFromTransactions)}</span>
+              </div>
+            )}
+
+            {depositRequestAmount > 0 ? (
+              <>
+                <div className="flex justify-between font-bold text-[12px]">
+                  <span className="text-[#18181b]">Cần đặt cọc</span>
+                  <span className="text-[#d99b26]">{formatVndLabel(depositRequestAmount)}</span>
+                </div>
+
+                <div className="flex justify-between">
+                  <span className="text-[#27272a]">Còn lại sau cọc</span>
+                  <span className="font-semibold text-[#18181b]">
+                    {formatVndLabel(remainingAfterDeposit)}
+                  </span>
+                </div>
+              </>
+            ) : (
+              <div className="flex justify-between">
+                <span className="text-[#27272a]">Còn lại</span>
+                <span className="font-semibold text-[#18181b]">{formatVndLabel(dueAmount)}</span>
+              </div>
+            )}
+          </>
+        ) : (
+          <>
+            <div className="flex justify-between font-bold text-[12px]">
+              <span className="text-[#18181b]">Tổng cộng</span>
+              <span className="text-[#d99b26]">{formatVndLabel(totalAmount)}</span>
+            </div>
+
+            <div className="flex justify-between">
+              <span className="text-[#27272a]">Tiền cọc</span>
+              <span className="font-semibold">{formatVndLabel(deposit)}</span>
+            </div>
+
+            {paidFromTransactions > 0 && (
+              <div className="flex justify-between">
+                <span className="text-[#27272a]">Đã thanh toán</span>
+                <span className="font-semibold">{formatVndLabel(paidFromTransactions)}</span>
+              </div>
+            )}
+
+            <div className="flex justify-between">
+              <span className="text-[#27272a]">Còn lại</span>
+              <span className="font-semibold text-[#18181b]">{formatVndLabel(dueAmount)}</span>
+            </div>
+          </>
         )}
-
-        <div className="flex justify-between">
-          <span className="text-[#27272a]">Còn lại</span>
-          <span className="font-semibold text-[#18181b]">{formatVndLabel(dueAmount)}</span>
-        </div>
       </div>
 
-      {/* Khối thông tin chuyển khoản VietQR hoặc trạng thái Đã thanh toán đủ */}
+      {/* Khối thông tin chuyển khoản VietQR hoặc trạng thái Đã thanh toán / Đã nhận cọc */}
       <div className="py-2.5 border-b border-[#d4d4d8]">
         {dueAmount <= 0 || order.isPaid ? (
           <div className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded border border-[#bbf7d0] bg-[#f0fdf4] text-[#15803d] text-[11px] font-semibold">
             <CheckCircle2 className="h-4 w-4 shrink-0" />
             <span>ĐÃ THANH TOÁN ĐỦ</span>
+          </div>
+        ) : isDepositMode && qrAmount <= 0 ? (
+          <div className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded border border-[#bbf7d0] bg-[#f0fdf4] text-[#15803d] text-[11px] font-semibold">
+            <CheckCircle2 className="h-4 w-4 shrink-0" />
+            <span>ĐÃ NHẬN ĐẶT CỌC</span>
           </div>
         ) : qrPayload ? (
           <div>

@@ -20,8 +20,15 @@ export function useAssignWebhookLogMutation() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ logId, orderId }: { logId: string; orderId: string }) =>
-      bankWebhookService.assignLogToOrder(logId, orderId),
+    mutationFn: ({
+      logId,
+      orderId,
+      asDeposit,
+    }: {
+      logId: string;
+      orderId: string;
+      asDeposit?: boolean;
+    }) => bankWebhookService.assignLogToOrder(logId, orderId, asDeposit),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: BANK_WEBHOOK_LOGS_QUERY_KEY });
       queryClient.invalidateQueries({ queryKey: ['orders'] });

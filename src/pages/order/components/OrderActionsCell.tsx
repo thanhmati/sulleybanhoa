@@ -8,10 +8,11 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
-import { MoreHorizontal, Printer, Pencil, Trash2 } from 'lucide-react';
+import { MoreHorizontal, Printer, Pencil, Trash2, Coins } from 'lucide-react';
 import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 import { Order } from '@/types/order';
 import { OrderReceiptDialog } from './OrderReceiptDialog';
+import type { ReceiptMode } from './OrderReceipt';
 
 interface OrderActionsCellProps {
   order: Order;
@@ -22,7 +23,13 @@ interface OrderActionsCellProps {
 export function OrderActionsCell({ order, onEdit, onDelete }: OrderActionsCellProps) {
   const [openConfirm, setOpenConfirm] = useState(false);
   const [openReceipt, setOpenReceipt] = useState(false);
+  const [receiptMode, setReceiptMode] = useState<ReceiptMode>('deposit');
   const [selectedOrder, setSelectedOrder] = useState<Order>();
+
+  const openReceiptWithMode = (mode: ReceiptMode) => {
+    setReceiptMode(mode);
+    setOpenReceipt(true);
+  };
 
   return (
     <>
@@ -34,7 +41,11 @@ export function OrderActionsCell({ order, onEdit, onDelete }: OrderActionsCellPr
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Thao tác</DropdownMenuLabel>
-          <DropdownMenuItem onClick={() => setOpenReceipt(true)}>
+          <DropdownMenuItem onClick={() => openReceiptWithMode('deposit')}>
+            <Coins className="mr-2 h-4 w-4 text-amber-600" />
+            In bill đặt cọc
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => openReceiptWithMode('sale')}>
             <Printer className="mr-2 h-4 w-4 text-primary" />
             In hoá đơn
           </DropdownMenuItem>
@@ -57,7 +68,12 @@ export function OrderActionsCell({ order, onEdit, onDelete }: OrderActionsCellPr
       </DropdownMenu>
 
       {openReceipt && (
-        <OrderReceiptDialog open={openReceipt} onOpenChange={setOpenReceipt} order={order} />
+        <OrderReceiptDialog
+          open={openReceipt}
+          onOpenChange={setOpenReceipt}
+          order={order}
+          initialMode={receiptMode}
+        />
       )}
 
       <ConfirmDialog
